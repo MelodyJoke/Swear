@@ -3,6 +3,7 @@ package com.teamsolo.swear.foundation.util;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -43,7 +44,7 @@ import static com.teamsolo.swear.foundation.constant.SpConst.SP_COOKIE;
  * <p>
  * about cookie: three levels caches, memory cache, shared-preference cache and database cache.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings("WeakerAccess, unused")
 public class RetrofitConfig {
 
     public static boolean releaseHttps = false;
@@ -128,6 +129,18 @@ public class RetrofitConfig {
         }
 
         return cookies;
+    }
+
+    @Nullable
+    public static String getSessionId() {
+        List<Cookie> cookies = loadCookies();
+        if (cookies == null || cookies.isEmpty()) return null;
+
+        for (Cookie cookie :
+                cookies)
+            if ("JSESSIONID".equals(cookie.name())) return cookie.value();
+
+        return null;
     }
 
     @NonNull

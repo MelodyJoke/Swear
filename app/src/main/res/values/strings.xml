@@ -9,6 +9,7 @@
     <string name="ignore">忽略</string>
 
     <string name="permission_deny">权限请求失败, 操作中止</string>
+    <string name="log_out">请先登录</string>
 
     <string name="service_phone">400&#8211;601&#8211;7717</string>
     <string name="real_phone">4006017717</string>
@@ -26,6 +27,19 @@
 
     <string name="net_ssl_handshake">网络异常: SSL验证失败</string>
     <string name="net_socket_timeout">网络异常: 连接超时</string>
+
+    <!--menu-->
+    <string name="action_settings">设置</string>
+    <string name="action_share">分享</string>
+    <string name="action_open_outside">在浏览器中打开</string>
+
+    <!--share-->
+    <string name="share_share_to">分享到</string>
+
+    <!-- web link -->
+    <string name="web_help_center">帮助中心</string>
+    <string name="web_open_deny">当前页面不可在浏览器中打开.</string>
+    <string name="web_share_deny">当前页面不可分享.</string>
 
     <!-- load -->
     <string name="load_company">南京学问道信息科技有限公司</string>

@@ -29,11 +29,14 @@ import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.LoginResp;
 import com.teamsolo.swear.foundation.constant.DbConst;
+import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.WebLinkActivity;
 import com.teamsolo.swear.structure.util.UserHelper;
 import com.teamsolo.swear.structure.util.db.UserDbHelper;
 
@@ -171,7 +174,13 @@ public class LoginActivity extends HandlerActivity {
                 }, PERMISSION_REQUEST_CODE));
 
         mHelpButton.setOnClickListener(view -> {
-            // TODO: jump to webView
+            WebLink webLink = new WebLink();
+            webLink.title = getString(R.string.web_help_center);
+            webLink.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.HELP_CENTER;
+
+            Intent intent = new Intent(mContext, WebLinkActivity.class);
+            intent.putExtra("link", webLink);
+            startActivity(intent);
         });
     }
 

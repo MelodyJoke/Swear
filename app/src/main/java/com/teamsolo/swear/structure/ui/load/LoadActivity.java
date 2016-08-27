@@ -31,6 +31,7 @@ import com.teamsolo.swear.foundation.bean.resp.LoginResp;
 import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.WebLinkActivity;
 import com.teamsolo.swear.structure.ui.login.LoginActivity;
 import com.teamsolo.swear.structure.util.UserHelper;
 
@@ -133,10 +134,12 @@ public class LoadActivity extends HandlerActivity {
                 return;
 
             v.setClickable(false);
-            handler.postDelayed(() -> mImageView.setClickable(true), 500);
 
-            // TODO: jump to webView
-            toast(mWebLink.title + ": " + mWebLink.forwardUrl);
+            Intent intent = new Intent(mContext, WebLinkActivity.class);
+            intent.putExtra("link", mWebLink);
+            startActivity(intent);
+
+            handler.postDelayed(() -> mImageView.setClickable(true), 500);
         });
     }
 
