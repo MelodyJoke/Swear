@@ -38,6 +38,7 @@
 
     <!-- web link -->
     <string name="web_help_center">帮助中心</string>
+    <string name="web_agreement">问学协议</string>
     <string name="web_open_deny">当前页面不可在浏览器中打开.</string>
     <string name="web_share_deny">当前页面不可分享.</string>
 
@@ -62,4 +63,7 @@
     <string name="login_error_phone">电话号码不合法.</string>
     <string name="login_error_password">密码过短.</string>
     <string name="login_call_for_service">联系客服:</string>
+
+    <!--register-->
+    <string name="register_title">注册</string>
 </resources>

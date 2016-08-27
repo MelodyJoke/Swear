@@ -37,6 +37,7 @@ import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.WebLinkActivity;
+import com.teamsolo.swear.structure.ui.register.RegisterActivity;
 import com.teamsolo.swear.structure.util.UserHelper;
 import com.teamsolo.swear.structure.util.db.UserDbHelper;
 
@@ -160,9 +161,7 @@ public class LoginActivity extends HandlerActivity {
 
         mLoginButton.setOnClickListener(view -> attemptLogin());
 
-        mRegisterButton.setOnClickListener(view -> {
-            // TODO: jump to register page
-        });
+        mRegisterButton.setOnClickListener(view -> startActivity(new Intent(mContext, RegisterActivity.class)));
 
         mSkipButton.setOnClickListener(view -> {
             // TODO: jump to main page
@@ -317,5 +316,11 @@ public class LoginActivity extends HandlerActivity {
                     } else
                         Snackbar.make(mPortraitView, R.string.permission_deny, Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        new Thread(this::prepare).start();
     }
 }

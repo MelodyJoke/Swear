@@ -27,6 +27,8 @@ import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.LogUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
+import com.teamsolo.swear.structure.ui.about.AgreementActivity;
+import com.teamsolo.swear.structure.ui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,15 +48,15 @@ import static com.teamsolo.swear.foundation.util.RetrofitConfig.getSessionId;
 @SuppressWarnings("unused")
 public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private WebView mWebView;
+    protected WebView mWebView;
 
-    private ProgressBar mProgressBar;
+    protected ProgressBar mProgressBar;
 
-    private WebLink mWebLink;
+    protected WebLink mWebLink;
 
-    private boolean canShare;
+    protected boolean canShare;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -206,7 +208,7 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadUrl(String url) {
+    protected void loadUrl(String url) {
         // empty url
         if (TextUtils.isEmpty(url)) {
             LogUtility.i("url", "empty url");
@@ -224,6 +226,19 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         // app protocols
         if (url.startsWith("http://app/login")) {
             toast(R.string.log_out);
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            return;
+        }
+
+        if (url.equals("http://wenxue/app/end")) {
+            if (BuildUtility.isRequired(Build.VERSION_CODES.LOLLIPOP)) finishAfterTransition();
+            else finish();
+        }
+
+        if (url.startsWith("http://wenxue/app/service/agreement")) {
+            startActivity(new Intent(mContext, AgreementActivity.class));
             return;
         }
 

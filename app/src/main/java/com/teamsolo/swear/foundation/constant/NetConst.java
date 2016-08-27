@@ -11,6 +11,31 @@ import com.teamsolo.base.util.LogUtility;
 @SuppressWarnings("unused")
 public class NetConst {
 
+    public static final String HTTP = "http://", HTTPS = "https://";
+
+    public static final String PATH_PRE = "/pc_secureproxy/";
+
+    // Login
+    public static final String LOGIN_URL = "parent/login";
+
+    // service
+    public static final String SERVICE_URL = "service/action";
+
+    // help
+    public static final String HELP_CENTER = "/scms/resources/helpdoc/index_web.html";
+
+    // agreement
+    public static final String AGREEMENT = "/client_resource/parent/aboutUs/page/about_us.html";
+
+    // choose child
+    public static final String CHILD_CHOOSE = "parent/studentSelect";
+
+    // register
+    public static final String REGISTER = "regist_resource/mobile/ph_register.html?hiddenTop=1";
+
+    // school register
+    public static final String REGISTER_SCHOOL = "regist_resource/mobile/ph_my_register.html";
+
     public static String getBaseHttpUrl() {
         switch (LogUtility.getMode()) {
             case LogUtility.MODE_EAGER:
@@ -114,26 +139,4 @@ public class NetConst {
                 return NetEnvironment.Dev.MINA_PORT;
         }
     }
-
-    public static final String HTTP = "http://", HTTPS = "https://";
-
-    public static final String PATH_PRE = "/pc_secureproxy/";
-
-    // Login
-    public static final String LOGIN_URL = "parent/login";
-
-    // service
-    public static final String SERVICE_URL = "service/action";
-
-    // help
-    public static final String HELP_CENTER = "/scms/resources/helpdoc/index_web.html";
-
-    // agreement
-    public static final String AGREEMENT = "/client_resource/parent/aboutUs/page/about_us.html";
-
-    // choose child
-    public static final String CHILD_CHOOSE = "parent/studentSelect";
-
-    // school register
-    public static final String REGISTER_SCHOOL = "regist_resource/mobile/ph_my_register.html";
 }

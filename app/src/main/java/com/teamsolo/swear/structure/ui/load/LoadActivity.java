@@ -240,8 +240,10 @@ public class LoadActivity extends HandlerActivity {
 
             @Override
             public void onNext(LoginResp loginResp) {
-                if (loginResp.code != 200) toast(loginResp.message);
-                else {
+                if (loginResp.code != 200) {
+                    toast(loginResp.message);
+                    Message.obtain(handler, 3, false).sendToTarget();
+                } else {
                     UserHelper.saveUserInfo(loginResp.getUser().merge(password), mContext);
                     Message.obtain(handler, 3, true).sendToTarget();
                 }
