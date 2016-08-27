@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Swear</string>
+
+    <!-- common -->
+    <string name="ok">OK</string>
+    <string name="accept">接受</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="ignore">忽略</string>
+
+    <string name="permission_deny">权限请求失败, 操作中止</string>
+
+    <string name="service_phone">400&#8211;601&#8211;7717</string>
+    <string name="real_phone">4006017717</string>
+
+    <!-- net -->
+    <string name="net_exception_unknown">未知异常</string>
+
+    <string name="net_exception">网络异常</string>
+
+    <string name="net_io_exception">网络异常: IO异常</string>
+
+    <string name="net_interrupt_io">网络异常: IO中断</string>
+    <string name="net_ssl_exception">网络异常: SSL异常</string>
+    <string name="net_unknown_host">网络异常: 未知主机</string>
+
+    <string name="net_ssl_handshake">网络异常: SSL验证失败</string>
+    <string name="net_socket_timeout">网络异常: 连接超时</string>
+
+    <!-- load -->
+    <string name="load_company">南京学问道信息科技有限公司</string>
+    <string name="load_permission">正在请求权限&#8230;</string>
+    <string name="load_permission_failed">权限请求失败, 终止&#8230;</string>
+    <string name="load_attempt">正在尝试登录&#8230;</string>
+    <string name="load_attempt_failed">登录失败, 前往登录&#8230;</string>
+    <string name="load_attempt_success">前往主页&#8230;</string>
+
+    <!--login-->
+    <string name="login_title">登录</string>
+    <string name="login_phone_hint">电话号码</string>
+    <string name="login_password_hint">密码</string>
+    <string name="login_login">登录</string>
+    <string name="login_register">注册</string>
+    <string name="login_skip">跳过</string>
+    <string name="login_service">联系客服</string>
+    <string name="login_help">帮助中心</string>
+    <string name="login_signing">登录&#8230;</string>
+    <string name="login_error_phone">电话号码不合法.</string>
+    <string name="login_error_password">密码过短.</string>
+    <string name="login_call_for_service">联系客服:</string>
+</resources>
