@@ -27,7 +27,6 @@ import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.LogUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
-import com.teamsolo.swear.foundation.ui.NestedWebView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +48,7 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private NestedWebView mWebView;
+    private WebView mWebView;
 
     private ProgressBar mProgressBar;
 
@@ -66,9 +65,8 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         initViews();
         bindListeners();
 
-        /*if (mWebLink != null && !TextUtils.isEmpty(mWebLink.forwardUrl))
-            loadUrl(mWebLink.forwardUrl);*/
-        loadUrl("http://www.baidu.com/");
+        if (mWebLink != null && !TextUtils.isEmpty(mWebLink.forwardUrl))
+            loadUrl(mWebLink.forwardUrl);
     }
 
     @Override
@@ -109,7 +107,7 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
                 Color.parseColor("#CDDC39"),
                 Color.parseColor("#4CAF50"));
 
-        mWebView = (NestedWebView) findViewById(R.id.webView);
+        mWebView = (WebView) findViewById(R.id.webView);
         initWebView();
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress);

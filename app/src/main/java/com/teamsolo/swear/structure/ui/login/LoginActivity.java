@@ -138,10 +138,10 @@ public class LoginActivity extends HandlerActivity {
                         String portrait = user.get(DbConst.TABLE_USER_FIELDS[3][0]);
                         if (!TextUtils.isEmpty(portrait))
                             mPortraitView.setImageURI(Uri.parse(portrait));
-                        else mPortraitView.setImageResource(R.drawable.portrait_default);
+                        else mPortraitView.setImageResource(R.mipmap.portrait_default);
                     } else {
                         mPasswordEdit.getText().clear();
-                        mPortraitView.setImageResource(R.drawable.portrait_default);
+                        mPortraitView.setImageResource(R.mipmap.portrait_default);
                     }
                 }
             }
