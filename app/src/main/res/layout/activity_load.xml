@@ -6,7 +6,7 @@
     android:background="@color/colorBackgroundBase"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".structure.ui.load.LoadActivity">
+    tools:context=".structure.ui.LoadActivity">
 
     <ImageView
         android:id="@+id/image"

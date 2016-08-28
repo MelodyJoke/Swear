@@ -1,4 +1,4 @@
-package com.teamsolo.swear.structure.ui.login;
+package com.teamsolo.swear.structure.ui;
 
 import android.Manifest;
 import android.content.Intent;
@@ -29,6 +29,7 @@ import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.LoginResp;
 import com.teamsolo.swear.foundation.constant.DbConst;
@@ -36,8 +37,6 @@ import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
-import com.teamsolo.swear.structure.ui.WebLinkActivity;
-import com.teamsolo.swear.structure.ui.register.RegisterActivity;
 import com.teamsolo.swear.structure.util.UserHelper;
 import com.teamsolo.swear.structure.util.db.UserDbHelper;
 
@@ -60,7 +59,7 @@ public class LoginActivity extends HandlerActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 477;
 
-    private SimpleDraweeView mPortraitView;
+    private SimpleDraweeView mPortraitImage;
 
     private AutoCompleteTextView mPhoneEdit;
 
@@ -105,7 +104,7 @@ public class LoginActivity extends HandlerActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mPortraitView = (SimpleDraweeView) findViewById(R.id.portrait);
+        mPortraitImage = (SimpleDraweeView) findViewById(R.id.portrait);
         mPhoneEdit = (AutoCompleteTextView) findViewById(R.id.phone);
         mPasswordEdit = (TextInputEditText) findViewById(R.id.password);
         mLoginButton = (Button) findViewById(R.id.login);
@@ -138,11 +137,11 @@ public class LoginActivity extends HandlerActivity {
 
                         String portrait = user.get(DbConst.TABLE_USER_FIELDS[3][0]);
                         if (!TextUtils.isEmpty(portrait))
-                            mPortraitView.setImageURI(Uri.parse(portrait));
-                        else mPortraitView.setImageResource(R.mipmap.portrait_default);
+                            mPortraitImage.setImageURI(Uri.parse(portrait));
+                        else mPortraitImage.setImageResource(R.mipmap.portrait_default);
                     } else {
                         mPasswordEdit.getText().clear();
-                        mPortraitView.setImageResource(R.mipmap.portrait_default);
+                        mPortraitImage.setImageResource(R.mipmap.portrait_default);
                     }
                 }
             }
@@ -164,7 +163,9 @@ public class LoginActivity extends HandlerActivity {
         mRegisterButton.setOnClickListener(view -> startActivity(new Intent(mContext, RegisterActivity.class)));
 
         mSkipButton.setOnClickListener(view -> {
-            // TODO: jump to main page
+            UserHelper.saveUserInfo(new User(), mContext);
+            startActivity(new Intent(mContext, MainActivity.class));
+            finish();
         });
 
         mServiceButton.setOnClickListener(view ->
@@ -247,7 +248,7 @@ public class LoginActivity extends HandlerActivity {
 
             @Override
             public void onError(Throwable e) {
-                Snackbar.make(mPortraitView, RetrofitConfig.handleReqError(e), Snackbar.LENGTH_LONG).show();
+                toast(RetrofitConfig.handleReqError(e));
 
                 mLoginButton.setClickable(true);
                 mRegisterButton.setClickable(true);
@@ -267,6 +268,9 @@ public class LoginActivity extends HandlerActivity {
                             .putString(SpConst.LAST_PASSWORD, Base64.encodeToString(password.getBytes(), Base64.DEFAULT))
                             .apply();
                     UserHelper.saveUserInfo(loginResp.getUser().merge(password), mContext);
+
+                    startActivity(new Intent(mContext, MainActivity.class));
+                    finish();
                 }
             }
         });
@@ -276,7 +280,7 @@ public class LoginActivity extends HandlerActivity {
         if (!TextUtils.isEmpty(phone) && phone.length() == 11 && (phone.startsWith("13") || phone.startsWith("14") || phone.startsWith("15") || phone.startsWith("18")))
             return true;
         else {
-            Snackbar.make(mPortraitView, R.string.login_error_phone, Snackbar.LENGTH_SHORT).show();
+            toast(R.string.login_error_phone);
             mPhoneEdit.requestFocus();
             return false;
         }
@@ -285,7 +289,7 @@ public class LoginActivity extends HandlerActivity {
     private boolean checkPassword(String password) {
         if (!TextUtils.isEmpty(password) && password.length() >= 6) return true;
         else {
-            Snackbar.make(mPortraitView, R.string.login_error_password, Snackbar.LENGTH_SHORT).show();
+            toast(R.string.login_error_password);
             mPasswordEdit.requestFocus();
             return false;
         }
@@ -313,8 +317,7 @@ public class LoginActivity extends HandlerActivity {
                                     .setNegativeButton(R.string.cancel, null)
                                     .create();
                         serviceDialog.show();
-                    } else
-                        Snackbar.make(mPortraitView, R.string.permission_deny, Snackbar.LENGTH_LONG).show();
+                    } else toast(R.string.permission_deny);
         }
     }
 
@@ -322,5 +325,15 @@ public class LoginActivity extends HandlerActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         new Thread(this::prepare).start();
+    }
+
+    @Override
+    public void toast(String message) {
+        Snackbar.make(mPortraitImage, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void toast(int msgRes) {
+        Snackbar.make(mPortraitImage, msgRes, Snackbar.LENGTH_LONG).show();
     }
 }

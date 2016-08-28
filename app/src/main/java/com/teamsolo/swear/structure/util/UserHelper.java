@@ -79,6 +79,7 @@ public class UserHelper {
                 if (!TextUtils.isEmpty(userId)) mUserId = Long.parseLong(userId);
             }
         }
+
         return mUserId;
     }
 
@@ -90,6 +91,7 @@ public class UserHelper {
                 if (!TextUtils.isEmpty(isWXUser)) mIsWXUser = Byte.parseByte(isWXUser);
             }
         }
+
         return mIsWXUser == 1;
     }
 
@@ -102,6 +104,7 @@ public class UserHelper {
                     mAttentionGrade = Integer.parseInt(attentionGrade);
             }
         }
+
         return mAttentionGrade;
     }
 
@@ -116,6 +119,7 @@ public class UserHelper {
                 }
             }
         }
+
         return mChildren;
     }
 }

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.teamsolo.swear">
@@ -18,9 +19,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup">
-
         <activity
-            android:name=".structure.ui.load.LoadActivity"
+            android:name=".structure.ui.LoadActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@style/Launch"
@@ -30,7 +30,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -46,36 +45,39 @@
                     android:scheme="teamsolo" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".structure.ui.login.LoginActivity"
+            android:name=".structure.ui.LoginActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:label="@string/login_title"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
         <activity
-            android:name=".structure.ui.register.RegisterActivity"
+            android:name=".structure.ui.RegisterActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:label="@string/register_title"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
+        <activity
+            android:name=".structure.ui.MainActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Translucent"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".structure.ui.about.AgreementActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:label="@string/web_agreement"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
         <activity
             android:name=".structure.ui.WebLinkActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
     </application>
 
 </manifest>

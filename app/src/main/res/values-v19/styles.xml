@@ -2,7 +2,5 @@
 <resources>
 
     <!-- translucent theme -->
-    <style name="AppTheme.Translucent" parent="AppTheme">
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
+    <style name="AppTheme.Translucent" parent="AppTheme"/>
 </resources>

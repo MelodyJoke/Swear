@@ -1,4 +1,4 @@
-package com.teamsolo.swear.structure.ui.load;
+package com.teamsolo.swear.structure.ui;
 
 import android.Manifest;
 import android.content.Intent;
@@ -31,8 +31,6 @@ import com.teamsolo.swear.foundation.bean.resp.LoginResp;
 import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
-import com.teamsolo.swear.structure.ui.WebLinkActivity;
-import com.teamsolo.swear.structure.ui.login.LoginActivity;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -255,7 +253,7 @@ public class LoadActivity extends HandlerActivity {
         if (isOut) return;
 
         if (toLogin) startActivity(new Intent(mContext, LoginActivity.class));
-        else toast("main");
+        else startActivity(new Intent(mContext, MainActivity.class));
 
         finish();
     }

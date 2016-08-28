@@ -28,7 +28,6 @@ import com.teamsolo.base.util.LogUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.structure.ui.about.AgreementActivity;
-import com.teamsolo.swear.structure.ui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
 

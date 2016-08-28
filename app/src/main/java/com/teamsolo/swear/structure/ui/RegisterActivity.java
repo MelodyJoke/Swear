@@ -1,4 +1,4 @@
-package com.teamsolo.swear.structure.ui.register;
+package com.teamsolo.swear.structure.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,8 +10,6 @@ import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.constant.SpConst;
-import com.teamsolo.swear.structure.ui.WebLinkActivity;
-import com.teamsolo.swear.structure.ui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
 
