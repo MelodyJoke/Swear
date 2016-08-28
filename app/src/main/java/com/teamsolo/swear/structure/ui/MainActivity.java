@@ -1,6 +1,7 @@
 package com.teamsolo.swear.structure.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +22,10 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.constant.NetConst;
+import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +49,8 @@ public class MainActivity extends HandlerActivity implements
 
     private TextView mUsernameText, mChildText, mSchoolText;
 
+    private User mUser;
+
     private boolean isWaitingForSecondBackPress;
 
     @Override
@@ -55,6 +61,8 @@ public class MainActivity extends HandlerActivity implements
         getBundle(getIntent());
         initViews();
         bindListeners();
+
+        new Thread(this::invalidateUIAboutUser).start();
     }
 
     @Override
@@ -204,5 +212,28 @@ public class MainActivity extends HandlerActivity implements
     @Override
     public void toast(int msgRes) {
         Snackbar.make(mFab, msgRes, Snackbar.LENGTH_LONG).show();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void invalidateUIAboutUser() {
+        mUser = UserHelper.getUser(mContext);
+
+        handler.post(() -> {
+            if (mUser != null) {
+                if (!TextUtils.isEmpty(mUser.parentsName)) mUsernameText.setText(mUser.parentsName);
+                else mUsernameText.setText(R.string.unknown);
+
+                if (!TextUtils.isEmpty(mUser.parentPath)) {
+                    try {
+                        mPortraitImage.setImageURI(Uri.parse(mUser.parentPath));
+                    } catch (Exception e) {
+                        mPortraitImage.setImageResource(R.mipmap.portrait_default);
+                    }
+                } else mPortraitImage.setImageResource(R.mipmap.portrait_default);
+            } else {
+                mUsernameText.setText(R.string.unknown);
+                mPortraitImage.setImageResource(R.mipmap.portrait_default);
+            }
+        });
     }
 }

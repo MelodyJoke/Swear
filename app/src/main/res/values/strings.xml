@@ -7,6 +7,8 @@
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
     <string name="ignore">忽略</string>
+    <string name="unknown">未知</string>
+    <string name="empty">无</string>
 
     <string name="permission_deny">权限请求失败, 操作中止</string>
     <string name="log_out">请先登录</string>
