@@ -25,6 +25,7 @@ import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.constant.NetConst;
+import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -176,7 +177,14 @@ public class MainActivity extends HandlerActivity implements
             case R.id.nav_account:
                 break;
 
+            case R.id.nav_order:
+                break;
+
             case R.id.nav_action_setting:
+                break;
+
+            case R.id.nav_action_about_us:
+                startActivity(new Intent(mContext, AboutActivity.class));
                 break;
 
             case R.id.nav_action_logout:

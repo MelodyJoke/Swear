@@ -22,6 +22,10 @@
             android:id="@+id/nav_account"
             android:icon="@drawable/ic_supervisor_account_white_24dp"
             android:title="@string/nav_account" />
+        <item
+            android:id="@+id/nav_order"
+            android:icon="@drawable/ic_assignment_white_24dp"
+            android:title="@string/nav_order" />
     </group>
 
     <item android:title="@string/nav_action">

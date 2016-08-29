@@ -69,12 +69,20 @@
     <!--register-->
     <string name="register_title">注册</string>
 
+    <!--about-->
+    <string name="about_title">关于我们</string>
+    <string name="about_app">\t\t\t\t问学是一款免费的家校互动平台，为家长与老师构建便捷沟通。您可以查看孩子的班级通讯录、作业、通知以及成绩等，对孩子成长学习情况便捷获取，并且及时方便与学校老师沟通。</string>
+    <string name="about_service">客服电话</string>
+    <string name="about_strategy">使用条款、隐私政策和免责申明</string>
+    <string name="about_company">©2015&#8211;2016 南京学问道信息科技有限公司</string>
+
     <!--main-->
     <string name="nav_attention">关注年级</string>
     <string name="nav_collection">我的收藏</string>
     <string name="nav_history">浏览历史</string>
     <string name="nav_download">本地下载</string>
     <string name="nav_account">账号管理</string>
+    <string name="nav_order">我的订单</string>
     <string name="nav_action">操作</string>
     <string name="nav_action_about_us">关于我们</string>
     <string name="nav_action_setting">系统设置</string>
