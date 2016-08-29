@@ -229,7 +229,7 @@ public class MainActivity extends HandlerActivity implements
         handler.post(() -> {
             if (mUser != null) {
                 if (!TextUtils.isEmpty(mUser.parentsName)) mUsernameText.setText(mUser.parentsName);
-                else mUsernameText.setText(R.string.unknown);
+                else mUsernameText.setText(R.string.app_name);
 
                 if (!TextUtils.isEmpty(mUser.parentPath)) {
                     try {
@@ -239,7 +239,7 @@ public class MainActivity extends HandlerActivity implements
                     }
                 } else mPortraitImage.setImageResource(R.mipmap.portrait_default);
             } else {
-                mUsernameText.setText(R.string.unknown);
+                mUsernameText.setText(R.string.app_name);
                 mPortraitImage.setImageResource(R.mipmap.portrait_default);
             }
         });
