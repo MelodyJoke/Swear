@@ -1,0 +1,24 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="com.teamsolo.swear.structure.ui.SettingsActivity$NotificationPreferenceFragment"
+        android:title="@string/pref_header_notifications" />
+
+    <header
+        android:fragment="com.teamsolo.swear.structure.ui.SettingsActivity$DataSyncPreferenceFragment"
+        android:title="@string/pref_header_data_sync" />
+
+    <header
+        android:id="@+id/setting_feedback"
+        android:title="@string/action_feedback" />
+
+    <header
+        android:id="@+id/setting_help"
+        android:breadCrumbTitle="@string/nav_action"
+        android:title="@string/action_help" />
+
+    <header
+        android:id="@+id/setting_share"
+        android:title="@string/nav_action_about_us" />
+
+</preference-headers>

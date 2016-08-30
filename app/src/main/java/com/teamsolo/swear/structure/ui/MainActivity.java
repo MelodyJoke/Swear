@@ -139,6 +139,7 @@ public class MainActivity extends HandlerActivity implements
                 return true;
 
             case R.id.action_setting:
+                startActivity(new Intent(mContext, SettingsActivity.class));
                 return true;
 
             case R.id.action_help:
@@ -181,6 +182,7 @@ public class MainActivity extends HandlerActivity implements
                 break;
 
             case R.id.nav_action_setting:
+                startActivity(new Intent(mContext, SettingsActivity.class));
                 break;
 
             case R.id.nav_action_about_us:

@@ -84,6 +84,11 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity
+            android:name=".structure.ui.SettingsActivity"
+            android:label="@string/settings_title"
+            android:screenOrientation="portrait"
+            android:theme="@style/ObAppTheme" />
     </application>
 
 </manifest>

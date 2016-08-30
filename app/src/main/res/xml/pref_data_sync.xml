@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/pref_ad_frequency_titles"
+        android:entryValues="@array/pref_ad_frequency_values"
+        android:key="load_cover_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_ad_frequency_title" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="setting_load_out"
+        android:title="@string/pref_title_enable_jump" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="setting_enable_hw"
+        android:title="@string/pref_title_enable_hw" />
+
+    <Preference
+        android:key="clear_cache"
+        android:title="@string/pref_title_data_clear_cache" />
+
+    <Preference
+        android:key="upgrade"
+        android:title="@string/pref_title_data_upgrade" />
+
+</PreferenceScreen>

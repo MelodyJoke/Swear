@@ -24,4 +24,6 @@ public interface SpConst {
     String SETTING_LOAD_OUT = "setting_load_out";
 
     String LOAD_COVER_FREQUENCY = "load_cover_frequency";
+
+    String SETTING_NOTICE_RINGTONE = "setting_notice_ringtone";
 }
