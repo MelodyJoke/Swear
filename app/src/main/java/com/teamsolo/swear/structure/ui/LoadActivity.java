@@ -125,7 +125,6 @@ public class LoadActivity extends HandlerActivity {
     @Override
     protected void bindListeners() {
         mImageView.setOnClickListener(v -> {
-            toast(String.valueOf(PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(SpConst.SETTING_LOAD_OUT, true)));
             if (!PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(SpConst.SETTING_LOAD_OUT, true))
                 return;
 
