@@ -1,5 +1,7 @@
 package com.teamsolo.swear.structure.request;
 
+import com.teamsolo.swear.foundation.bean.req.OrdersReq;
+import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.foundation.bean.req.LoadPicReq;
 import com.teamsolo.swear.foundation.bean.req.LoginReq;
@@ -82,6 +84,22 @@ public class BaseHttpUrlRequests {
     public Subscriber<LoginResp> getLoginInfo(Map<String, String> paras, Subscriber<LoginResp> subscriber) {
         retrofit.create(LoginReq.class)
                 .getLoginInfo(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取订单列表
+     *
+     * @param paras      参数
+     * @param subscriber 回调
+     * @return subscriber，用作取消请求
+     */
+    public Subscriber<OrdersResp> getOrders(Map<String, String> paras, Subscriber<OrdersResp> subscriber) {
+        retrofit.create(OrdersReq.class)
+                .getOrders(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

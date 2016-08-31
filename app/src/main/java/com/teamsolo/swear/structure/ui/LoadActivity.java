@@ -67,6 +67,8 @@ public class LoadActivity extends HandlerActivity {
 
     private WebLink mWebLink;
 
+    private Subscriber<LoginResp> subscriber;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -224,7 +226,7 @@ public class LoadActivity extends HandlerActivity {
         paras.put("currentVersion", BuildUtility.getApkVersionName(this));
         paras.put("deviceId", SecurityUtility.getDeviceId(getApplicationContext()));
         paras.put("equipmentType", android.os.Build.MODEL);
-        BaseHttpUrlRequests.getInstance().getLoginInfo(paras, new Subscriber<LoginResp>() {
+        subscriber = BaseHttpUrlRequests.getInstance().getLoginInfo(paras, new Subscriber<LoginResp>() {
             @Override
             public void onCompleted() {
 
@@ -268,5 +270,11 @@ public class LoadActivity extends HandlerActivity {
                 jump();
             }
         }, 500);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
     }
 }

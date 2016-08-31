@@ -41,4 +41,7 @@ public interface CmdConst {
 
     // get school activities
     String CMD_GET_ACTIVITIES = "getActivityList";
+
+    // get orders
+    String CMD_GET_ORDERS = "getorderlist";
 }

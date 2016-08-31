@@ -1,0 +1,172 @@
+package com.teamsolo.swear.structure.ui.mine;
+
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Message;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.teamsolo.base.template.fragment.HandlerFragment;
+import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.Order;
+import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
+import com.teamsolo.swear.foundation.constant.CmdConst;
+import com.teamsolo.swear.foundation.ui.Refreshable;
+import com.teamsolo.swear.foundation.util.RetrofitConfig;
+import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.mine.adapter.OrderAdapter;
+import com.teamsolo.swear.structure.util.UserHelper;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import rx.Subscriber;
+
+/**
+ * description: orders pager
+ * author: Melody
+ * date: 2016/8/31
+ * version: 0.0.0.1
+ */
+
+public class OrdersFragment extends HandlerFragment implements Refreshable {
+
+    private RecyclerView mListView;
+
+    private OrderAdapter mAdapter;
+
+    private List<Order> mList = new ArrayList<>();
+
+    private int type;
+
+    private int page = 1;
+
+    private static final int pageSize = 10;
+
+    private boolean append;
+
+    private Subscriber<OrdersResp> subscriber;
+
+    public static OrdersFragment newInstance(int type) {
+        OrdersFragment fragment = new OrdersFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", type);
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setContentView(inflater, R.layout.fragment_orders, container);
+        initViews();
+        bindListeners();
+        onInteraction(Uri.parse("refresh?start=true"));
+        new Thread(this::request).start();
+
+        return mLayoutView;
+    }
+
+    @Override
+    protected void getBundle(@NotNull Bundle bundle) {
+        type = bundle.getInt("type", 0);
+    }
+
+    @Override
+    protected void initViews() {
+        mListView = (RecyclerView) findViewById(R.id.listView);
+
+        mListView.setHasFixedSize(true);
+        mListView.setItemAnimator(new DefaultItemAnimator());
+        mListView.setLayoutManager(new LinearLayoutManager(mContext));
+
+        mAdapter = new OrderAdapter(mList);
+        mListView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void bindListeners() {
+
+    }
+
+    private void request() {
+        System.out.println("type: " + type + " append: " + append + " page: " + page);
+
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_GET_ORDERS);
+        paras.put("userId", String.valueOf(UserHelper.getUserId(mContext)));
+        paras.put("orderStatus", String.valueOf(type));
+        paras.put("page", String.valueOf(page));
+        paras.put("pageSize", String.valueOf(pageSize));
+        subscriber = BaseHttpUrlRequests.getInstance().getOrders(paras, new Subscriber<OrdersResp>() {
+            @Override
+            public void onCompleted() {
+                onInteraction(Uri.parse("refresh?ready=true"));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+                onInteraction(Uri.parse("refresh?ready=true"));
+            }
+
+            @Override
+            public void onNext(OrdersResp ordersResp) {
+                if (ordersResp.code != 200) toast(ordersResp.message);
+                else {
+                    System.out.println(ordersResp.orderList.size());
+
+                    List<Order> temp = ordersResp.orderList;
+
+                    if (!append) mList.clear();
+                    mList.addAll(temp);
+
+                    // TODO: can load more or not
+
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        handler.postDelayed(() -> onInteraction(Uri.parse("refresh?ready=true")), 2000);
+    }
+
+    @Override
+    public void refresh(Uri uri) {
+        append = false;
+        page = 1;
+        new Thread(this::request).start();
+    }
+
+    @Override
+    protected void handleMessage(HandlerFragment fragment, Message msg) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
+    }
+
+    @Override
+    public void toast(String message) {
+        Snackbar.make(mListView, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void toast(int msgRes) {
+        Snackbar.make(mListView, msgRes, Snackbar.LENGTH_LONG).show();
+    }
+}

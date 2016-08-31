@@ -26,6 +26,7 @@ import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
+import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -179,6 +180,7 @@ public class MainActivity extends HandlerActivity implements
                 break;
 
             case R.id.nav_order:
+                startActivity(new Intent(mContext, OrdersActivity.class));
                 break;
 
             case R.id.nav_action_setting:

@@ -5,7 +5,7 @@ import android.os.Parcel;
 import com.teamsolo.base.bean.Response;
 
 /**
- * description: 启动图
+ * description: load image response
  * author: Melody
  * date: 2016/8/22
  * version: 0.0.0.1

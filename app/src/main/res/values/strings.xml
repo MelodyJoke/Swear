@@ -11,6 +11,7 @@
     <string name="empty">无</string>
     <string name="prompt">提示</string>
     <string name="coming_soon">即将为您带来&#8230;</string>
+    <string name="no_more">没有更多数据&#8230;</string>
 
     <string name="permission_deny">权限请求失败, 操作中止</string>
     <string name="log_out">请先登录</string>
@@ -127,4 +128,13 @@
     </string-array>
     <string name="pref_title_data_clear_cache">清除缓存</string>
     <string name="pref_title_data_upgrade">检查更新</string>
+
+    <!--orders-->
+    <string name="orders_title">我的订单</string>
+    <string-array name="orders_indicators">
+        <item>全部</item>
+        <item>未付款</item>
+        <item>已付款</item>
+        <item>退款单</item>
+    </string-array>
 </resources>

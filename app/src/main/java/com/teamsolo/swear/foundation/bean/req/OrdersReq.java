@@ -1,6 +1,6 @@
 package com.teamsolo.swear.foundation.bean.req;
 
-import com.teamsolo.swear.foundation.bean.resp.LoadPicResp;
+import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
 
 import java.util.Map;
@@ -11,15 +11,15 @@ import retrofit2.http.POST;
 import rx.Observable;
 
 /**
- * description: load image request
+ * description: orders list request
  * author: Melody
- * date: 2016/8/22
+ * date: 2016/8/31
  * version: 0.0.0.1
  */
 @SuppressWarnings("unused")
-public interface LoadPicReq {
+public interface OrdersReq {
 
     @POST(NetConst.PATH_PRE + NetConst.SERVICE_URL)
     @FormUrlEncoded
-    Observable<LoadPicResp> getLoadPicResp(@FieldMap Map<String, String> paras);
+    Observable<OrdersResp> getOrders(@FieldMap Map<String, String> paras);
 }

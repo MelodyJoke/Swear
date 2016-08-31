@@ -77,6 +77,8 @@ public class LoginActivity extends HandlerActivity {
 
     private AlertDialog serviceDialog;
 
+    private Subscriber<LoginResp> subscriber;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -232,7 +234,7 @@ public class LoginActivity extends HandlerActivity {
         paras.put("currentVersion", BuildUtility.getApkVersionName(this));
         paras.put("deviceId", SecurityUtility.getDeviceId(getApplicationContext()));
         paras.put("equipmentType", android.os.Build.MODEL);
-        BaseHttpUrlRequests.getInstance().getLoginInfo(paras, new Subscriber<LoginResp>() {
+        subscriber = BaseHttpUrlRequests.getInstance().getLoginInfo(paras, new Subscriber<LoginResp>() {
             @Override
             public void onCompleted() {
                 if (mLoginButton != null) {
@@ -335,5 +337,11 @@ public class LoginActivity extends HandlerActivity {
     @Override
     public void toast(int msgRes) {
         Snackbar.make(mPortraitImage, msgRes, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
     }
 }

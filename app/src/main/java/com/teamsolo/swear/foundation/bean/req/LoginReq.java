@@ -11,7 +11,7 @@ import retrofit2.http.POST;
 import rx.Observable;
 
 /**
- * description: 登录
+ * description: login request
  * author: Melody
  * date: 2016/8/23
  * version: 0.0.0.1
