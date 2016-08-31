@@ -11,4 +11,5 @@
 	<color name="colorBackground">#FFFFFF</color>
     <color name="colorBackgroundBase">#F5F5F5</color>
     <color name="colorBackgroundBaseDark">#E0E0E0</color>
+    <color name="colorBackgroundImage">#959595</color>
 </resources>

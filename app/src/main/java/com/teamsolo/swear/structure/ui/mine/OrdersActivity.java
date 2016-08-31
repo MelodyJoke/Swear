@@ -17,6 +17,7 @@ import com.teamsolo.base.template.activity.BaseActivity;
 import com.teamsolo.base.template.fragment.BaseFragment;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.adapter.CommonPagerAdapter;
 
@@ -32,7 +33,9 @@ import java.util.List;
  * version: 0.0.0.1
  */
 public class OrdersActivity extends BaseActivity implements
-        BaseFragment.OnFragmentInteractionListener, SwipeRefreshLayout.OnRefreshListener {
+        BaseFragment.OnFragmentInteractionListener,
+        SwipeRefreshLayout.OnRefreshListener,
+        Appendable {
 
     private TabLayout mTabLayout;
 
@@ -140,5 +143,11 @@ public class OrdersActivity extends BaseActivity implements
     public void onRefresh() {
         Fragment currentFragment = mPagerAdapter.getCurrentFragment();
         if (currentFragment instanceof Refreshable) ((Refreshable) currentFragment).refresh(null);
+    }
+
+    @Override
+    public void append(Uri uri) {
+        Fragment currentFragment = mPagerAdapter.getCurrentFragment();
+        if (currentFragment instanceof Appendable) ((Appendable) currentFragment).append(null);
     }
 }

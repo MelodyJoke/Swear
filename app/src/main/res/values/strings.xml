@@ -137,4 +137,26 @@
         <item>已付款</item>
         <item>退款单</item>
     </string-array>
+    <string-array name="orders_status_array">
+        <item>未知</item>
+        <item>未付款</item>
+        <item>已付款</item>
+        <item>已关闭</item>
+        <item>已完成</item>
+        <item>退款中</item>
+        <item>已退款</item>
+        <item>退款拒绝</item>
+        <item>已失效</item>
+        <item>已付款</item>
+    </string-array>
+    <string name="orders_no">订单号: %1$s</string>
+    <string name="orders_count">数量: %1$d</string>
+    <string name="orders_count_2">课时: %1$d</string>
+    <string name="orders_price">金额: ￥%1$s</string>
+    <string name="orders_price_2">课程金额: ￥%1$s</string>
+    <string name="orders_price_3">付款方式: 当面付款</string>
+    <string name="orders_re_price">预付金: ￥%1$s</string>
+    <string name="orders_cancel">取消订单</string>
+    <string name="orders_refund">申请退款</string>
+    <string name="orders_pay">去付款</string>
 </resources>

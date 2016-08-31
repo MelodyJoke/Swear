@@ -17,6 +17,7 @@ import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Order;
 import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
+import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
@@ -39,7 +40,7 @@ import rx.Subscriber;
  * version: 0.0.0.1
  */
 
-public class OrdersFragment extends HandlerFragment implements Refreshable {
+public class OrdersFragment extends HandlerFragment implements Refreshable, Appendable {
 
     private RecyclerView mListView;
 
@@ -91,7 +92,7 @@ public class OrdersFragment extends HandlerFragment implements Refreshable {
         mListView.setItemAnimator(new DefaultItemAnimator());
         mListView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new OrderAdapter(mList);
+        mAdapter = new OrderAdapter(mContext, mList);
         mListView.setAdapter(mAdapter);
     }
 
@@ -101,8 +102,6 @@ public class OrdersFragment extends HandlerFragment implements Refreshable {
     }
 
     private void request() {
-        System.out.println("type: " + type + " append: " + append + " page: " + page);
-
         Map<String, String> paras = new HashMap<>();
         paras.put("CMD", CmdConst.CMD_GET_ORDERS);
         paras.put("userId", String.valueOf(UserHelper.getUserId(mContext)));
@@ -125,14 +124,20 @@ public class OrdersFragment extends HandlerFragment implements Refreshable {
             public void onNext(OrdersResp ordersResp) {
                 if (ordersResp.code != 200) toast(ordersResp.message);
                 else {
-                    System.out.println(ordersResp.orderList.size());
-
                     List<Order> temp = ordersResp.orderList;
 
                     if (!append) mList.clear();
+
+                    int size = mList.size();
+                    if (size > 0 && mList.get(size - 1) == null) mList.remove(size - 1);
+
                     mList.addAll(temp);
 
-                    // TODO: can load more or not
+                    if (temp.size() >= pageSize) mList.add(null);
+                    if (temp.size() == 0) {
+                        page--;
+                        if (page < 1) page = 1;
+                    }
 
                     mAdapter.notifyDataSetChanged();
                 }
@@ -146,6 +151,13 @@ public class OrdersFragment extends HandlerFragment implements Refreshable {
     public void refresh(Uri uri) {
         append = false;
         page = 1;
+        new Thread(this::request).start();
+    }
+
+    @Override
+    public void append(Uri uri) {
+        append = true;
+        page++;
         new Thread(this::request).start();
     }
 

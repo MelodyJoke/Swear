@@ -52,6 +52,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/light_margin"
             android:layout_marginTop="@dimen/light_margin"
             android:orientation="horizontal">
 
@@ -60,6 +61,11 @@
                 android:layout_width="0dp"
                 android:layout_height="82dp"
                 android:layout_weight="4"
+                android:scaleType="centerCrop"
+                app:failureImage="@mipmap/loading_failed"
+                app:failureImageScaleType="centerInside"
+                app:placeholderImage="@mipmap/loading_holder"
+                app:placeholderImageScaleType="centerInside"
                 app:roundedCornerRadius="4dp" />
 
             <LinearLayout
@@ -113,28 +119,55 @@
             android:id="@+id/bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/light_margin"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/pre_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/light_margin"
-                android:layout_marginRight="@dimen/light_margin"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@string/app_name" />
-
-            <TextView
-                android:id="@+id/action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/light_margin"
                 android:paddingBottom="@dimen/light_margin"
                 android:paddingTop="@dimen/light_margin"
                 android:text="@string/app_name" />
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/light_margin"
+                android:layout_marginStart="@dimen/light_margin"
+                android:padding="@dimen/light_margin"
+                android:paddingBottom="@dimen/light_margin"
+                android:paddingTop="@dimen/light_margin"
+                android:text="@string/orders_cancel"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/refund"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/light_margin"
+                android:layout_marginStart="@dimen/light_margin"
+                android:padding="@dimen/light_margin"
+                android:paddingBottom="@dimen/light_margin"
+                android:paddingTop="@dimen/light_margin"
+                android:text="@string/orders_refund"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/light_margin"
+                android:layout_marginStart="@dimen/light_margin"
+                android:padding="@dimen/light_margin"
+                android:paddingBottom="@dimen/light_margin"
+                android:paddingTop="@dimen/light_margin"
+                android:text="@string/orders_pay"
+                android:textColor="@color/colorPrimary" />
 
         </LinearLayout>
 
