@@ -127,6 +127,25 @@ public class OrdersActivity extends BaseActivity implements
 
             }
         });
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                Fragment currentFragment = mPagerAdapter.getCurrentFragment();
+                if (currentFragment instanceof Refreshable)
+                    ((Refreshable) currentFragment).refresh(Uri.parse("refresh?top=true"));
+            }
+        });
     }
 
     @Override

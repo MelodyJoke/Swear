@@ -185,9 +185,14 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
 
     @Override
     public void refresh(Uri uri) {
-        append = false;
-        page = 1;
-        new Thread(this::request).start();
+        if (uri == null) {
+            append = false;
+            page = 1;
+            new Thread(this::request).start();
+        } else {
+            if (uri.getBooleanQueryParameter("top", false))
+                if (mList.size() > 0) mListView.scrollToPosition(0);
+        }
     }
 
     @Override
