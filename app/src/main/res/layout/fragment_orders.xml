@@ -9,5 +9,8 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
-    <!--todo empty reload layout here-->
+    <include
+        android:id="@+id/loading"
+        layout="@layout/view_loading"
+        android:visibility="gone" />
 </FrameLayout>

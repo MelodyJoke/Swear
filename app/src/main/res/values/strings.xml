@@ -12,6 +12,7 @@
     <string name="prompt">提示</string>
     <string name="coming_soon">即将为您带来&#8230;</string>
     <string name="no_more">没有更多数据&#8230;</string>
+    <string name="loading">加载&#8230;</string>
 
     <string name="permission_deny">权限请求失败, 操作中止</string>
     <string name="log_out">请先登录</string>
@@ -159,4 +160,5 @@
     <string name="orders_cancel">取消订单</string>
     <string name="orders_refund">申请退款</string>
     <string name="orders_pay">去付款</string>
+    <string name="orders_empty">空空如也~</string>
 </resources>

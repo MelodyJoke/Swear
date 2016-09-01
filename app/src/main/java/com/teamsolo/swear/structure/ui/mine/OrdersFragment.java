@@ -22,6 +22,7 @@ import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.mine.adapter.OrderAdapter;
+import com.teamsolo.swear.structure.util.LoadingUtil;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +57,8 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
     private boolean append;
 
     private Subscriber<OrdersResp> subscriber;
+
+    private LoadingUtil loadingUtil;
 
     public static OrdersFragment newInstance(int type) {
         OrdersFragment fragment = new OrdersFragment();
@@ -93,6 +96,10 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
 
         mAdapter = new OrderAdapter(mContext, mList);
         mListView.setAdapter(mAdapter);
+
+        loadingUtil = new LoadingUtil(findViewById(R.id.loading), mListView)
+                .init(R.mipmap.orders_empty, R.string.loading, R.string.orders_empty);
+        loadingUtil.showLoading();
     }
 
     @Override
@@ -135,6 +142,12 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
             public void onError(Throwable e) {
                 toast(RetrofitConfig.handleReqError(e));
                 onInteraction(Uri.parse("refresh?ready=true"));
+
+                handler.postDelayed(() -> {
+                    if (mList.size() == 0 || mList.size() == 1 && mList.get(0) == null)
+                        loadingUtil.showEmpty();
+                    else loadingUtil.dismiss();
+                }, 500);
             }
 
             @Override
@@ -157,6 +170,12 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
                     }
 
                     mAdapter.notifyDataSetChanged();
+
+                    handler.postDelayed(() -> {
+                        if (mList.size() == 0 || mList.size() == 1 && mList.get(0) == null)
+                            loadingUtil.showEmpty();
+                        else loadingUtil.dismiss();
+                    }, 500);
                 }
             }
         });
@@ -175,7 +194,7 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
     public void append(Uri uri) {
         append = true;
         page++;
-        new Thread(this::request).start();
+        handler.postDelayed(() -> new Thread(this::request).start(), 500);
     }
 
     @Override
