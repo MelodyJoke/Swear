@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.teamsolo.base.template.activity.BaseActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Order;
@@ -29,14 +28,16 @@ import static android.text.Html.FROM_HTML_MODE_LEGACY;
  * date: 2016/8/31
  * version: 0.0.0.1
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings("WeakerAccess, unused")
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
-    protected Context mContext;
+    private Context mContext;
 
-    protected List<Order> mList;
+    private List<Order> mList;
 
-    protected LayoutInflater mInflater;
+    private LayoutInflater mInflater;
+
+    private OnItemClickListener mItemListener, mCancelListener, mRefundListener, mPayListener;
 
     public OrderAdapter(Context context, List<Order> orders) {
         mContext = context;
@@ -110,17 +111,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             holder.bottomLayout.setVisibility((item.isShowPrePay == 1 || item.isShowCancel == 1 || item.isShowRefund == 1 || item.isShowPay == 1)
                     ? View.VISIBLE : View.GONE);
 
-            // TODO: handle click event here
+            holder.itemView.setOnClickListener(v -> {
+                if (mItemListener != null) mItemListener.onClick(v, item);
+            });
+
             holder.cancelButton.setOnClickListener(v -> {
-                ((BaseActivity) mContext).toast("cancel");
+                if (mCancelListener != null) mCancelListener.onClick(v, item);
             });
 
             holder.refundButton.setOnClickListener(v -> {
-                ((BaseActivity) mContext).toast("refund");
+                if (mRefundListener != null) mRefundListener.onClick(v, item);
             });
 
             holder.payButton.setOnClickListener(v -> {
-                ((BaseActivity) mContext).toast("pay");
+                if (mPayListener != null) mPayListener.onClick(v, item);
             });
         } else {
             holder.noText.setText(R.string.unknown);
@@ -145,6 +149,22 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     public Order getItem(int position) {
         if (mList.size() > position) return mList.get(position);
         return null;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mItemListener = listener;
+    }
+
+    public void setOnCancelListener(OnItemClickListener listener) {
+        mCancelListener = listener;
+    }
+
+    public void setOnRefundListener(OnItemClickListener listener) {
+        mRefundListener = listener;
+    }
+
+    public void setOnPayListener(OnItemClickListener listener) {
+        mPayListener = listener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -190,5 +210,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         if (statusCode < statusStrings.length) return statusStrings[statusCode];
 
         return context.getString(R.string.unknown);
+    }
+
+    public interface OnItemClickListener {
+        void onClick(View v, Order item);
     }
 }

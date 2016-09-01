@@ -39,7 +39,6 @@ import rx.Subscriber;
  * date: 2016/8/31
  * version: 0.0.0.1
  */
-
 public class OrdersFragment extends HandlerFragment implements Refreshable, Appendable {
 
     private RecyclerView mListView;
@@ -98,7 +97,25 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
 
     @Override
     protected void bindListeners() {
+        mAdapter.setOnItemClickListener((v, item) -> {
+            // TODO: show detail
+            toast("item");
+        });
 
+        mAdapter.setOnCancelListener((v, item) -> {
+            // TODO: cancel order
+            toast("cancel");
+        });
+
+        mAdapter.setOnRefundListener((v, item) -> {
+            // TODO: refund
+            toast("refund");
+        });
+
+        mAdapter.setOnPayListener((v, item) -> {
+            // TODO: pay
+            toast("pay");
+        });
     }
 
     private void request() {
