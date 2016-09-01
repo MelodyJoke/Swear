@@ -139,6 +139,17 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             holder.payButton.setText(R.string.unknown);
             holder.bottomLayout.setVisibility(View.GONE);
         }
+
+        holder.coverImage.post(() -> {
+            int width = holder.coverImage.getMeasuredWidth();
+            ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
+            int height = params.height;
+            int aimHeight = width * 246 / 357;
+            if (height != aimHeight) {
+                params.height = aimHeight;
+                holder.coverImage.setLayoutParams(params);
+            }
+        });
     }
 
     @Override
