@@ -48,6 +48,8 @@ import static com.teamsolo.swear.foundation.util.RetrofitConfig.getSessionId;
 @SuppressWarnings("unused")
 public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+    public static final String USER_AGENT_DEFAULT = "wenx_webview";
+
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     protected WebView mWebView;
@@ -125,6 +127,10 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         settings.setAppCacheEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
+        String userAgent = settings.getUserAgentString();
+        if (!userAgent.contains(USER_AGENT_DEFAULT))
+            userAgent = userAgent + " " + USER_AGENT_DEFAULT;
+        settings.setUserAgentString(userAgent);
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -233,7 +239,9 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         }
 
         if (url.startsWith("http://wenxue/app/getInfoDetail")) {
-            mWebView.loadUrl("javascript:getNeedInfo(\"" + getSessionId() + "\",\"" + SecurityUtility.getDeviceId(mContext) + "\")");
+            String js = "javascript:getNeedInfo('" + getSessionId() + "', '" + SecurityUtility.getDeviceId(mContext) + "')";
+            mWebView.loadUrl(js);
+            System.out.println(js);
             return;
         }
 

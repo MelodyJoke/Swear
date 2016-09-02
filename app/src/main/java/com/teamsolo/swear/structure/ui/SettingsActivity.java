@@ -99,10 +99,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         for (int i = 0; i < target.size(); i++) {
             PreferenceActivity.Header header = target.get(i);
-            if (header.id == R.id.setting_feedback)
+            if (header.id == R.id.setting_feedback) {
                 // TODO:
-                header.intent = new Intent(this, WebLinkActivity.class);
-            else if (header.id == R.id.setting_help) {
+                WebLink webLink = new WebLink();
+                webLink.title = getString(R.string.app_name);
+                webLink.forwardUrl = "http://wenxue.test.xweisoft.com/pc_secureproxy/resource/page/info_detail.html?newsUuid=14b18c5421d44dccb63e57e992203dae";
+
+                Intent intent = new Intent(this, WebLinkActivity.class);
+                intent.putExtra("link", webLink);
+                header.intent = intent;
+            } else if (header.id == R.id.setting_help) {
                 WebLink webLink = new WebLink();
                 webLink.title = getString(R.string.web_help_center);
                 webLink.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.HELP_CENTER;
