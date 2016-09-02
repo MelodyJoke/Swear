@@ -11,14 +11,13 @@
 
     <application
         android:name=".structure.Application"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:resizeableActivity="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="UnusedAttribute"
-        tools:replace="android:allowBackup">
+        tools:ignore="AllowBackup,UnusedAttribute">
         <activity
             android:name=".structure.ui.LoadActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
@@ -64,7 +63,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Translucent"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".structure.ui.WebLinkActivity"

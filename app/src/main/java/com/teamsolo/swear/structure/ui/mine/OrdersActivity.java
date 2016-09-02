@@ -6,12 +6,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.teamsolo.base.template.activity.BaseActivity;
 import com.teamsolo.base.template.fragment.BaseFragment;
@@ -19,6 +21,7 @@ import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
+import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.adapter.CommonPagerAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -142,8 +145,8 @@ public class OrdersActivity extends BaseActivity implements
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment currentFragment = mPagerAdapter.getCurrentFragment();
-                if (currentFragment instanceof Refreshable)
-                    ((Refreshable) currentFragment).refresh(Uri.parse("refresh?top=true"));
+                if (currentFragment instanceof ScrollAble)
+                    ((ScrollAble) currentFragment).scroll(Uri.parse("scroll?top=true"));
             }
         });
     }
@@ -168,5 +171,15 @@ public class OrdersActivity extends BaseActivity implements
     public void append(Uri uri) {
         Fragment currentFragment = mPagerAdapter.getCurrentFragment();
         if (currentFragment instanceof Appendable) ((Appendable) currentFragment).append(null);
+    }
+
+    @Override
+    public void toast(int msgRes) {
+        Snackbar.make(mTabLayout, msgRes, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void toast(String message) {
+        Snackbar.make(mTabLayout, message, Snackbar.LENGTH_LONG).show();
     }
 }

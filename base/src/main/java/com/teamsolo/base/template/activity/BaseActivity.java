@@ -74,11 +74,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract void bindListeners();
 
     public void toast(int msgRes) {
-        Toast.makeText(mContext, msgRes, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, msgRes, Toast.LENGTH_LONG).show();
     }
 
     public void toast(String message) {
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
     }
 
     /**

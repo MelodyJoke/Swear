@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.teamsolo.base.template.activity.BaseActivity;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -96,10 +98,12 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void toast(int msgRes) {
-        Toast.makeText(mContext, msgRes, Toast.LENGTH_SHORT).show();
+        if (mContext instanceof BaseActivity) ((BaseActivity) mContext).toast(msgRes);
+        else Toast.makeText(mContext, msgRes, Toast.LENGTH_LONG).show();
     }
 
     public void toast(String message) {
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+        if (mContext instanceof BaseActivity) ((BaseActivity) mContext).toast(message);
+        else Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
     }
 }

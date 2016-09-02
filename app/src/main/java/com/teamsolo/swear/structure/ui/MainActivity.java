@@ -8,25 +8,35 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.teamsolo.base.template.activity.HandlerActivity;
+import com.teamsolo.base.template.fragment.BaseFragment;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.constant.NetConst;
+import com.teamsolo.swear.foundation.ui.Appendable;
+import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
+import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,13 +49,21 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public class MainActivity extends HandlerActivity implements
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        BaseFragment.OnFragmentInteractionListener,
+        Appendable {
+
+    private static final int FRAG_SCHOOL = 0, FRAG_TRAINING = 1, FRAG_NEWS = 2, FRAG_NLG = 3;
 
     private FloatingActionButton mFab;
 
     private DrawerLayout mDrawer;
 
     private NavigationView mNavigationView;
+
+    private TabLayout mTabLayout;
+
+    private BottomNavigationBar mBottomNavigationBar;
 
     private SimpleDraweeView mPortraitImage, mChildPortraitImage;
 
@@ -54,6 +72,12 @@ public class MainActivity extends HandlerActivity implements
     private User mUser;
 
     private boolean isWaitingForSecondBackPress;
+
+    private FragmentManager fragmentManager;
+
+    private SparseArray<Fragment> fragments = new SparseArray<>();
+
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +98,7 @@ public class MainActivity extends HandlerActivity implements
 
     @Override
     protected void getBundle(@NotNull Intent intent) {
-
+        fragmentManager = getSupportFragmentManager();
     }
 
     @Override
@@ -102,6 +126,32 @@ public class MainActivity extends HandlerActivity implements
                 mSchoolText = (TextView) headerView.findViewById(R.id.nav_header_school);
             }
         }
+
+        mTabLayout = (TabLayout) findViewById(R.id.tab);
+        mTabLayout.setVisibility(View.GONE);
+
+        mBottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bnb);
+        mBottomNavigationBar.setFab(mFab);
+        mBottomNavigationBar
+                .addItem(new BottomNavigationItem(R.drawable.ic_business_white_24dp, getString(R.string.school_nav)))
+                .addItem(new BottomNavigationItem(R.drawable.ic_school_white_24dp, getString(R.string.training_nav)))
+                .addItem(new BottomNavigationItem(R.drawable.ic_receipt_white_24dp, getString(R.string.news_nav)))
+                .addItem(new BottomNavigationItem(R.drawable.ic_local_library_white_24dp, getString(R.string.nlg_nav)))
+                .initialise();
+
+        fragments.append(FRAG_SCHOOL, OrdersFragment.newInstance(FRAG_SCHOOL));
+        /*fragments.append(FRAG_TRAINING, OrdersFragment.newInstance(FRAG_TRAINING));
+        fragments.append(FRAG_NEWS, OrdersFragment.newInstance(FRAG_NEWS));
+        fragments.append(FRAG_NLG, OrdersFragment.newInstance(FRAG_NLG));*/
+
+        fragmentManager.beginTransaction()
+                .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
+                /*.add(R.id.content, fragments.get(FRAG_TRAINING), String.valueOf(FRAG_TRAINING))
+                .add(R.id.content, fragments.get(FRAG_NEWS), String.valueOf(FRAG_NEWS))
+                .add(R.id.content, fragments.get(FRAG_NLG), String.valueOf(FRAG_NLG))*/
+                .show(fragments.get(FRAG_SCHOOL))
+                .commit();
+        currentFragment = fragments.get(FRAG_SCHOOL);
     }
 
     @Override
@@ -118,6 +168,109 @@ public class MainActivity extends HandlerActivity implements
 
         mChildPortraitImage.setOnClickListener(view -> {
             // TODO:
+        });
+
+        mBottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(int position) {
+                ActionBar actionBar = getSupportActionBar();
+
+                switch (position) {
+                    case 0:
+                        if (actionBar != null) actionBar.setTitle(R.string.app_name);
+
+                        Fragment fragmentSchool = fragments.get(FRAG_SCHOOL);
+                        fragmentManager.beginTransaction()
+                                .show(fragmentSchool)
+                                .hide(currentFragment)
+                                .commit();
+                        currentFragment = fragmentSchool;
+                        break;
+
+                    case 1:
+                        if (actionBar != null) actionBar.setTitle(R.string.training_nav);
+                        if (fragments.get(FRAG_TRAINING) == null) {
+                            Fragment fragmentTraining = OrdersFragment.newInstance(FRAG_TRAINING);
+                            fragments.append(FRAG_TRAINING, fragmentTraining);
+                            fragmentManager.beginTransaction()
+                                    .add(R.id.content, fragments.get(FRAG_TRAINING), String.valueOf(FRAG_TRAINING))
+                                    .show(fragmentTraining)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentTraining;
+                        } else {
+                            Fragment fragmentTraining = fragments.get(FRAG_TRAINING);
+                            fragmentManager.beginTransaction()
+                                    .show(fragmentTraining)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentTraining;
+                        }
+                        break;
+
+                    case 2:
+                        if (actionBar != null) actionBar.setTitle(R.string.news_nav);
+                        if (fragments.get(FRAG_NEWS) == null) {
+                            Fragment fragmentNews = OrdersFragment.newInstance(FRAG_NEWS);
+                            fragments.append(FRAG_NEWS, fragmentNews);
+                            fragmentManager.beginTransaction()
+                                    .add(R.id.content, fragments.get(FRAG_NEWS), String.valueOf(FRAG_NEWS))
+                                    .show(fragmentNews)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentNews;
+                        } else {
+                            Fragment fragmentNews = fragments.get(FRAG_NEWS);
+                            fragmentManager.beginTransaction()
+                                    .show(fragmentNews)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentNews;
+                        }
+                        break;
+
+                    case 3:
+                        if (actionBar != null) actionBar.setTitle(R.string.nlg_nav);
+                        if (fragments.get(FRAG_NLG) == null) {
+                            Fragment fragmentNlg = OrdersFragment.newInstance(FRAG_NLG);
+                            fragments.append(FRAG_NLG, fragmentNlg);
+                            fragmentManager.beginTransaction()
+                                    .add(R.id.content, fragments.get(FRAG_NLG), String.valueOf(FRAG_NLG))
+                                    .show(fragmentNlg)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentNlg;
+                        } else {
+                            Fragment fragmentNlg = fragments.get(FRAG_NLG);
+                            fragmentManager.beginTransaction()
+                                    .show(fragmentNlg)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentNlg;
+                        }
+                        break;
+                }
+
+                if (position < fragments.size()) {
+                    fragmentManager.beginTransaction()
+                            .hide(currentFragment)
+                            .show(fragments.get(position))
+                            .commit();
+
+                    currentFragment = fragments.get(position);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(int position) {
+
+            }
+
+            @Override
+            public void onTabReselected(int position) {
+                if (currentFragment instanceof ScrollAble)
+                    ((ScrollAble) currentFragment).scroll(Uri.parse("scroll?top=true"));
+            }
         });
     }
 
@@ -211,19 +364,10 @@ public class MainActivity extends HandlerActivity implements
         if (mDrawer.isDrawerOpen(GravityCompat.START)) mDrawer.closeDrawer(GravityCompat.START);
         else if (!isWaitingForSecondBackPress) {
             isWaitingForSecondBackPress = true;
-            Snackbar.make(mFab, R.string.double_click_exit, Snackbar.LENGTH_SHORT).show();
+            toast(R.string.double_click_exit);
+
             handler.postDelayed(() -> isWaitingForSecondBackPress = false, 1000);
         } else super.onBackPressed();
-    }
-
-    @Override
-    public void toast(String message) {
-        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void toast(int msgRes) {
-        Snackbar.make(mFab, msgRes, Snackbar.LENGTH_LONG).show();
     }
 
     @SuppressWarnings("deprecation")
@@ -247,5 +391,15 @@ public class MainActivity extends HandlerActivity implements
                 mPortraitImage.setImageResource(R.mipmap.portrait_default);
             }
         });
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void append(Uri uri) {
+        if (currentFragment instanceof Appendable) ((Appendable) currentFragment).append(null);
     }
 }

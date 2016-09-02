@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +18,7 @@ import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
+import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.mine.adapter.OrderAdapter;
@@ -40,7 +40,7 @@ import rx.Subscriber;
  * date: 2016/8/31
  * version: 0.0.0.1
  */
-public class OrdersFragment extends HandlerFragment implements Refreshable, Appendable {
+public class OrdersFragment extends HandlerFragment implements Refreshable, Appendable, ScrollAble {
 
     private RecyclerView mListView;
 
@@ -185,14 +185,9 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
 
     @Override
     public void refresh(Uri uri) {
-        if (uri == null) {
-            append = false;
-            page = 1;
-            new Thread(this::request).start();
-        } else {
-            if (uri.getBooleanQueryParameter("top", false))
-                if (mList.size() > 0) mListView.scrollToPosition(0);
-        }
+        append = false;
+        page = 1;
+        new Thread(this::request).start();
     }
 
     @Override
@@ -200,6 +195,12 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
         append = true;
         page++;
         handler.postDelayed(() -> new Thread(this::request).start(), 500);
+    }
+
+    @Override
+    public void scroll(Uri uri) {
+        if (uri.getBooleanQueryParameter("top", false))
+            if (mList.size() > 0) mListView.scrollToPosition(0);
     }
 
     @Override
@@ -211,15 +212,5 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
     public void onDestroy() {
         super.onDestroy();
         if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
-    }
-
-    @Override
-    public void toast(String message) {
-        Snackbar.make(mListView, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void toast(int msgRes) {
-        Snackbar.make(mListView, msgRes, Snackbar.LENGTH_LONG).show();
     }
 }

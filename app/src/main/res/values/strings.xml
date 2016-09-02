@@ -130,6 +130,18 @@
     <string name="pref_title_data_clear_cache">清除缓存</string>
     <string name="pref_title_data_upgrade">检查更新</string>
 
+    <!--school-->
+    <string name="school_nav">学校</string>
+
+    <!--training-->
+    <string name="training_nav">培训</string>
+
+    <!--news-->
+    <string name="news_nav">资讯</string>
+
+    <!--knowledge-->
+    <string name="nlg_nav">学堂</string>
+
     <!--orders-->
     <string name="orders_title">我的订单</string>
     <string-array name="orders_indicators">
