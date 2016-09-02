@@ -1,6 +1,7 @@
 package com.teamsolo.swear.structure.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -52,6 +54,7 @@ import org.jetbrains.annotations.NotNull;
 public class MainActivity extends HandlerActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         BaseFragment.OnFragmentInteractionListener,
+        SwipeRefreshLayout.OnRefreshListener,
         Appendable {
 
     private static final int FRAG_SCHOOL = 0, FRAG_TRAINING = 1, FRAG_NEWS = 2, FRAG_NLG = 3;
@@ -65,6 +68,8 @@ public class MainActivity extends HandlerActivity implements
     private TabLayout mTabLayout;
 
     private BottomNavigationBar mBottomNavigationBar;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private SimpleDraweeView mPortraitImage, mChildPortraitImage;
 
@@ -141,18 +146,19 @@ public class MainActivity extends HandlerActivity implements
                 .initialise();
 
         fragments.append(FRAG_SCHOOL, OrdersFragment.newInstance(FRAG_SCHOOL));
-        /*fragments.append(FRAG_TRAINING, OrdersFragment.newInstance(FRAG_TRAINING));
-        fragments.append(FRAG_NEWS, OrdersFragment.newInstance(FRAG_NEWS));
-        fragments.append(FRAG_NLG, OrdersFragment.newInstance(FRAG_NLG));*/
 
         fragmentManager.beginTransaction()
                 .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
-                /*.add(R.id.content, fragments.get(FRAG_TRAINING), String.valueOf(FRAG_TRAINING))
-                .add(R.id.content, fragments.get(FRAG_NEWS), String.valueOf(FRAG_NEWS))
-                .add(R.id.content, fragments.get(FRAG_NLG), String.valueOf(FRAG_NLG))*/
                 .show(fragments.get(FRAG_SCHOOL))
                 .commit();
         currentFragment = fragments.get(FRAG_SCHOOL);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
+        mSwipeRefreshLayout.setColorSchemeColors(
+                Color.parseColor("#F44336"),
+                Color.parseColor("#FF5722"),
+                Color.parseColor("#CDDC39"),
+                Color.parseColor("#4CAF50"));
     }
 
     @Override
@@ -273,6 +279,8 @@ public class MainActivity extends HandlerActivity implements
                     ((ScrollAble) currentFragment).scroll(Uri.parse("scroll?top=true"));
             }
         });
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
@@ -288,6 +296,7 @@ public class MainActivity extends HandlerActivity implements
         // TODO: options action
         switch (id) {
             case R.id.action_refresh:
+                if (!mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(true);
                 if (currentFragment instanceof Refreshable)
                     ((Refreshable) currentFragment).refresh(null);
                 return true;
@@ -398,11 +407,21 @@ public class MainActivity extends HandlerActivity implements
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        if ("refresh".equals(uri.getPath())) {
+            if (uri.getBooleanQueryParameter("ready", false)) {
+                if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
+            } else if (uri.getBooleanQueryParameter("start", false))
+                if (!mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(true);
+        }
     }
 
     @Override
     public void append(Uri uri) {
         if (currentFragment instanceof Appendable) ((Appendable) currentFragment).append(null);
+    }
+
+    @Override
+    public void onRefresh() {
+        if (currentFragment instanceof Refreshable) ((Refreshable) currentFragment).refresh(null);
     }
 }
