@@ -33,6 +33,7 @@ import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
+import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
@@ -287,6 +288,8 @@ public class MainActivity extends HandlerActivity implements
         // TODO: options action
         switch (id) {
             case R.id.action_refresh:
+                if (currentFragment instanceof Refreshable)
+                    ((Refreshable) currentFragment).refresh(null);
                 return true;
 
             case R.id.action_feedback:
