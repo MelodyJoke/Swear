@@ -239,9 +239,7 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         }
 
         if (url.startsWith("http://wenxue/app/getInfoDetail")) {
-            String js = "javascript:getNeedInfo('" + getSessionId() + "', '" + SecurityUtility.getDeviceId(mContext) + "')";
-            mWebView.loadUrl(js);
-            System.out.println(js);
+            mWebView.loadUrl("javascript:getNeedInfo('" + getSessionId() + "', '" + SecurityUtility.getDeviceId(mContext) + "')");
             return;
         }
 
