@@ -26,6 +26,12 @@ public interface DbConst {
 
     String DB_USER_CHILDREN = "db_user_children";
 
+    String DB_CHILD_INFO = "db_child_info";
+
+    String DB_CHILD_ID = "db_child_id";
+
+    String DB_CHILD_ATTENTION_GRADE = "db_child_grade_id";
+
     String TABLE_CACHE = "table_cache";
 
     String[][] TABLE_CACHE_FIELDS = {

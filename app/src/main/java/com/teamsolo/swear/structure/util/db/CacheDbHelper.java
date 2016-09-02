@@ -29,7 +29,7 @@ public class CacheDbHelper extends BaseDbHelper {
     }
 
     public boolean save(String key, String cache, String spare) {
-        if (TextUtils.isEmpty(key) || TextUtils.isEmpty(cache)) return false;
+        if (TextUtils.isEmpty(key)) return false;
 
         ContentValues values = new ContentValues();
         values.put(TABLE_CACHE_FIELDS[1][0], key);

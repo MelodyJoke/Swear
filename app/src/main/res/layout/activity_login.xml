@@ -45,7 +45,10 @@
                 android:layout_height="120dp"
                 android:scaleType="centerCrop"
                 app:fadeDuration="1000"
+                app:failureImage="@mipmap/portrait_default"
+                app:failureImageScaleType="centerCrop"
                 app:placeholderImage="@mipmap/portrait_default"
+                app:placeholderImageScaleType="centerCrop"
                 app:roundAsCircle="true" />
 
             <android.support.design.widget.TextInputLayout

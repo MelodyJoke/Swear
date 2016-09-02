@@ -152,7 +152,7 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
 
             @Override
             public void onNext(OrdersResp ordersResp) {
-                if (ordersResp.code != 200) toast(ordersResp.message);
+                if (!RetrofitConfig.handleResp(ordersResp, mContext)) toast(ordersResp.message);
                 else {
                     List<Order> temp = ordersResp.orderList;
 
@@ -204,13 +204,13 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
     }
 
     @Override
-    protected void handleMessage(HandlerFragment fragment, Message msg) {
-
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
+    }
+
+    @Override
+    protected void handleMessage(HandlerFragment fragment, Message msg) {
+
     }
 }

@@ -1,18 +1,23 @@
 package com.teamsolo.swear.foundation.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.teamsolo.base.bean.Response;
+import com.teamsolo.base.template.activity.BaseActivity;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.constant.DbConst;
 import com.teamsolo.swear.structure.Application;
+import com.teamsolo.swear.structure.ui.LoginActivity;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 
 import java.io.IOException;
@@ -131,6 +136,19 @@ public class RetrofitConfig {
         return cookies;
     }
 
+    public static void clearCookies() {
+        // memory cache
+        if (!RetrofitConfig.cookies.isEmpty()) RetrofitConfig.cookies.clear();
+
+        // sp cache
+        String cache = new Gson().toJson(RetrofitConfig.cookies);
+        getDefaultSharedPreferences(getInstanceContext())
+                .edit().putString(SP_COOKIE, cache).apply();
+
+        // db cache
+        new CacheDbHelper(getInstanceContext()).save(SP_COOKIE, cache, "");
+    }
+
     @Nullable
     public static String getSessionId() {
         List<Cookie> cookies = loadCookies();
@@ -175,5 +193,24 @@ public class RetrofitConfig {
 
         // throwable level
         return context.getString(R.string.net_exception_unknown);
+    }
+
+    public static boolean handleResp(Response response, Context context) {
+        switch (response.code) {
+            case 303:
+                if (context != null) {
+                    Toast.makeText(context, response.message, Toast.LENGTH_LONG).show();
+
+                    Intent intent = new Intent(context, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
+
+                    if (context instanceof BaseActivity && !(context instanceof LoginActivity))
+                        ((BaseActivity) context).finish();
+                }
+                return false;
+        }
+
+        return response.code == 200;
     }
 }

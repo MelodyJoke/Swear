@@ -31,18 +31,31 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.template.fragment.BaseFragment;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.Child;
 import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
+import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
+import com.teamsolo.swear.foundation.util.RetrofitConfig;
+import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
+import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import rx.Subscriber;
+
+import static com.teamsolo.swear.structure.util.UserHelper.getChildren;
 
 /**
  * description: main page
@@ -56,6 +69,8 @@ public class MainActivity extends HandlerActivity implements
         BaseFragment.OnFragmentInteractionListener,
         SwipeRefreshLayout.OnRefreshListener,
         Appendable {
+
+    private static final int CHILD_CHOOSE_REQUEST_CODE = 847;
 
     private static final int FRAG_SCHOOL = 0, FRAG_TRAINING = 1, FRAG_NEWS = 2, FRAG_NLG = 3;
 
@@ -85,6 +100,10 @@ public class MainActivity extends HandlerActivity implements
 
     private Fragment currentFragment;
 
+    private Subscriber<ChildChooseResp> childChooseRespSubscriber;
+
+    private boolean hasInit;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,12 +113,41 @@ public class MainActivity extends HandlerActivity implements
         initViews();
         bindListeners();
 
-        new Thread(this::invalidateUIAboutUser).start();
+        handler.sendEmptyMessage(0);
     }
 
     @Override
     protected void handleMessage(HandlerActivity activity, Message msg) {
+        switch (msg.what) {
+            case 0:
+                // choose child
+                new Thread(this::startChooseChild).start();
+                break;
 
+            case 1:
+                // init school fragment
+                initFragment();
+                break;
+
+            case 2:
+                // invalidate ui about user
+                new Thread(this::invalidateUIAboutUser).start();
+                break;
+
+            case 3:
+                // invalidate ui about child
+                new Thread(this::invalidateUIAboutChild).start();
+                break;
+
+            case 4:
+                // request and download load image
+                new Thread(this::requestLoadPic).start();
+                break;
+
+            case 5:
+                hasInit = true;
+                break;
+        }
     }
 
     @Override
@@ -145,14 +193,6 @@ public class MainActivity extends HandlerActivity implements
                 .addItem(new BottomNavigationItem(R.drawable.ic_local_library_white_24dp, getString(R.string.nlg_nav)))
                 .initialise();
 
-        fragments.append(FRAG_SCHOOL, OrdersFragment.newInstance(FRAG_SCHOOL));
-
-        fragmentManager.beginTransaction()
-                .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
-                .show(fragments.get(FRAG_SCHOOL))
-                .commit();
-        currentFragment = fragments.get(FRAG_SCHOOL);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
         mSwipeRefreshLayout.setColorSchemeColors(
                 Color.parseColor("#F44336"),
@@ -164,34 +204,49 @@ public class MainActivity extends HandlerActivity implements
     @Override
     protected void bindListeners() {
         mFab.setOnClickListener(view -> {
-            // TODO: choose child
+            if (!hasInit) return;
+            startChooseChild();
         });
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
         mPortraitImage.setOnClickListener(view -> {
+            if (!hasInit) return;
             // TODO:
         });
 
         mChildPortraitImage.setOnClickListener(view -> {
-            // TODO:
+            if (!hasInit) return;
+            startChooseChild();
         });
 
         mBottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {
+                if (!hasInit) return;
+
                 ActionBar actionBar = getSupportActionBar();
 
                 switch (position) {
                     case 0:
                         if (actionBar != null) actionBar.setTitle(R.string.app_name);
-
-                        Fragment fragmentSchool = fragments.get(FRAG_SCHOOL);
-                        fragmentManager.beginTransaction()
-                                .show(fragmentSchool)
-                                .hide(currentFragment)
-                                .commit();
-                        currentFragment = fragmentSchool;
+                        if (fragments.get(FRAG_SCHOOL) == null) {
+                            Fragment fragmentSchool = OrdersFragment.newInstance(FRAG_SCHOOL);
+                            fragments.append(FRAG_SCHOOL, fragmentSchool);
+                            fragmentManager.beginTransaction()
+                                    .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
+                                    .show(fragmentSchool)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentSchool;
+                        } else {
+                            Fragment fragmentSchool = fragments.get(FRAG_SCHOOL);
+                            fragmentManager.beginTransaction()
+                                    .show(fragmentSchool)
+                                    .hide(currentFragment)
+                                    .commit();
+                            currentFragment = fragmentSchool;
+                        }
                         break;
 
                     case 1:
@@ -266,6 +321,8 @@ public class MainActivity extends HandlerActivity implements
 
                     currentFragment = fragments.get(position);
                 }
+
+                if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -275,6 +332,8 @@ public class MainActivity extends HandlerActivity implements
 
             @Override
             public void onTabReselected(int position) {
+                if (!hasInit) return;
+
                 if (currentFragment instanceof ScrollAble)
                     ((ScrollAble) currentFragment).scroll(Uri.parse("scroll?top=true"));
             }
@@ -358,6 +417,7 @@ public class MainActivity extends HandlerActivity implements
 
             case R.id.nav_action_logout:
                 closeDrawer = true;
+                RetrofitConfig.clearCookies();
                 handler.postDelayed(() -> {
                     Intent intentLogout = new Intent(mContext, LoginActivity.class);
                     intentLogout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -382,9 +442,76 @@ public class MainActivity extends HandlerActivity implements
         } else super.onBackPressed();
     }
 
-    @SuppressWarnings("deprecation")
+    private void startChooseChild() {
+        List<Child> children = getChildren(mContext);
+        if (children != null && children.size() > 1) {
+            if (!hasInit) {
+                long lastStudentId = UserHelper.getLastChildId(mContext);
+                if (lastStudentId > 0)
+                    for (Child child :
+                            children) {
+                        if (child.studentId == lastStudentId) {
+                            chooseChild(child);
+                            return;
+                        }
+                    }
+            }
+
+            startActivityForResult(new Intent(mContext, ChildChooseActivity.class), CHILD_CHOOSE_REQUEST_CODE);
+        } else if (children != null && children.size() == 1) {
+            if (!hasInit) chooseChild(children.get(0));
+        } else handler.sendEmptyMessage(1);
+    }
+
+    private void chooseChild(final Child child) {
+        if (child.studentId < 0) handler.sendEmptyMessage(1);
+        else {
+            Map<String, String> paras = new HashMap<>();
+            paras.put("studentId", String.valueOf(child.studentId));
+
+            childChooseRespSubscriber = BaseHttpUrlRequests.getInstance().getChildInfo(paras, new Subscriber<ChildChooseResp>() {
+                @Override
+                public void onCompleted() {
+                    handler.sendEmptyMessage(1);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    toast(RetrofitConfig.handleReqError(e));
+                    handler.sendEmptyMessage(1);
+                }
+
+                @Override
+                public void onNext(ChildChooseResp childChooseResp) {
+                    if (!RetrofitConfig.handleResp(childChooseResp, mContext))
+                        toast(childChooseResp.message);
+                    else UserHelper.saveChildInfo(child.merge(childChooseResp), mContext);
+                }
+            });
+        }
+    }
+
+    private void initFragment() {
+        if (!hasInit) {
+            fragments.append(FRAG_SCHOOL, OrdersFragment.newInstance(FRAG_SCHOOL));
+
+            fragmentManager.beginTransaction()
+                    .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
+                    .show(fragments.get(FRAG_SCHOOL))
+                    .commit();
+            currentFragment = fragments.get(FRAG_SCHOOL);
+        }
+
+        handler.sendEmptyMessage(2);
+    }
+
     private void invalidateUIAboutUser() {
-        mUser = UserHelper.getUser(mContext);
+        if (hasInit) {
+            handler.sendEmptyMessage(3);
+            return;
+        }
+
+        if (mUser == null) mUser = UserHelper.getUser(mContext);
 
         handler.post(() -> {
             if (mUser != null) {
@@ -395,14 +522,56 @@ public class MainActivity extends HandlerActivity implements
                     try {
                         mPortraitImage.setImageURI(Uri.parse(mUser.parentPath));
                     } catch (Exception e) {
-                        mPortraitImage.setImageResource(R.mipmap.portrait_default);
+                        mPortraitImage.setImageURI(Uri.parse("http://error"));
                     }
-                } else mPortraitImage.setImageResource(R.mipmap.portrait_default);
+                } else mPortraitImage.setImageURI(Uri.parse("http://error"));
             } else {
                 mUsernameText.setText(R.string.app_name);
-                mPortraitImage.setImageResource(R.mipmap.portrait_default);
+                mPortraitImage.setImageURI(Uri.parse("http://error"));
+            }
+
+            List<Child> children = UserHelper.getChildren(mContext);
+            mFab.setVisibility(children == null || children.size() <= 1 ? View.GONE : View.VISIBLE);
+            mChildPortraitImage.setVisibility(children == null || children.size() < 1 ? View.GONE : View.VISIBLE);
+            mChildText.setVisibility(children == null || children.size() < 1 ? View.GONE : View.VISIBLE);
+
+            handler.sendEmptyMessage(3);
+        });
+    }
+
+    private void invalidateUIAboutChild() {
+        final Child child = UserHelper.getChild(mContext);
+
+        handler.post(() -> {
+            if (child != null) {
+                StringBuilder builder = new StringBuilder();
+
+                if (!TextUtils.isEmpty(child.studentName)) builder.append(child.studentName);
+                else builder.append(getString(R.string.app_name));
+
+                if (!TextUtils.isEmpty(child.appellation))
+                    builder.append("(").append(child.appellation).append(")");
+
+                mChildText.setText(builder.toString());
+
+                if (!TextUtils.isEmpty(child.schoolName)) mSchoolText.setText(child.schoolName);
+                else mSchoolText.setText(R.string.load_company);
+
+                try {
+                    mChildPortraitImage.setImageURI(Uri.parse(child.portraitPath));
+                } catch (Exception e) {
+                    mChildPortraitImage.setImageURI(Uri.parse("http://error"));
+                }
+            } else {
+                mChildText.setText(R.string.app_name);
+                mSchoolText.setText(R.string.load_company);
             }
         });
+        handler.sendEmptyMessage(4);
+    }
+
+    private void requestLoadPic() {
+        handler.sendEmptyMessage(5);
     }
 
     @Override
@@ -422,6 +591,24 @@ public class MainActivity extends HandlerActivity implements
 
     @Override
     public void onRefresh() {
+        if (!hasInit) return;
+
         if (currentFragment instanceof Refreshable) ((Refreshable) currentFragment).refresh(null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CHILD_CHOOSE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) chooseChild(data.getParcelableExtra("child"));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (childChooseRespSubscriber != null && !childChooseRespSubscriber.isUnsubscribed())
+            childChooseRespSubscriber.unsubscribe();
     }
 }

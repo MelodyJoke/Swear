@@ -29,7 +29,6 @@ import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
-import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.LoginResp;
 import com.teamsolo.swear.foundation.constant.DbConst;
@@ -128,7 +127,6 @@ public class LoginActivity extends HandlerActivity {
             }
 
             @Override
-            @SuppressWarnings("deprecation")
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (start + count == 11 && checkPhone(s.toString())) {
                     Map<String, String> user = userMap.get(s.toString());
@@ -138,12 +136,14 @@ public class LoginActivity extends HandlerActivity {
                         else mPasswordEdit.getText().clear();
 
                         String portrait = user.get(DbConst.TABLE_USER_FIELDS[3][0]);
-                        if (!TextUtils.isEmpty(portrait))
+                        try {
                             mPortraitImage.setImageURI(Uri.parse(portrait));
-                        else mPortraitImage.setImageResource(R.mipmap.portrait_default);
+                        } catch (Exception e) {
+                            mPortraitImage.setImageURI(Uri.parse("http://error"));
+                        }
                     } else {
                         mPasswordEdit.getText().clear();
-                        mPortraitImage.setImageResource(R.mipmap.portrait_default);
+                        mPortraitImage.setImageURI(Uri.parse("http://error"));
                     }
                 }
             }
@@ -165,7 +165,8 @@ public class LoginActivity extends HandlerActivity {
         mRegisterButton.setOnClickListener(view -> startActivity(new Intent(mContext, RegisterActivity.class)));
 
         mSkipButton.setOnClickListener(view -> {
-            UserHelper.saveUserInfo(new User(), mContext);
+            UserHelper.clear(mContext);
+
             startActivity(new Intent(mContext, MainActivity.class));
             finish();
         });
@@ -226,6 +227,8 @@ public class LoginActivity extends HandlerActivity {
             return;
         }
 
+        UserHelper.clear(mContext);
+
         Map<String, String> paras = new HashMap<>();
         paras.put("phone", phone);
         paras.put("password", SecurityUtility.MD5(password));
@@ -263,7 +266,7 @@ public class LoginActivity extends HandlerActivity {
 
             @Override
             public void onNext(LoginResp loginResp) {
-                if (loginResp.code != 200) toast(loginResp.message);
+                if (!RetrofitConfig.handleResp(loginResp, mContext)) toast(loginResp.message);
                 else {
                     PreferenceManager.getDefaultSharedPreferences(mContext).edit()
                             .putString(SpConst.LAST_PHONE, phone)

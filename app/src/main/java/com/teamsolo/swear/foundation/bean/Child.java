@@ -3,6 +3,7 @@ package com.teamsolo.swear.foundation.bean;
 import android.os.Parcel;
 
 import com.teamsolo.base.bean.Bean;
+import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
 
 /**
  * description: child bean
@@ -47,7 +48,7 @@ public class Child extends Bean {
 
     private Child(Parcel in) {
         studentId = in.readLong();
-        schoolName = in.readString();
+        studentName = in.readString();
         portraitPath = in.readString();
         sex = in.readByte();
         appellation = in.readString();
@@ -96,4 +97,19 @@ public class Child extends Bean {
         dest.writeByte(teachphoVisibleToParent);
         dest.writeString(schoolRollCard);
     }
+
+    public Child merge(ChildChooseResp resp) {
+        schoolRollCard = resp.schoolRollCard;
+        schoolName = resp.schoolName;
+        schoolId = resp.schoolId;
+        groupId = resp.groupId;
+        attentionGrade = resp.attentionGrade;
+        classinfoId = resp.classinfoId;
+        classinfoName = resp.classinfoName;
+
+        return this;
+    }
+
+    // fields about ui
+    public boolean check;
 }

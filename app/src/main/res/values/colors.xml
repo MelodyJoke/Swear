@@ -12,4 +12,6 @@
     <color name="colorBackgroundBase">#F5F5F5</color>
     <color name="colorBackgroundBaseDark">#E0E0E0</color>
     <color name="colorBackgroundImage">#959595</color>
+
+    <color name="colorTransparentFull">#00000000</color>
 </resources>

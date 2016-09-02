@@ -1,6 +1,8 @@
 package com.teamsolo.swear.structure.request;
 
+import com.teamsolo.swear.foundation.bean.req.ChildChooseReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
+import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
 import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.foundation.bean.req.LoadPicReq;
@@ -60,10 +62,6 @@ public class BaseHttpUrlRequests {
 
     /**
      * 获取启动图
-     *
-     * @param paras      参数
-     * @param subscriber 回调
-     * @return subscriber，用作取消请求
      */
     public Subscriber<LoadPicResp> getLoadPic(Map<String, String> paras, Subscriber<LoadPicResp> subscriber) {
         retrofit.create(LoadPicReq.class)
@@ -76,10 +74,6 @@ public class BaseHttpUrlRequests {
 
     /**
      * 登录
-     *
-     * @param paras      参数
-     * @param subscriber 回调
-     * @return subscriber，用作取消请求
      */
     public Subscriber<LoginResp> getLoginInfo(Map<String, String> paras, Subscriber<LoginResp> subscriber) {
         retrofit.create(LoginReq.class)
@@ -91,11 +85,19 @@ public class BaseHttpUrlRequests {
     }
 
     /**
+     * 选择孩子
+     */
+    public Subscriber<ChildChooseResp> getChildInfo(Map<String, String> paras, Subscriber<ChildChooseResp> subscriber) {
+        retrofit.create(ChildChooseReq.class)
+                .getChildInfo(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
      * 获取订单列表
-     *
-     * @param paras      参数
-     * @param subscriber 回调
-     * @return subscriber，用作取消请求
      */
     public Subscriber<OrdersResp> getOrders(Map<String, String> paras, Subscriber<OrdersResp> subscriber) {
         retrofit.create(OrdersReq.class)

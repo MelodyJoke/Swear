@@ -20,8 +20,6 @@ import com.teamsolo.swear.structure.Application;
 
 import java.util.List;
 
-import static android.text.Html.FROM_HTML_MODE_LEGACY;
-
 /**
  * description: order adapter
  * author: Melody
@@ -95,7 +93,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                     holder.priceText.setText(String.format(mContext.getString(R.string.orders_price_2), String.valueOf(item.originalPrice)));
                 else if (item.payType == 2) {
                     if (BuildUtility.isRequired(Build.VERSION_CODES.N))
-                        holder.priceText.setText(Html.fromHtml(mContext.getString(R.string.orders_price_3), FROM_HTML_MODE_LEGACY));
+                        holder.priceText.setText(Html.fromHtml(mContext.getString(R.string.orders_price_3), Html.FROM_HTML_MODE_COMPACT));
                     else
                         holder.priceText.setText(Html.fromHtml(mContext.getString(R.string.orders_price_3)));
                 }

@@ -218,6 +218,8 @@ public class LoadActivity extends HandlerActivity {
             return;
         }
 
+        UserHelper.clear(mContext);
+
         Map<String, String> paras = new HashMap<>();
         paras.put("phone", phone);
         paras.put("password", SecurityUtility.MD5(password));
@@ -240,7 +242,7 @@ public class LoadActivity extends HandlerActivity {
 
             @Override
             public void onNext(LoginResp loginResp) {
-                if (loginResp.code != 200) {
+                if (!RetrofitConfig.handleResp(loginResp, mContext)) {
                     toast(loginResp.message);
                     Message.obtain(handler, 3, false).sendToTarget();
                 } else {

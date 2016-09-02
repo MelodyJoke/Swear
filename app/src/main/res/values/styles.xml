@@ -8,7 +8,13 @@
     </style>
 
     <!-- translucent theme -->
-    <style name="AppTheme.Translucent" parent="AppTheme" />
+    <style name="AppTheme.Translucent" parent="AppTheme">
+        <item name="android:windowBackground">@color/colorTransparentFull</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+        <item name="colorPrimaryDark">@color/colorTransparentFull</item>
+    </style>
 
     <!-- AppTheme with actionbar. -->
     <style name="ObAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">

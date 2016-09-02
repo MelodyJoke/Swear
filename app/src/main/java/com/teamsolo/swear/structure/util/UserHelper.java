@@ -1,6 +1,7 @@
 package com.teamsolo.swear.structure.util;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -8,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import com.teamsolo.swear.foundation.bean.Child;
 import com.teamsolo.swear.foundation.bean.User;
 import com.teamsolo.swear.foundation.constant.DbConst;
+import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 import com.teamsolo.swear.structure.util.db.UserDbHelper;
 
@@ -15,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * description: handle user info
@@ -34,6 +38,12 @@ public class UserHelper {
     private static int mAttentionGrade;
 
     private static ArrayList<Child> mChildren;
+
+    private static Child mChild;
+
+    private static long mStudentId;
+
+    private static int mChildAttentionGrade;
 
     private static Gson gson = new Gson();
 
@@ -56,6 +66,24 @@ public class UserHelper {
         // save last user
         UserDbHelper dbHelper = new UserDbHelper(context);
         dbHelper.save(user.phone, user.password, user.parentPath, true);
+    }
+
+    public static void saveChildInfo(@NotNull Child child, @NotNull Context context) {
+        // memory cache
+        mChild = child;
+        mStudentId = child.studentId;
+        mChildAttentionGrade = child.attentionGrade;
+
+        // db cache
+        CacheDbHelper helper = new CacheDbHelper(context);
+        helper.save(DbConst.DB_CHILD_INFO, gson.toJson(child), "");
+        helper.save(DbConst.DB_CHILD_ID, String.valueOf(child.studentId), "");
+        helper.save(DbConst.DB_CHILD_ATTENTION_GRADE, String.valueOf(child.attentionGrade), "");
+
+        // save last child
+        getDefaultSharedPreferences(context).edit()
+                .putLong(SpConst.LAST_CHILD, child.studentId).apply();
+        helper.save(SpConst.LAST_CHILD, String.valueOf(child.studentId), "");
     }
 
     public static User getUser(@NotNull Context context) {
@@ -95,7 +123,7 @@ public class UserHelper {
         return mIsWXUser == 1;
     }
 
-    public static int getAttentionGrade(@NotNull Context context) {
+    private static int getAttentionGrade(@NotNull Context context) {
         if (mAttentionGrade <= 0) {
             Map<String, String> cacheMap = new CacheDbHelper(context).load(DbConst.DB_USER_ATTENTION_GRADE);
             if (cacheMap != null) {
@@ -110,7 +138,7 @@ public class UserHelper {
 
     public static ArrayList<Child> getChildren(@NotNull Context context) {
         if (mChildren == null) {
-            Map<String, String> cacheMap = new CacheDbHelper(context).load(DbConst.DB_USER_ATTENTION_GRADE);
+            Map<String, String> cacheMap = new CacheDbHelper(context).load(DbConst.DB_USER_CHILDREN);
             if (cacheMap != null) {
                 String cacheJson = cacheMap.get(DbConst.TABLE_CACHE_FIELDS[2][0]);
                 if (!TextUtils.isEmpty(cacheJson)) {
@@ -121,5 +149,91 @@ public class UserHelper {
         }
 
         return mChildren;
+    }
+
+    public static Child getChild(@NotNull Context context) {
+        if (mChild == null) {
+            Map<String, String> cacheMap = new CacheDbHelper(context).load(DbConst.DB_CHILD_INFO);
+            if (cacheMap != null) {
+                String cacheJson = cacheMap.get(DbConst.TABLE_CACHE_FIELDS[2][0]);
+                if (!TextUtils.isEmpty(cacheJson))
+                    mChild = new Gson().fromJson(cacheJson, Child.class);
+            }
+        }
+
+        return mChild;
+    }
+
+    public static long getLastChildId(@NotNull Context context) {
+        long studentId = PreferenceManager.getDefaultSharedPreferences(context).getLong(SpConst.LAST_CHILD, 0);
+        if (studentId > 0) return studentId;
+
+        Map<String, String> cacheMap = new CacheDbHelper(context).load(SpConst.LAST_CHILD);
+        if (cacheMap != null) {
+            String studentIdStr = cacheMap.get(DbConst.TABLE_CACHE_FIELDS[2][0]);
+            if (!TextUtils.isEmpty(studentIdStr)) studentId = Long.parseLong(studentIdStr);
+        }
+
+        return studentId;
+    }
+
+    public static long getStudentId(@NotNull Context context) {
+        if (mStudentId <= 0) {
+            Map<String, String> cacheMap = new CacheDbHelper(context).load(DbConst.DB_CHILD_ID);
+            if (cacheMap != null) {
+                String studentId = cacheMap.get(DbConst.TABLE_CACHE_FIELDS[2][0]);
+                if (!TextUtils.isEmpty(studentId)) mStudentId = Long.parseLong(studentId);
+            }
+        }
+
+        return mStudentId;
+    }
+
+    private static int getChildAttentionGrade(@NotNull Context context) {
+        if (mChildAttentionGrade <= 0) {
+            Map<String, String> cacheMap = new CacheDbHelper(context).load(DbConst.DB_CHILD_ATTENTION_GRADE);
+            if (cacheMap != null) {
+                String attentionGrade = cacheMap.get(DbConst.TABLE_CACHE_FIELDS[2][0]);
+                if (!TextUtils.isEmpty(attentionGrade))
+                    mChildAttentionGrade = Integer.parseInt(attentionGrade);
+            }
+        }
+
+        return mChildAttentionGrade;
+    }
+
+    public static int getRealAttentionGrade(@NotNull Context context) {
+        int childAttentionGrade = getChildAttentionGrade(context);
+        if (childAttentionGrade > 0) return childAttentionGrade;
+
+        int attentionGrade = getAttentionGrade(context);
+        if (attentionGrade > 0) return attentionGrade;
+
+        return 0;
+    }
+
+    public static void clear(@NotNull Context context) {
+        // clear memory cache
+        mUser = null;
+        mUserId = 0;
+        mIsWXUser = 0;
+        mAttentionGrade = 0;
+        mChildren = null;
+
+        mChild = null;
+        mStudentId = 0;
+        mChildAttentionGrade = 0;
+
+        // clear db cache
+        CacheDbHelper helper = new CacheDbHelper(context);
+        helper.save(DbConst.DB_USER_INFO, "", "");
+        helper.save(DbConst.DB_USER_ID, "0", "");
+        helper.save(DbConst.DB_USER_IS_WX_USER, "0", "");
+        helper.save(DbConst.DB_USER_ATTENTION_GRADE, "0", "");
+        helper.save(DbConst.DB_USER_CHILDREN, "", "");
+
+        helper.save(DbConst.DB_CHILD_INFO, "", "");
+        helper.save(DbConst.DB_CHILD_ID, "0", "");
+        helper.save(DbConst.DB_CHILD_ATTENTION_GRADE, "0", "");
     }
 }

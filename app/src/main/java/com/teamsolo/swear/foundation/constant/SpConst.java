@@ -17,7 +17,7 @@ public interface SpConst {
 
     String LAST_LOAD_COVER_TIME = "last_load_cover_time";
 
-    String LAST_PHONE  = "last_phone";
+    String LAST_PHONE = "last_phone";
 
     String LAST_PASSWORD = "last_password";
 
@@ -26,4 +26,6 @@ public interface SpConst {
     String LOAD_COVER_FREQUENCY = "load_cover_frequency";
 
     String SETTING_NOTICE_RINGTONE = "setting_notice_ringtone";
+
+    String LAST_CHILD = "last_child";
 }
