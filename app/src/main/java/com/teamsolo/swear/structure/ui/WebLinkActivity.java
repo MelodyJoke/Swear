@@ -25,6 +25,7 @@ import android.widget.ProgressBar;
 import com.teamsolo.base.template.activity.BaseActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.LogUtility;
+import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.structure.ui.about.AgreementActivity;
@@ -223,11 +224,16 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         }
 
         // app protocols
-        if (url.startsWith("http://app/login")) {
+        if (url.startsWith("http://app/login") || url.startsWith("http://wenxue/app/login")) {
             toast(R.string.log_out);
             Intent intent = new Intent(mContext, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            return;
+        }
+
+        if (url.startsWith("http://wenxue/app/getInfoDetail")) {
+            mWebView.loadUrl("javascript:getNeedInfo(\"" + getSessionId() + "\",\"" + SecurityUtility.getDeviceId(mContext) + "\")");
             return;
         }
 
