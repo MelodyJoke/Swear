@@ -188,8 +188,10 @@ public class RetrofitConfig {
             return context.getString(R.string.net_io_exception);
 
         // exception level
-        if (throwable instanceof Exception)
+        if (throwable instanceof Exception) {
+            throwable.printStackTrace();
             return context.getString(R.string.net_exception);
+        }
 
         // throwable level
         return context.getString(R.string.net_exception_unknown);

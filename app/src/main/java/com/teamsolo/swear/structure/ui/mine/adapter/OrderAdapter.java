@@ -45,13 +45,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position) == null) return 1;
+        if (getItem(position) == null) return -1;
         return super.getItemViewType(position);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == 1)
+        if (viewType == -1)
             return new ViewHolder(mInflater.inflate(R.layout.item_loading, parent, false), viewType);
         return new ViewHolder(mInflater.inflate(R.layout.item_order, parent, false), viewType);
     }
@@ -62,7 +62,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         final int mPosition = holder.getAdapterPosition();
         final int viewType = getItemViewType(position);
 
-        if (viewType == 1) {
+        if (viewType == -1) {
             if (mContext instanceof Appendable) ((Appendable) mContext).append(null);
             return;
         }
@@ -188,10 +188,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
         TextView prePriceText, cancelButton, refundButton, payButton;
 
-        public ViewHolder(View itemView, int viewType) {
+        ViewHolder(View itemView, int viewType) {
             super(itemView);
 
-            if (viewType != 1) {
+            if (viewType != -1) {
                 noText = (TextView) itemView.findViewById(R.id.no);
                 statusText = (TextView) itemView.findViewById(R.id.status);
 

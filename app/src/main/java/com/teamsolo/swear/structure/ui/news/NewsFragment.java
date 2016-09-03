@@ -1,4 +1,4 @@
-package com.teamsolo.swear.structure.ui.mine;
+package com.teamsolo.swear.structure.ui.news;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,58 +13,62 @@ import android.view.ViewGroup;
 
 import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
-import com.teamsolo.swear.foundation.bean.Order;
-import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
+import com.teamsolo.swear.foundation.bean.NewsDaily;
+import com.teamsolo.swear.foundation.bean.dummy.NewsDummy;
+import com.teamsolo.swear.foundation.bean.resp.NewsResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
-import com.teamsolo.swear.structure.ui.mine.adapter.OrderAdapter;
+import com.teamsolo.swear.structure.ui.news.adapter.NewsAdapter;
 import com.teamsolo.swear.structure.util.LoadingUtil;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import rx.Subscriber;
 
 /**
- * description: orders pager
+ * description: news fragment
  * author: Melody
- * date: 2016/8/31
+ * date: 2016/9/3
  * version: 0.0.0.1
  */
-public class OrdersFragment extends HandlerFragment implements Refreshable, Appendable, ScrollAble {
+public class NewsFragment extends HandlerFragment implements Refreshable, Appendable, ScrollAble {
 
     private RecyclerView mListView;
 
-    private OrderAdapter mAdapter;
+    private NewsAdapter mAdapter;
 
-    private List<Order> mList = new ArrayList<>();
+    private List<NewsDaily> mList = new ArrayList<>();
 
-    private int type;
+    private List<NewsDummy> mDummyList = new ArrayList<>();
 
-    private int page = 1;
+    private String date;
 
-    private static final int pageSize = 10;
+    private static final int pageSize = 4;
 
     private boolean append;
 
-    private Subscriber<OrdersResp> subscriber;
+    private Subscriber<NewsResp> subscriber;
+
+    private SimpleDateFormat format;
 
     private LoadingUtil loadingUtil;
 
-    public static OrdersFragment newInstance(int type) {
-        OrdersFragment fragment = new OrdersFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("type", type);
-        fragment.setArguments(bundle);
+    public static NewsFragment newInstance() {
+        NewsFragment fragment = new NewsFragment();
+        fragment.setArguments(new Bundle());
 
         return fragment;
     }
@@ -76,6 +80,7 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
         initViews();
         bindListeners();
         onInteraction(Uri.parse("refresh?start=true"));
+        date = format.format(new Date());
         new Thread(this::request).start();
 
         return mLayoutView;
@@ -83,7 +88,7 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
 
     @Override
     protected void getBundle(@NotNull Bundle bundle) {
-        type = bundle.getInt("type", 0);
+        format = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
     }
 
     @Override
@@ -94,51 +99,38 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
         mListView.setItemAnimator(new DefaultItemAnimator());
         mListView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        mAdapter = new OrderAdapter(mContext, mList);
+        mAdapter = new NewsAdapter(mContext, mDummyList);
         mListView.setAdapter(mAdapter);
 
         loadingUtil = new LoadingUtil(findViewById(R.id.loading), mListView)
-                .init(R.mipmap.orders_empty, R.string.loading, R.string.orders_empty);
+                .init(R.mipmap.news_empty, R.string.loading, R.string.news_empty);
         loadingUtil.showLoading();
     }
 
     @Override
     protected void bindListeners() {
-        mAdapter.setOnItemClickListener((v, item) -> {
-            // TODO: show detail
-            toast("item");
-        });
-
-        mAdapter.setOnCancelListener((v, item) -> {
-            // TODO: cancel order
-            toast("cancel");
-        });
-
-        mAdapter.setOnRefundListener((v, item) -> {
-            // TODO: refund
-            toast("refund");
-        });
-
-        mAdapter.setOnPayListener((v, item) -> {
-            // TODO: pay
-            toast("pay");
+        mAdapter.setOnItemClickListener((v, dummy) -> {
+            // TODO:
+            toast(dummy.title);
         });
     }
 
     private void request() {
         Map<String, String> paras = new HashMap<>();
-        paras.put("CMD", CmdConst.CMD_GET_ORDERS);
-        paras.put("userId", String.valueOf(UserHelper.getUserId(mContext)));
-        paras.put("orderStatus", String.valueOf(type));
-        paras.put("page", String.valueOf(page));
-        paras.put("pageSize", String.valueOf(pageSize));
-        subscriber = BaseHttpUrlRequests.getInstance().getOrders(paras, new Subscriber<OrdersResp>() {
+        paras.put("CMD", CmdConst.CMD_GET_NEWS);
+        paras.put("date", date);
+        paras.put("gradeType", "0");
+        int gradeId = UserHelper.getRealAttentionGrade(mContext);
+        if (gradeId > 0) paras.put("gradeId", String.valueOf(gradeId));
+        paras.put("serviceType", "2");
+
+        subscriber = BaseHttpUrlRequests.getInstance().getNews(paras, new Subscriber<NewsResp>() {
             @Override
             public void onCompleted() {
                 onInteraction(Uri.parse("refresh?ready=true"));
 
                 handler.postDelayed(() -> {
-                    if (mList.size() == 0 || mList.size() == 1 && mList.get(0) == null)
+                    if (mDummyList.size() == 0 || mDummyList.size() == 1 && mDummyList.get(0) == null)
                         loadingUtil.showEmpty();
                     else loadingUtil.dismiss();
                 }, 500);
@@ -150,17 +142,17 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
                 onInteraction(Uri.parse("refresh?ready=true"));
 
                 handler.postDelayed(() -> {
-                    if (mList.size() == 0 || mList.size() == 1 && mList.get(0) == null)
+                    if (mDummyList.size() == 0 || mDummyList.size() == 1 && mDummyList.get(0) == null)
                         loadingUtil.showEmpty();
                     else loadingUtil.dismiss();
                 }, 500);
             }
 
             @Override
-            public void onNext(OrdersResp ordersResp) {
-                if (!RetrofitConfig.handleResp(ordersResp, mContext)) toast(ordersResp.message);
+            public void onNext(NewsResp newsResp) {
+                if (!RetrofitConfig.handleResp(newsResp, mContext)) toast(newsResp.message);
                 else {
-                    List<Order> temp = ordersResp.orderList;
+                    List<NewsDaily> temp = newsResp.newsDateList;
 
                     if (!append) mList.clear();
 
@@ -170,9 +162,12 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
                     mList.addAll(temp);
 
                     if (temp.size() >= pageSize) mList.add(null);
-                    if (temp.size() == 0) {
-                        page--;
-                        if (page < 1) page = 1;
+
+                    mDummyList.clear();
+                    for (NewsDaily newsDaily :
+                            mList) {
+                        if (newsDaily == null) mDummyList.add(null);
+                        else mDummyList.addAll(newsDaily.extractDummies());
                     }
 
                     mAdapter.notifyDataSetChanged();
@@ -184,15 +179,22 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
     @Override
     public void refresh(Uri uri) {
         append = false;
-        page = 1;
+        date = format.format(new Date());
         new Thread(this::request).start();
     }
 
     @Override
     public void append(Uri uri) {
         append = true;
-        page++;
-        handler.postDelayed(() -> new Thread(this::request).start(), 500);
+        int size = mList.size();
+        if (size > 0) {
+            if (mList.get(size - 1) != null) date = mList.get(mList.size() - 1).date;
+            else if (size > 1) date = mList.get(mList.size() - 2).date;
+            else date = format.format(new Date());
+
+            if (!format.format(new Date()).equals(date))
+                handler.postDelayed(() -> new Thread(this::request).start(), 500);
+        }
     }
 
     @Override

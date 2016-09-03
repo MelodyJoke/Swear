@@ -42,6 +42,12 @@ public interface CmdConst {
     // get school activities
     String CMD_GET_ACTIVITIES = "getActivityList";
 
+    // get news list
+    String CMD_GET_NEWS = "querynewslist";
+
+    // get news detail
+    String CMD_GET_NEWS_DETAIL = "getnewsdetail";
+
     // get orders
     String CMD_GET_ORDERS = "getorderlist";
 }

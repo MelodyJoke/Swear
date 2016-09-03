@@ -87,7 +87,7 @@ public class ChildChooseActivity extends HandlerActivity {
         if (current != null && current.studentId > 0) {
             for (Child child :
                     children)
-                child.check = child.studentId == current.studentId;
+                child.isChecked = child.studentId == current.studentId;
         }
         mList.addAll(children);
         handler.post(() -> mAdapter.notifyDataSetChanged());

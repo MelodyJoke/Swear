@@ -111,5 +111,5 @@ public class Child extends Bean {
     }
 
     // fields about ui
-    public boolean check;
+    public boolean isChecked;
 }

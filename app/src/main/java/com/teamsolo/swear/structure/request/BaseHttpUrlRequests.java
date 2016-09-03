@@ -1,8 +1,10 @@
 package com.teamsolo.swear.structure.request;
 
 import com.teamsolo.swear.foundation.bean.req.ChildChooseReq;
+import com.teamsolo.swear.foundation.bean.req.NewsReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
 import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
+import com.teamsolo.swear.foundation.bean.resp.NewsResp;
 import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.foundation.bean.req.LoadPicReq;
@@ -90,6 +92,18 @@ public class BaseHttpUrlRequests {
     public Subscriber<ChildChooseResp> getChildInfo(Map<String, String> paras, Subscriber<ChildChooseResp> subscriber) {
         retrofit.create(ChildChooseReq.class)
                 .getChildInfo(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取资讯列表
+     */
+    public Subscriber<NewsResp> getNews(Map<String, String> paras, Subscriber<NewsResp> subscriber) {
+        retrofit.create(NewsReq.class)
+                .getNews(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

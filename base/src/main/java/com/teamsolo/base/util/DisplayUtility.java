@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+import android.view.View;
 
 import com.teamsolo.base.template.application.BaseApplication;
 
@@ -16,6 +17,10 @@ import com.teamsolo.base.template.application.BaseApplication;
  */
 @SuppressWarnings("WeakerAccess, unused")
 public final class DisplayUtility {
+
+    public static final int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec((1 << 30) - 1, View.MeasureSpec.AT_MOST);
+
+    public static final int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec((1 << 30) - 1, View.MeasureSpec.AT_MOST);
 
     private DisplayUtility() {
     }

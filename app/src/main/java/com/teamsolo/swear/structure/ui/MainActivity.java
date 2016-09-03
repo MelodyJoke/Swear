@@ -45,6 +45,7 @@ import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
+import com.teamsolo.swear.structure.ui.news.NewsFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -273,7 +274,7 @@ public class MainActivity extends HandlerActivity implements
                     case 2:
                         if (actionBar != null) actionBar.setTitle(R.string.news_nav);
                         if (fragments.get(FRAG_NEWS) == null) {
-                            Fragment fragmentNews = OrdersFragment.newInstance(FRAG_NEWS);
+                            Fragment fragmentNews = NewsFragment.newInstance();
                             fragments.append(FRAG_NEWS, fragmentNews);
                             fragmentManager.beginTransaction()
                                     .add(R.id.content, fragments.get(FRAG_NEWS), String.valueOf(FRAG_NEWS))

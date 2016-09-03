@@ -20,6 +20,8 @@
     <string name="service_phone">400&#8211;601&#8211;7717</string>
     <string name="real_phone">4006017717</string>
 
+    <string name="today">今天</string>
+
     <!-- net -->
     <string name="net_exception_unknown">未知异常</string>
 
@@ -138,6 +140,8 @@
 
     <!--news-->
     <string name="news_nav">资讯</string>
+    <string name="news_empty">不毛之地~</string>
+    <string name="news_author">作者: %1$s</string>
 
     <!--knowledge-->
     <string name="nlg_nav">学堂</string>

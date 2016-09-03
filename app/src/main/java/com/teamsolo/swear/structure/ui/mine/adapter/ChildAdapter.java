@@ -54,7 +54,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
 
         if (item != null) {
             StringBuilder builder = new StringBuilder();
-            if (item.check) builder.append("<font color='#E91E63'>");
+            if (item.isChecked) builder.append("<font color='#E91E63'>");
 
             if (!TextUtils.isEmpty(item.studentName)) builder.append(item.studentName);
             else builder.append(mContext.getString(R.string.unknown));
@@ -62,7 +62,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
             if (!TextUtils.isEmpty(item.appellation))
                 builder.append("(").append(item.appellation).append(")");
 
-            if (item.check) builder.append("<font/>");
+            if (item.isChecked) builder.append("<font/>");
 
             if (BuildUtility.isRequired(Build.VERSION_CODES.N))
                 holder.nameText.setText(Html.fromHtml(builder.toString(), Html.FROM_HTML_MODE_COMPACT));
@@ -105,7 +105,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
 
         private SimpleDraweeView portraitImage;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             nameText = (TextView) itemView.findViewById(R.id.name);
