@@ -144,6 +144,7 @@
     <string name="news_author">作者: %1$s</string>
 
     <string name="news_detail_title">详情</string>
+    <string name="news_detail_reply">热门评论</string>
 
     <!--knowledge-->
     <string name="nlg_nav">学堂</string>

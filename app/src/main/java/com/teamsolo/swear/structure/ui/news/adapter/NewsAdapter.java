@@ -108,10 +108,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             holder.commentText.setText(item.commentCount <= 99999 ? String.valueOf(item.commentCount) : "99999+");
 
             if (item.indexes == null || item.indexes.length == 0)
-                holder.tagsContainer.setVisibility(View.GONE);
+                holder.tagContainer.setVisibility(View.GONE);
             else {
-                holder.tagsContainer.removeAllViews();
-                holder.tagsContainer.setVisibility(View.VISIBLE);
+                holder.tagContainer.removeAllViews();
+                holder.tagContainer.setVisibility(View.VISIBLE);
 
                 DisplayMetrics metrics = DisplayUtility.getDisplayMetrics();
                 if (metrics != null) {
@@ -144,7 +144,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                         if (totalLength + DisplayUtility.getPxFromDp(20) + 50 >= metrics.widthPixels)
                             break;
 
-                        holder.tagsContainer.addView(tagView, params);
+                        holder.tagContainer.addView(tagView, params);
                     }
                 }
             }
@@ -248,7 +248,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         TextView titleText;
 
-        LinearLayout tagsContainer;
+        LinearLayout tagContainer;
 
         SimpleDraweeView coverImage, coverImage2, coverImage3;
 
@@ -261,7 +261,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
             if (viewType > -1) titleText = (TextView) itemView.findViewById(R.id.title);
             if (viewType > 0) {
-                tagsContainer = (LinearLayout) itemView.findViewById(R.id.tags);
+                tagContainer = (LinearLayout) itemView.findViewById(R.id.tags);
                 authorText = (TextView) itemView.findViewById(R.id.author);
                 browseText = (TextView) itemView.findViewById(R.id.browse);
                 commentText = (TextView) itemView.findViewById(R.id.comment);
