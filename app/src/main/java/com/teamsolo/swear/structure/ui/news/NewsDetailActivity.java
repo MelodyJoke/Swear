@@ -150,7 +150,7 @@ public class NewsDetailActivity extends HandlerActivity {
                 mContentText.setText(Html.fromHtml(mItem.content, Html.FROM_HTML_MODE_COMPACT));
             else mContentText.setText(Html.fromHtml(mItem.content));
 
-            mCountText.setText(String.valueOf(mItem.commentNumber));
+            mCountText.setText(mItem.commentNumber > 9999 ? "9999+" : String.valueOf(mItem.commentNumber));
             mCountText.setVisibility(mItem.commentNumber > 0 ? View.VISIBLE : View.GONE);
 
             mKeepButton.setChecked(mItem.isFavorite == 1);
