@@ -149,6 +149,9 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
                 toast(RetrofitConfig.handleReqError(e));
                 onInteraction(Uri.parse("refresh?ready=true"));
 
+                page--;
+                if (page < 1) page = 1;
+
                 handler.postDelayed(() -> {
                     if (mList.size() == 0 || mList.size() == 1 && mList.get(0) == null)
                         loadingUtil.showEmpty();
@@ -158,8 +161,12 @@ public class OrdersFragment extends HandlerFragment implements Refreshable, Appe
 
             @Override
             public void onNext(OrdersResp ordersResp) {
-                if (!RetrofitConfig.handleResp(ordersResp, mContext)) toast(ordersResp.message);
-                else {
+                if (!RetrofitConfig.handleResp(ordersResp, mContext)) {
+                    toast(ordersResp.message);
+                    
+                    page--;
+                    if (page < 1) page = 1;
+                } else {
                     List<Order> temp = ordersResp.orderList;
 
                     if (!append) mList.clear();
