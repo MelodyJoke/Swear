@@ -29,5 +29,5 @@ public interface SpConst {
 
     String LAST_CHILD = "last_child";
 
-    String LAST_GET_NEWS = "last_get_news";
+    String LAST_GET_NEWS = "last_get_news_";
 }

@@ -145,17 +145,18 @@ public class NewsFragment extends HandlerFragment implements Refreshable, Append
 
     @SuppressWarnings("Convert2streamapi")
     private void request() {
+        final long studentId = UserHelper.getStudentId(mContext);
         String today = format.format(new Date());
         if (today.equals(date)) {
-            String last = PreferenceManager.getDefaultSharedPreferences(mContext).getString(SpConst.LAST_GET_NEWS, "");
+            String last = PreferenceManager.getDefaultSharedPreferences(mContext).getString(SpConst.LAST_GET_NEWS + studentId, "");
             if (last.equals(today)) {
                 mList.clear();
 
                 List<Map<String, String>> cacheMaps = new ArrayList<>();
-                cacheMaps.add(helper.load("news_cache_0"));
-                cacheMaps.add(helper.load("news_cache_1"));
-                cacheMaps.add(helper.load("news_cache_2"));
-                cacheMaps.add(helper.load("news_cache_3"));
+                cacheMaps.add(helper.load("news_cache_0_" + studentId));
+                cacheMaps.add(helper.load("news_cache_1_" + studentId));
+                cacheMaps.add(helper.load("news_cache_2_" + studentId));
+                cacheMaps.add(helper.load("news_cache_3_" + studentId));
 
                 Gson gson = new GsonBuilder().create();
 
@@ -241,12 +242,12 @@ public class NewsFragment extends HandlerFragment implements Refreshable, Append
 
                             for (int i = 0; i < 4; i++) {
                                 if (i < count)
-                                    helper.save("news_cache_" + i, gson.toJson(temp.get(i)), "");
-                                else helper.save("news_cache_" + i, "", "");
+                                    helper.save("news_cache_" + i + "_" + studentId, gson.toJson(temp.get(i)), "");
+                                else helper.save("news_cache_" + i + "_" + studentId, "", "");
                             }
 
                             PreferenceManager.getDefaultSharedPreferences(mContext).edit()
-                                    .putString(SpConst.LAST_GET_NEWS, today).apply();
+                                    .putString(SpConst.LAST_GET_NEWS + studentId, today).apply();
                         }
                     }
                 }
