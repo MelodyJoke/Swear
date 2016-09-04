@@ -159,6 +159,10 @@ public class MainActivity extends HandlerActivity implements
     @Override
     protected void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(v -> {
+            if (currentFragment instanceof ScrollAble)
+                ((ScrollAble) currentFragment).scroll(Uri.parse("scroll?top=true"));
+        });
         setSupportActionBar(toolbar);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
