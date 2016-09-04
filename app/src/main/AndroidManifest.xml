@@ -97,6 +97,14 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
+        <!--news-->
+        <activity
+            android:name=".structure.ui.news.NewsDetailActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:label="@string/news_detail_title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
         <!--orders-->
         <activity
             android:name=".structure.ui.mine.OrdersActivity"
