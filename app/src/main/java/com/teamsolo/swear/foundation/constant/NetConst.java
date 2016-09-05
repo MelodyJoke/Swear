@@ -36,6 +36,9 @@ public class NetConst {
     // school register
     public static final String REGISTER_SCHOOL = "regist_resource/mobile/ph_my_register.html";
 
+    // news share url
+    public static final String NEWS_SHARE_URL = "resource/page/info_detail.html?";
+
     public static String getBaseHttpUrl() {
         switch (LogUtility.getMode()) {
             case LogUtility.MODE_EAGER:

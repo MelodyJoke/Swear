@@ -2,6 +2,7 @@ package com.teamsolo.swear.structure.ui.news;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -15,6 +16,8 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
@@ -32,6 +35,7 @@ import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.constant.DbConst;
+import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.ui.widget.HtmlSupportTextView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
@@ -280,6 +284,39 @@ public class NewsDetailActivity extends HandlerActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.web_link, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_share) {
+            if (TextUtils.isEmpty(mNewsUUId)) return true;
+
+            share(NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.NEWS_SHARE_URL + "newsUuid=" + mNewsUUId,
+                    TextUtils.isEmpty(mItem.title) ? getString(R.string.news_detail_title) : mItem.title);
+            return true;
+        } else if (id == R.id.action_open_outside) {
+            if (TextUtils.isEmpty(mNewsUUId)) return true;
+
+            try {
+                Intent intent = new Intent("android.intent.action.VIEW");
+                intent.setData(Uri.parse(NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.NEWS_SHARE_URL + "newsUuid=" + mNewsUUId));
+                startActivity(intent);
+            } catch (Exception e) {
+                toast(R.string.web_open_deny);
+            }
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void prepare() {
         attemptCount++;
 
@@ -395,6 +432,19 @@ public class NewsDetailActivity extends HandlerActivity {
                 }
             }
         });
+    }
+
+    private void share(String shareUrl, String shareTitle) {
+        try {
+            Uri.parse(shareUrl);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, shareTitle + ": " + shareUrl);
+
+            startActivity(Intent.createChooser(intent, getString(R.string.share_share_to)));
+        } catch (Exception e) {
+            toast(R.string.web_share_deny);
+        }
     }
 
     @Override
