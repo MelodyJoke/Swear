@@ -372,6 +372,10 @@ public class NewsDetailActivity extends HandlerActivity {
                 if (!RetrofitConfig.handleResp(commonResponse, mContext)) {
                     toast(commonResponse.message);
                     mPraiseButton.setChecked(false);
+                } else {
+                    long realGreatNumber = mItem.greatNumber + 1;
+                    mCountText2.setText(realGreatNumber > 9999 ? "9999+" : String.valueOf(realGreatNumber));
+                    mCountText2.setVisibility(realGreatNumber > 0 ? View.VISIBLE : View.GONE);
                 }
             }
         });
