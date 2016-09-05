@@ -84,7 +84,7 @@
                     android:layout_marginTop="@dimen/light_margin"
                     android:background="@color/colorDark" />
 
-                <TextView
+                <com.teamsolo.swear.foundation.ui.widget.HtmlSupportTextView
                     android:id="@+id/content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

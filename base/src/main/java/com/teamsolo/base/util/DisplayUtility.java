@@ -3,6 +3,7 @@ package com.teamsolo.base.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -85,5 +86,16 @@ public final class DisplayUtility {
     public static boolean isXLargeTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+    }
+
+    /**
+     * get res uri
+     *
+     * @param resId       res id
+     * @param packageName package name
+     * @return uri
+     */
+    public static Uri getResourceUri(int resId, String packageName) {
+        return Uri.parse("android.resource://" + packageName + "/" + resId);
     }
 }

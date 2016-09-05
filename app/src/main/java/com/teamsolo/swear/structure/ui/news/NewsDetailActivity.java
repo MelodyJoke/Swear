@@ -11,8 +11,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
@@ -28,11 +28,14 @@ import com.teamsolo.base.util.DisplayUtility;
 import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.News;
+import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.constant.DbConst;
+import com.teamsolo.swear.foundation.ui.widget.HtmlSupportTextView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.WebLinkActivity;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +62,7 @@ public class NewsDetailActivity extends HandlerActivity {
 
     private LinearLayout mTagContainer;
 
-    private TextView mContentText;
+    private HtmlSupportTextView mContentText;
 
     private View mReplyLayout;
 
@@ -135,7 +138,11 @@ public class NewsDetailActivity extends HandlerActivity {
         mAuthorText = (TextView) findViewById(R.id.author);
         mDateText = (TextView) findViewById(R.id.date);
         mTagContainer = (LinearLayout) findViewById(R.id.tags);
-        mContentText = (TextView) findViewById(R.id.content);
+
+        mContentText = (HtmlSupportTextView) findViewById(R.id.content);
+        mContentText.setLinksClickable(true);
+        mContentText.setMovementMethod(LinkMovementMethod.getInstance());
+
         mReplyLayout = findViewById(R.id.reply_layout);
 
         RecyclerView mListView = (RecyclerView) findViewById(R.id.listView);
@@ -165,9 +172,7 @@ public class NewsDetailActivity extends HandlerActivity {
                 else mDateText.setText(date);
             } else mDateText.setText(R.string.unknown);
 
-            if (BuildUtility.isRequired(Build.VERSION_CODES.N))
-                mContentText.setText(Html.fromHtml(mItem.content, Html.FROM_HTML_MODE_COMPACT));
-            else mContentText.setText(Html.fromHtml(mItem.content));
+            mContentText.setRichText(mItem.content);
 
             mCountText.setText(mItem.commentNumber > 9999 ? "9999+" : String.valueOf(mItem.commentNumber));
             mCountText.setVisibility(mItem.commentNumber > 0 ? View.VISIBLE : View.GONE);
@@ -261,6 +266,17 @@ public class NewsDetailActivity extends HandlerActivity {
         mPraiseButton.setOnClickListener(v -> {
             if (mPraiseButton.isChecked()) return;
             requestPraise();
+        });
+
+        mContentText.setOnHrefClickListener(link -> {
+            WebLink webLink = new WebLink();
+            webLink.forwardUrl = link;
+            webLink.title = getString(R.string.news_detail_title);
+
+            Intent intent = new Intent(mContext, WebLinkActivity.class);
+            intent.putExtra("link", webLink);
+            intent.putExtra("canShare", true);
+            startActivity(intent);
         });
     }
 
