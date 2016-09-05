@@ -220,16 +220,42 @@
                 android:padding="@dimen/tiny_margin"
                 android:scaleType="centerCrop" />
 
-            <CheckedTextView
-                android:id="@+id/praise"
+            <RelativeLayout
                 android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="?android:selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/app_name"
-                android:drawableBottom="@drawable/selector_praise"
-                android:padding="@dimen/tiny_margin"
-                android:scaleType="centerCrop" />
+                android:layout_height="32dp">
+
+                <CheckedTextView
+                    android:id="@+id/praise"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/app_name"
+                    android:drawableBottom="@drawable/selector_praise"
+                    android:padding="@dimen/tiny_margin"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/count2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/shape_bg_tag_primary"
+                    android:maxLength="5"
+                    android:maxWidth="32dp"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="2dp"
+                    android:text="@string/app_name"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="5dp"
+                    android:visibility="gone"
+                    tools:ignore="RelativeOverlap,SpUsage" />
+            </RelativeLayout>
 
         </LinearLayout>
 

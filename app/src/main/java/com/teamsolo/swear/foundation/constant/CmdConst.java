@@ -48,6 +48,12 @@ public interface CmdConst {
     // get news detail
     String CMD_GET_NEWS_DETAIL = "getnewsdetail";
 
+    // keep or drop news
+    String CMD_KEEP_NEWS = "savefavorite", CMD_DROP_NEWS = "canclefavorite";
+
+    // praise news
+    String CMD_PRAISE_NEWS = "dolike";
+
     // get orders
     String CMD_GET_ORDERS = "getorderlist";
 }

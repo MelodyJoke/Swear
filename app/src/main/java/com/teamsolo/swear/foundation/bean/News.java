@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.teamsolo.base.bean.Bean;
 import com.teamsolo.swear.foundation.bean.dummy.NewsDummy;
+import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 
 import java.util.ArrayList;
 
@@ -144,5 +145,14 @@ public class News extends Bean {
             dummy.pictures = pictureUrl.split(",");
 
         return dummy;
+    }
+
+    public News merge(NewsDetailResp resp) {
+        this.isFavorite = resp.isFavorite;
+        this.isFullComment = resp.isFullComment;
+        this.isLike = resp.isLike;
+        this.newsCommentList = resp.newsCommentList;
+
+        return this;
     }
 }

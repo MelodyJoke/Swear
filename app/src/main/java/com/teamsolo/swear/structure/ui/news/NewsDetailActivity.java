@@ -21,20 +21,29 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.DisplayUtility;
+import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.News;
+import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
+import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.constant.DbConst;
+import com.teamsolo.swear.foundation.util.RetrofitConfig;
+import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import rx.Subscriber;
 
 /**
  * description: news detail page
@@ -56,9 +65,9 @@ public class NewsDetailActivity extends HandlerActivity {
 
     private View mInputLayout;
 
-    private TextView mCountText;
+    private TextView mCountText, mCountText2;
 
-    private CheckedTextView mCommentButton, mKeepButton, mPraiseButtom;
+    private CheckedTextView mCommentButton, mKeepButton, mPraiseButton;
 
     private String mNewsUUId;
 
@@ -67,6 +76,10 @@ public class NewsDetailActivity extends HandlerActivity {
     private CacheDbHelper helper;
 
     private int attemptCount;
+
+    private Subscriber<NewsDetailResp> subscriberDetail;
+
+    private Subscriber<CommonResponse> subscriberKeep, subscriberPraise;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,6 +98,11 @@ public class NewsDetailActivity extends HandlerActivity {
         switch (msg.what) {
             case 0:
                 if (attemptCount < 10) new Thread(this::prepare).start();
+                break;
+
+            case 1:
+                invalidateUI();
+                new Thread(this::requestDetail).start();
                 break;
         }
     }
@@ -127,9 +145,10 @@ public class NewsDetailActivity extends HandlerActivity {
         mInputLayout = findViewById(R.id.input);
 
         mCountText = (TextView) findViewById(R.id.count);
+        mCountText2 = (TextView) findViewById(R.id.count2);
         mCommentButton = (CheckedTextView) findViewById(R.id.comment);
         mKeepButton = (CheckedTextView) findViewById(R.id.keep);
-        mPraiseButtom = (CheckedTextView) findViewById(R.id.praise);
+        mPraiseButton = (CheckedTextView) findViewById(R.id.praise);
     }
 
     @SuppressWarnings("deprecation")
@@ -153,7 +172,8 @@ public class NewsDetailActivity extends HandlerActivity {
             mCountText.setText(mItem.commentNumber > 9999 ? "9999+" : String.valueOf(mItem.commentNumber));
             mCountText.setVisibility(mItem.commentNumber > 0 ? View.VISIBLE : View.GONE);
 
-            mKeepButton.setChecked(mItem.isFavorite == 1);
+            mCountText2.setText(mItem.greatNumber > 9999 ? "9999+" : String.valueOf(mItem.greatNumber));
+            mCountText2.setVisibility(mItem.greatNumber > 0 ? View.VISIBLE : View.GONE);
 
             if (!TextUtils.isEmpty(mItem.searchIndexs)) {
                 String[] indexes = mItem.searchIndexs.split(",");
@@ -202,8 +222,17 @@ public class NewsDetailActivity extends HandlerActivity {
         }
     }
 
-    private void invalidateReply() {
+    private void invalidateUIDetail() {
         if (mItem != null) {
+            mKeepButton.setChecked(mItem.isFavorite == 1);
+            mPraiseButton.setChecked(mItem.isLike == 1);
+
+            if (mItem.isLike == 1) {
+                long realGreatNumber = mItem.greatNumber + 1;
+                mCountText2.setText(realGreatNumber > 9999 ? "9999+" : String.valueOf(realGreatNumber));
+                mCountText2.setVisibility(realGreatNumber > 0 ? View.VISIBLE : View.GONE);
+            }
+
             if (mItem.newsCommentList == null || mItem.newsCommentList.isEmpty())
                 mReplyLayout.setVisibility(View.GONE);
             else {
@@ -224,12 +253,14 @@ public class NewsDetailActivity extends HandlerActivity {
         });
 
         mKeepButton.setOnClickListener(v -> {
-            // TODO:
+            v.setClickable(false);
+            handler.postDelayed(() -> mKeepButton.setClickable(true), 500);
+            requestToggleKeep();
         });
 
-        mPraiseButtom.setOnClickListener(v -> {
-            if (mPraiseButtom.isChecked()) return;
-            // TODO:
+        mPraiseButton.setOnClickListener(v -> {
+            if (mPraiseButton.isChecked()) return;
+            requestPraise();
         });
     }
 
@@ -242,12 +273,120 @@ public class NewsDetailActivity extends HandlerActivity {
                 String cacheJson = cacheMap.get(DbConst.TABLE_CACHE_FIELDS[2][0]);
                 if (!TextUtils.isEmpty(cacheJson)) {
                     mItem = new Gson().fromJson(cacheJson, News.class);
-                    handler.post(() -> {
-                        invalidateUI();
-                        invalidateReply();
-                    });
+                    handler.sendEmptyMessage(1);
                 } else handler.sendEmptyMessageDelayed(0, 500);
             } else handler.sendEmptyMessageDelayed(0, 500);
         } else handler.sendEmptyMessageDelayed(0, 500);
+    }
+
+    private void requestDetail() {
+        if (TextUtils.isEmpty(mNewsUUId)) return;
+
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_GET_NEWS_DETAIL);
+        paras.put("newsUuid", mNewsUUId);
+        paras.put("serviceType", "2");
+        paras.put("deviceId", SecurityUtility.getDeviceId(mContext));
+        paras.put("browseType", "1");
+
+        subscriberDetail = BaseHttpUrlRequests.getInstance().getNewsDetail(paras, new Subscriber<NewsDetailResp>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+            }
+
+            @Override
+            public void onNext(NewsDetailResp resp) {
+                if (!RetrofitConfig.handleResp(resp, mContext)) toast(resp.message);
+                else {
+                    mItem = mItem.merge(resp);
+                    invalidateUIDetail();
+                }
+            }
+        });
+    }
+
+    private void requestToggleKeep() {
+        if (TextUtils.isEmpty(mNewsUUId)) return;
+
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", mKeepButton.isChecked() ? CmdConst.CMD_DROP_NEWS : CmdConst.CMD_KEEP_NEWS);
+        paras.put("serviceType", "2");
+        paras.put("contentId", mNewsUUId);
+        paras.put("contentType", "1");
+        paras.put("userType", "2");
+
+        mKeepButton.toggle();
+
+        subscriberKeep = BaseHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+                mKeepButton.toggle();
+            }
+
+            @Override
+            public void onNext(CommonResponse commonResponse) {
+                if (!RetrofitConfig.handleResp(commonResponse, mContext)) {
+                    toast(commonResponse.message);
+                    mKeepButton.toggle();
+                }
+            }
+        });
+    }
+
+    private void requestPraise() {
+        if (TextUtils.isEmpty(mNewsUUId)) return;
+
+        mPraiseButton.setChecked(true);
+
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_PRAISE_NEWS);
+        paras.put("newsUuid", mNewsUUId);
+        paras.put("serviceType", "2");
+
+        subscriberPraise = BaseHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+                mPraiseButton.setChecked(false);
+            }
+
+            @Override
+            public void onNext(CommonResponse commonResponse) {
+                if (!RetrofitConfig.handleResp(commonResponse, mContext)) {
+                    toast(commonResponse.message);
+                    mPraiseButton.setChecked(false);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (subscriberDetail != null && !subscriberDetail.isUnsubscribed())
+            subscriberDetail.unsubscribe();
+
+        if (subscriberKeep != null && !subscriberKeep.isUnsubscribed())
+            subscriberKeep.unsubscribe();
+
+        if (subscriberPraise != null && !subscriberPraise.isUnsubscribed())
+            subscriberPraise.unsubscribe();
     }
 }
