@@ -21,6 +21,7 @@
     <string name="real_phone">4006017717</string>
 
     <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
 
     <!-- net -->
     <string name="net_exception_unknown">未知异常</string>

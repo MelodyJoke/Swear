@@ -96,9 +96,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         if (viewType > -1) {
             if (!TextUtils.isEmpty(item.title)) {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-                if (!format.format(new Date()).equals(item.title))
-                    holder.titleText.setText(item.title);
-                else holder.titleText.setText(R.string.today);
+                if (!format.format(new Date()).equals(item.title)) {
+                    if (!format.format(new Date(System.currentTimeMillis() - 60 * 60 * 24 * 1000)).equals(item.title))
+                        holder.titleText.setText(item.title);
+                    else holder.titleText.setText(R.string.yesterday);
+                } else holder.titleText.setText(R.string.today);
             } else holder.titleText.setText(R.string.unknown);
         }
 
