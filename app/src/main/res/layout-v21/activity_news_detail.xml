@@ -165,7 +165,28 @@
                 android:id="@+id/input"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_marginEnd="@dimen/light_margin"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_dark_corner"
+                android:paddingBottom="@dimen/tiny_margin"
+                android:paddingEnd="@dimen/light_margin"
+                android:paddingStart="@dimen/light_margin"
+                android:paddingTop="@dimen/tiny_margin"
+                android:text="@string/news_detail_comment"
+                android:textColor="@color/colorWhite" />
+
+            <CheckedTextView
+                android:id="@+id/slide"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="@dimen/light_margin"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/app_name"
+                android:drawableBottom="@drawable/selector_slide"
+                android:padding="@dimen/tiny_margin"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:layout_width="32dp"

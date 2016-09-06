@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
@@ -27,6 +28,9 @@ import com.teamsolo.base.util.DisplayUtility;
 import com.teamsolo.base.util.LogUtility;
 import com.teamsolo.swear.R;
 
+import org.xml.sax.XMLReader;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +47,8 @@ import static com.facebook.imagepipeline.request.ImageRequest.fromUri;
 @SuppressWarnings("unused")
 public class HtmlSupportTextView extends TextView {
 
+    private static final String TAG = "HtmlTv";
+
     private String content;
 
     private List<String> urls = new ArrayList<>();
@@ -56,40 +62,54 @@ public class HtmlSupportTextView extends TextView {
             download();
 
             Drawable drawable = getContext().getResources().getDrawable(R.mipmap.loading_holder_web);
-            int width = drawable.getIntrinsicWidth();
-            int height = drawable.getIntrinsicHeight();
-            int widthEnable = getMeasuredWidth();
-            if (width < widthEnable) drawable.setBounds(0, 0, width, height);
-            else drawable.setBounds(0, 0, widthEnable, widthEnable * height / width);
+            fixDrawableSize(drawable);
             return drawable;
         } else {
             Drawable drawable = caches.get(source);
             if (drawable != null) {
-                int width = drawable.getIntrinsicWidth();
-                int height = drawable.getIntrinsicHeight();
-                int widthEnable = getMeasuredWidth();
-                if (width < widthEnable) drawable.setBounds(0, 0, width, height);
-                else drawable.setBounds(0, 0, widthEnable, widthEnable * height / width);
+                fixDrawableSize(drawable);
                 return drawable;
             }
             return getContext().getResources().getDrawable(R.mipmap.loading_failed_web);
         }
     };
 
+    @SuppressWarnings("deprecation")
     private Html.TagHandler tagHandler = (opening, tag, output, xmlReader) -> {
-        // TODO: handle video and audio tag
-        if ("video".equals(tag)) {
-            if (opening) System.out.println("<");
-            System.out.println(output);
-            if (!opening) System.out.println(">");
-        } else if ("audio".equals(tag)) {
-            if (opening) System.out.println("<");
-            System.out.println(output);
-            if (!opening) System.out.println(">");
+        if (!opening) return;
+
+        try {
+            if ("video".equals(tag.toLowerCase())) {
+                final String link = getAttrs(xmlReader).get("src");
+
+                Drawable drawable = getContext().getResources().getDrawable(R.mipmap.web_cover_video);
+                fixDrawableSize(drawable);
+                ClickableImageSpan imageSpan = new ClickableImageSpan(drawable) {
+                    @Override
+                    public void onClick(View view) {
+                        if (onVideoClickListener != null) onVideoClickListener.onClick(view, link);
+                    }
+                };
+                output.setSpan(imageSpan, output.length() - 1, output.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else if ("audio".equals(tag.toLowerCase())) {
+                final String link = getAttrs(xmlReader).get("src");
+
+                Drawable drawable = getContext().getResources().getDrawable(R.mipmap.web_cover_audio);
+                fixDrawableSize(drawable);
+                ClickableImageSpan imageSpan = new ClickableImageSpan(drawable) {
+                    @Override
+                    public void onClick(View view) {
+                        if (onAudioClickListener != null) onAudioClickListener.onClick(view, link);
+                    }
+                };
+                output.setSpan(imageSpan, output.length() - 1, output.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        } catch (Exception e) {
+            LogUtility.e(TAG, e.getMessage());
         }
     };
 
-    private OnHrefClickListener listener;
+    private onClickListener onHrefClickListener, onVideoClickListener, onAudioClickListener;
 
     public HtmlSupportTextView(Context context) {
         super(context);
@@ -123,7 +143,7 @@ public class HtmlSupportTextView extends TextView {
             builder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    if (listener != null) listener.onClick(link);
+                    if (onHrefClickListener != null) onHrefClickListener.onClick(widget, link);
                 }
             }, start, end, flag);
             builder.removeSpan(span);
@@ -145,18 +165,23 @@ public class HtmlSupportTextView extends TextView {
                 request = ImageRequest.fromUri(Uri.parse(url));
             } catch (Exception e) {
                 request = fromUri(DisplayUtility.getResourceUri(R.mipmap.loading_failed_web, getContext().getPackageName()));
-                LogUtility.i("HtmlTV", "parse url failed: " + url);
+                LogUtility.i(TAG, "parse url failed: " + url);
             }
 
+            final ImageRequest copy = request;
             BaseBitmapDataSubscriber subscriber = new BaseBitmapDataSubscriber() {
                 @Override
                 protected void onNewResultImpl(Bitmap bitmap) {
-                    if (bitmap != null) {
+                    if (bitmap != null && !bitmap.isRecycled()) {
                         caches.put(url, new BitmapDrawable(getContext().getResources(), bitmap));
-                        LogUtility.i("HtmlTV", "download success: " + url);
+                        LogUtility.i(TAG, "download success: " + url);
+                    } else if (bitmap != null && bitmap.isRecycled()) {
+                        Fresco.getImagePipeline()
+                                .fetchDecodedImage(copy, getContext())
+                                .subscribe(this, CallerThreadExecutor.getInstance());
                     } else {
                         caches.put(url, getContext().getResources().getDrawable(R.mipmap.loading_failed_web));
-                        LogUtility.i("HtmlTV", "download failed: " + url);
+                        LogUtility.i(TAG, "download failed: " + url);
                     }
 
                     getHandler().post(() -> setRichText(content));
@@ -165,7 +190,7 @@ public class HtmlSupportTextView extends TextView {
                 @Override
                 protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
                     caches.put(url, getContext().getResources().getDrawable(R.mipmap.loading_failed_web));
-                    LogUtility.i("HtmlTV", "download failed: " + url);
+                    LogUtility.i(TAG, "download failed: " + url);
 
                     getHandler().post(() -> setRichText(content));
                 }
@@ -182,11 +207,53 @@ public class HtmlSupportTextView extends TextView {
         }
     }
 
-    public void setOnHrefClickListener(OnHrefClickListener listener) {
-        this.listener = listener;
+    public List<String> getPictureUrls() {
+        return urls;
     }
 
-    public interface OnHrefClickListener {
-        void onClick(String link);
+    public void setOnHrefClickListener(onClickListener listener) {
+        this.onHrefClickListener = listener;
+    }
+
+    public void setOnVideoClickListener(onClickListener listener) {
+        this.onVideoClickListener = listener;
+    }
+
+    public void setOnAudioClickListener(onClickListener listener) {
+        this.onAudioClickListener = listener;
+    }
+
+    private Map<String, String> getAttrs(XMLReader reader) throws Exception {
+        Field elementField = reader.getClass().getDeclaredField("theNewElement");
+        elementField.setAccessible(true);
+        Object element = elementField.get(reader);
+        Field attrsField = element.getClass().getDeclaredField("theAtts");
+        attrsField.setAccessible(true);
+        Object attrs = attrsField.get(element);
+        Field dataField = attrs.getClass().getDeclaredField("data");
+        dataField.setAccessible(true);
+        String[] data = (String[]) dataField.get(attrs);
+        Field lengthField = attrs.getClass().getDeclaredField("length");
+        lengthField.setAccessible(true);
+        int len = (Integer) lengthField.get(attrs);
+
+        HashMap<String, String> attributes = new HashMap<>();
+
+        for (int i = 0; i < len; i++)
+            attributes.put(data[i * 5 + 1], data[i * 5 + 4]);
+
+        return attributes;
+    }
+
+    private void fixDrawableSize(Drawable drawable) {
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        int widthEnable = getMeasuredWidth();
+        if (width < widthEnable) drawable.setBounds(0, 0, width, height);
+        else drawable.setBounds(0, 0, widthEnable, widthEnable * height / width);
+    }
+
+    public interface onClickListener {
+        void onClick(View v, String link);
     }
 }

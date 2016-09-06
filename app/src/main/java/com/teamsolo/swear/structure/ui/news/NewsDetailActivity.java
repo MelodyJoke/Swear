@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.Menu;
@@ -36,6 +35,7 @@ import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.constant.DbConst;
 import com.teamsolo.swear.foundation.constant.NetConst;
+import com.teamsolo.swear.foundation.ui.widget.ClickableMovementMethod;
 import com.teamsolo.swear.foundation.ui.widget.HtmlSupportTextView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
@@ -74,7 +74,7 @@ public class NewsDetailActivity extends HandlerActivity {
 
     private TextView mCountText, mCountText2;
 
-    private CheckedTextView mCommentButton, mKeepButton, mPraiseButton;
+    private CheckedTextView mSlideButton, mCommentButton, mKeepButton, mPraiseButton;
 
     private String mNewsUUId;
 
@@ -145,7 +145,7 @@ public class NewsDetailActivity extends HandlerActivity {
 
         mContentText = (HtmlSupportTextView) findViewById(R.id.content);
         mContentText.setLinksClickable(true);
-        mContentText.setMovementMethod(LinkMovementMethod.getInstance());
+        mContentText.setMovementMethod(ClickableMovementMethod.getInstance());
 
         mReplyLayout = findViewById(R.id.reply_layout);
 
@@ -157,6 +157,7 @@ public class NewsDetailActivity extends HandlerActivity {
 
         mCountText = (TextView) findViewById(R.id.count);
         mCountText2 = (TextView) findViewById(R.id.count2);
+        mSlideButton = (CheckedTextView) findViewById(R.id.slide);
         mCommentButton = (CheckedTextView) findViewById(R.id.comment);
         mKeepButton = (CheckedTextView) findViewById(R.id.keep);
         mPraiseButton = (CheckedTextView) findViewById(R.id.praise);
@@ -227,6 +228,8 @@ public class NewsDetailActivity extends HandlerActivity {
                         }
                     }
                 }
+
+                mSlideButton.setVisibility(mContentText.getPictureUrls().isEmpty() ? View.GONE : View.VISIBLE);
             } else mTagContainer.setVisibility(View.GONE);
         }
     }
@@ -257,6 +260,10 @@ public class NewsDetailActivity extends HandlerActivity {
             // TODO:
         });
 
+        mSlideButton.setOnClickListener(v -> {
+            // TODO:
+        });
+
         mCommentButton.setOnClickListener(v -> {
             // TODO:
         });
@@ -272,7 +279,7 @@ public class NewsDetailActivity extends HandlerActivity {
             requestPraise();
         });
 
-        mContentText.setOnHrefClickListener(link -> {
+        mContentText.setOnHrefClickListener((v, link) -> {
             WebLink webLink = new WebLink();
             webLink.forwardUrl = link;
             webLink.title = getString(R.string.news_detail_title);
@@ -281,6 +288,16 @@ public class NewsDetailActivity extends HandlerActivity {
             intent.putExtra("link", webLink);
             intent.putExtra("canShare", true);
             startActivity(intent);
+        });
+
+        mContentText.setOnAudioClickListener((v, link) -> {
+            // TODO: play audio here
+            toast(link);
+        });
+
+        mContentText.setOnVideoClickListener((v, link) -> {
+            // TODO: play video here
+            toast(link);
         });
     }
 
