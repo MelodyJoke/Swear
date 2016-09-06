@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,6 +30,7 @@ import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.DisplayUtility;
 import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.Comment;
 import com.teamsolo.swear.foundation.bean.News;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
@@ -40,13 +42,16 @@ import com.teamsolo.swear.foundation.ui.widget.HtmlSupportTextView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.WebLinkActivity;
+import com.teamsolo.swear.structure.ui.news.adapter.CommentAdapter;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -75,6 +80,10 @@ public class NewsDetailActivity extends HandlerActivity {
     private TextView mCountText, mCountText2;
 
     private CheckedTextView mSlideButton, mCommentButton, mKeepButton, mPraiseButton;
+
+    private CommentAdapter mAdapter;
+
+    private List<Comment> mCommentList = new ArrayList<>();
 
     private String mNewsUUId;
 
@@ -151,7 +160,14 @@ public class NewsDetailActivity extends HandlerActivity {
 
         RecyclerView mListView = (RecyclerView) findViewById(R.id.listView);
         mListView.setHasFixedSize(true);
-        mListView.setLayoutManager(new LinearLayoutManager(mContext));
+        LinearLayoutManager manager = new LinearLayoutManager(mContext);
+        manager.setAutoMeasureEnabled(true);
+        mListView.setLayoutManager(manager);
+        mListView.setItemAnimator(new DefaultItemAnimator());
+        mListView.setNestedScrollingEnabled(false);
+
+        mAdapter = new CommentAdapter(mContext, mCommentList);
+        mListView.setAdapter(mAdapter);
 
         mInputLayout = findViewById(R.id.input);
 
@@ -248,8 +264,10 @@ public class NewsDetailActivity extends HandlerActivity {
             if (mItem.newsCommentList == null || mItem.newsCommentList.isEmpty())
                 mReplyLayout.setVisibility(View.GONE);
             else {
+                mCommentList.addAll(mItem.newsCommentList);
+                mAdapter.notifyDataSetChanged();
+
                 mReplyLayout.setVisibility(View.VISIBLE);
-                // TODO:
             }
         }
     }
