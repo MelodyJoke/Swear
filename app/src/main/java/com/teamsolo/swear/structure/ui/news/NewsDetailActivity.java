@@ -283,7 +283,13 @@ public class NewsDetailActivity extends HandlerActivity {
         });
 
         mCommentButton.setOnClickListener(v -> {
-            // TODO:
+            if (mCommentList.isEmpty()) return;
+
+            Intent intent = new Intent(mContext, CommentsActivity.class);
+            intent.putExtra("count", mItem.commentNumber);
+            intent.putExtra("id", mItem.newsUuid);
+            intent.putParcelableArrayListExtra("list", (ArrayList<Comment>) mCommentList);
+            startActivity(intent);
         });
 
         mKeepButton.setOnClickListener(v -> {

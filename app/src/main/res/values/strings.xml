@@ -148,6 +148,9 @@
     <string name="news_detail_reply">热门评论</string>
     <string name="news_detail_comment">说点啥吧~</string>
 
+    <string name="news_comments_title">评论</string>
+    <string name="news_comments_count">共%1$s条</string>
+
     <!--knowledge-->
     <string name="nlg_nav">学堂</string>
 

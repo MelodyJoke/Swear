@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/colorBackgroundBase"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/tiny_margin"
+    android:paddingEnd="@dimen/tiny_margin"
+    android:paddingLeft="@dimen/tiny_margin"
+    android:paddingRight="@dimen/tiny_margin"
+    android:paddingStart="@dimen/tiny_margin"
+    android:paddingTop="@dimen/tiny_margin">
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_bg_white_corner"
+        android:gravity="start"
+        android:hint="@string/news_detail_comment"
+        android:maxLines="8"
+        android:minLines="4"
+        android:padding="@dimen/light_margin"
+        android:textAppearance="?android:textAppearanceSmall" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/tiny_margin"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:selectableItemBackground"
+            android:paddingBottom="@dimen/tiny_margin"
+            android:paddingEnd="@dimen/light_margin"
+            android:paddingLeft="@dimen/light_margin"
+            android:paddingRight="@dimen/light_margin"
+            android:paddingStart="@dimen/light_margin"
+            android:paddingTop="@dimen/tiny_margin"
+            android:text="@string/cancel" />
+
+        <TextView
+            android:id="@+id/confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/tiny_margin"
+            android:layout_marginStart="@dimen/tiny_margin"
+            android:background="?android:selectableItemBackground"
+            android:paddingBottom="@dimen/tiny_margin"
+            android:paddingEnd="@dimen/light_margin"
+            android:paddingLeft="@dimen/light_margin"
+            android:paddingRight="@dimen/light_margin"
+            android:paddingStart="@dimen/light_margin"
+            android:paddingTop="@dimen/tiny_margin"
+            android:text="@string/confirm" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -104,6 +104,12 @@
             android:label="@string/news_detail_title"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity
+            android:name=".structure.ui.news.CommentsActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:label="@string/news_comments_title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <!--orders-->
         <activity
