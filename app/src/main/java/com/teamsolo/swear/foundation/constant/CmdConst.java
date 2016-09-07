@@ -54,6 +54,9 @@ public interface CmdConst {
     // praise news
     String CMD_PRAISE_NEWS = "dolike";
 
+    // comment list
+    String CMD_GET_COMMENTS = "getcommentlist";
+
     // get orders
     String CMD_GET_ORDERS = "getorderlist";
 }
