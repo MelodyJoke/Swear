@@ -41,7 +41,8 @@ import com.teamsolo.swear.foundation.ui.widget.ClickableMovementMethod;
 import com.teamsolo.swear.foundation.ui.widget.HtmlSupportTextView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
-import com.teamsolo.swear.structure.ui.WebLinkActivity;
+import com.teamsolo.swear.structure.ui.common.GalleryActivity;
+import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
 import com.teamsolo.swear.structure.ui.news.adapter.CommentAdapter;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 
@@ -79,7 +80,7 @@ public class NewsDetailActivity extends HandlerActivity {
 
     private TextView mCountText, mCountText2;
 
-    private CheckedTextView mSlideButton, mCommentButton, mKeepButton, mPraiseButton;
+    private CheckedTextView mGalleryButton, mCommentButton, mKeepButton, mPraiseButton;
 
     private CommentAdapter mAdapter;
 
@@ -173,7 +174,7 @@ public class NewsDetailActivity extends HandlerActivity {
 
         mCountText = (TextView) findViewById(R.id.count);
         mCountText2 = (TextView) findViewById(R.id.count2);
-        mSlideButton = (CheckedTextView) findViewById(R.id.slide);
+        mGalleryButton = (CheckedTextView) findViewById(R.id.slide);
         mCommentButton = (CheckedTextView) findViewById(R.id.comment);
         mKeepButton = (CheckedTextView) findViewById(R.id.keep);
         mPraiseButton = (CheckedTextView) findViewById(R.id.praise);
@@ -245,7 +246,7 @@ public class NewsDetailActivity extends HandlerActivity {
                     }
                 }
 
-                mSlideButton.setVisibility(mContentText.getPictureUrls().isEmpty() ? View.GONE : View.VISIBLE);
+                mGalleryButton.setVisibility(mContentText.getPictureUrls().isEmpty() ? View.GONE : View.VISIBLE);
             } else mTagContainer.setVisibility(View.GONE);
         }
     }
@@ -278,8 +279,13 @@ public class NewsDetailActivity extends HandlerActivity {
             // TODO:
         });
 
-        mSlideButton.setOnClickListener(v -> {
-            // TODO:
+        mGalleryButton.setOnClickListener(v -> {
+            List<String> urls = mContentText.getPictureUrls();
+            if (urls == null || urls.isEmpty()) return;
+
+            Intent intent = new Intent(mContext, GalleryActivity.class);
+            intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
+            startActivity(intent);
         });
 
         mCommentButton.setOnClickListener(v -> {

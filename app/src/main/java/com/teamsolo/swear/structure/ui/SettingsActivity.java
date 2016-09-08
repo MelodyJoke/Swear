@@ -26,6 +26,7 @@ import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.ui.AppCompatPreferenceActivity;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
+import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
 
 import java.util.List;
 

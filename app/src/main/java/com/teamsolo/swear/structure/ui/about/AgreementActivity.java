@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.constant.NetConst;
-import com.teamsolo.swear.structure.ui.WebLinkActivity;
+import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
 
 import org.jetbrains.annotations.NotNull;
 

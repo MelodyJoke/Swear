@@ -15,6 +15,7 @@
 
     <color name="colorGray">#CDCDCD</color>
     <color name="colorDark">#959595</color>
+    <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
 
     <color name="colorTransparentFull">#00000000</color>

@@ -1,4 +1,4 @@
-package com.teamsolo.swear.structure.ui;
+package com.teamsolo.swear.structure.ui.common;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -28,6 +28,7 @@ import com.teamsolo.base.util.LogUtility;
 import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
+import com.teamsolo.swear.structure.ui.LoginActivity;
 import com.teamsolo.swear.structure.ui.about.AgreementActivity;
 
 import org.jetbrains.annotations.NotNull;

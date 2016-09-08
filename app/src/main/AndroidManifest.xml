@@ -72,10 +72,16 @@
             android:theme="@style/AppTheme.Translucent"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".structure.ui.WebLinkActivity"
+            android:name=".structure.ui.common.WebLinkActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity
+            android:name=".structure.ui.common.GalleryActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Translucent"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".structure.ui.SettingsActivity"
@@ -118,6 +124,7 @@
             android:label="@string/orders_title"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
     </application>
 
 </manifest>
