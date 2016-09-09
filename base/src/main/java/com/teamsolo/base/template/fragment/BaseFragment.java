@@ -47,6 +47,7 @@ public abstract class BaseFragment extends Fragment {
     protected OnFragmentInteractionListener mListener;
 
     public BaseFragment() {
+
     }
 
     @Override

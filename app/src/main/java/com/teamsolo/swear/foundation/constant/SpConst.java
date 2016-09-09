@@ -28,4 +28,6 @@ public interface SpConst {
     String SETTING_NOTICE_RINGTONE = "setting_notice_ringtone";
 
     String LAST_CHILD = "last_child";
+
+    String NEWS_COMMENT_CACHE = "news_comment_cache";
 }

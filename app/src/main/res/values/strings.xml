@@ -6,6 +6,7 @@
     <string name="accept">接受</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
+    <string name="clear">清除</string>
     <string name="ignore">忽略</string>
     <string name="unknown">未知</string>
     <string name="empty">无</string>
@@ -134,7 +135,7 @@
     <string name="pref_title_data_upgrade">检查更新</string>
 
     <!--school-->
-    <string name="school_nav">学校</string>
+    <string name="school_nav">首页</string>
 
     <!--training-->
     <string name="training_nav">培训</string>
@@ -150,6 +151,8 @@
 
     <string name="news_comments_title">评论</string>
     <string name="news_comments_count">共%1$s条</string>
+    <string name="news_comments_length">%1$d/%2$d</string>
+    <string name="news_comments_hint">评论不能为空</string>
 
     <!--knowledge-->
     <string name="nlg_nav">学堂</string>

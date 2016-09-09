@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -37,7 +38,9 @@ import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.constant.DbConst;
 import com.teamsolo.swear.foundation.constant.NetConst;
+import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.ui.widget.ClickableMovementMethod;
+import com.teamsolo.swear.foundation.ui.widget.CommentDialog;
 import com.teamsolo.swear.foundation.ui.widget.HtmlSupportTextView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
@@ -82,6 +85,8 @@ public class NewsDetailActivity extends HandlerActivity {
 
     private CheckedTextView mGalleryButton, mCommentButton, mKeepButton, mPraiseButton;
 
+    private CommentDialog mCommentDialog;
+
     private CommentAdapter mAdapter;
 
     private List<Comment> mCommentList = new ArrayList<>();
@@ -96,7 +101,7 @@ public class NewsDetailActivity extends HandlerActivity {
 
     private Subscriber<NewsDetailResp> subscriberDetail;
 
-    private Subscriber<CommonResponse> subscriberKeep, subscriberPraise;
+    private Subscriber<CommonResponse> subscriberKeep, subscriberPraise, subscriberComment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -178,6 +183,8 @@ public class NewsDetailActivity extends HandlerActivity {
         mCommentButton = (CheckedTextView) findViewById(R.id.comment);
         mKeepButton = (CheckedTextView) findViewById(R.id.keep);
         mPraiseButton = (CheckedTextView) findViewById(R.id.praise);
+
+        mCommentDialog = CommentDialog.newInstance(250);
     }
 
     @SuppressWarnings("deprecation")
@@ -265,6 +272,7 @@ public class NewsDetailActivity extends HandlerActivity {
             if (mItem.newsCommentList == null || mItem.newsCommentList.isEmpty())
                 mReplyLayout.setVisibility(View.GONE);
             else {
+                mCommentList.clear();
                 mCommentList.addAll(mItem.newsCommentList);
                 mAdapter.notifyDataSetChanged();
 
@@ -275,8 +283,49 @@ public class NewsDetailActivity extends HandlerActivity {
 
     @Override
     protected void bindListeners() {
-        mInputLayout.setOnClickListener(v -> {
-            // TODO:
+        mInputLayout.setOnClickListener(v -> mCommentDialog.show(getSupportFragmentManager(), ""));
+
+        mCommentDialog.setOnCancelButtonClickListener((v, editText) -> editText.getText().clear());
+
+        mCommentDialog.setOnConfirmButtonClickListener((v, editText) -> {
+            String reply = editText.getText().toString();
+
+            if (TextUtils.isEmpty(reply)) {
+                toast(R.string.news_comments_hint);
+                return;
+            }
+
+            if (TextUtils.isEmpty(mNewsUUId)) return;
+
+            Map<String, String> paras = new HashMap<>();
+            paras.put("CMD", CmdConst.CMD_NEWS_COMMENT);
+            paras.put("newsUuid", mNewsUUId);
+            paras.put("replyContent", reply);
+            paras.put("serviceType", "2");
+            subscriberComment = BaseHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    toast(RetrofitConfig.handleReqError(e));
+                }
+
+                @Override
+                public void onNext(CommonResponse commonResponse) {
+                    if (!RetrofitConfig.handleResp(commonResponse, mContext))
+                        toast(commonResponse.message);
+                    else {
+                        PreferenceManager.getDefaultSharedPreferences(mContext).edit()
+                                .putString(SpConst.NEWS_COMMENT_CACHE, "").apply();
+                        if (mCommentList.size() < 6) requestDetail();
+                    }
+                }
+            });
+
+            mCommentDialog.dismiss();
         });
 
         mGalleryButton.setOnClickListener(v -> {
@@ -505,5 +554,8 @@ public class NewsDetailActivity extends HandlerActivity {
 
         if (subscriberPraise != null && !subscriberPraise.isUnsubscribed())
             subscriberPraise.unsubscribe();
+
+        if (subscriberComment != null && !subscriberComment.isUnsubscribed())
+            subscriberComment.unsubscribe();
     }
 }

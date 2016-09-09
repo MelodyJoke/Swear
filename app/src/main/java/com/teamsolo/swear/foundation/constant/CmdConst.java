@@ -57,6 +57,9 @@ public interface CmdConst {
     // comment list
     String CMD_GET_COMMENTS = "getcommentlist";
 
+    // comment
+    String CMD_NEWS_COMMENT = "savecomment";
+
     // get orders
     String CMD_GET_ORDERS = "getorderlist";
 }

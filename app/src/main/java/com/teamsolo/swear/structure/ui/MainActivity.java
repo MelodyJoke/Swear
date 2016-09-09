@@ -499,7 +499,7 @@ public class MainActivity extends HandlerActivity implements
 
     private void initFragment() {
         if (!hasInit) {
-            fragments.append(FRAG_SCHOOL, OrdersFragment.newInstance(FRAG_SCHOOL));
+            fragments.append(FRAG_SCHOOL, NewsFragment.newInstance());
 
             fragmentManager.beginTransaction()
                     .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
