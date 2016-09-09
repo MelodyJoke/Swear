@@ -33,6 +33,8 @@ import java.util.Locale;
 @SuppressWarnings("WeakerAccess, unused")
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
+    private static int aimHeightSmall = -1, aimHeightLarge = -1;
+
     private Context mContext;
 
     private List<NewsDummy> mList;
@@ -196,40 +198,61 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         } else holder.itemView.setOnClickListener(null);
 
         if (viewType == 2)
-            holder.coverImage.post(() -> {
-                int width = holder.coverImage.getMeasuredWidth();
+            if (aimHeightSmall < 0)
+                holder.coverImage.post(() -> {
+                    int width = holder.coverImage.getMeasuredWidth();
+                    ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
+                    aimHeightSmall = width * 246 / 357;
+                    if (params.height != aimHeightSmall) {
+                        params.height = aimHeightSmall;
+                        holder.coverImage.setLayoutParams(params);
+                    }
+                });
+            else {
                 ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
-                int height = params.height;
-                int aimHeight = width * 246 / 357;
-                if (height != aimHeight) {
-                    params.height = aimHeight;
+                if (params.height != aimHeightSmall) {
+                    params.height = aimHeightSmall;
                     holder.coverImage.setLayoutParams(params);
                 }
-            });
+            }
 
         if (viewType == 3)
-            holder.coverLayout.post(() -> {
-                int width = holder.coverLayout.getMeasuredWidth();
+            if (aimHeightLarge < 0)
+                holder.coverLayout.post(() -> {
+                    int width = holder.coverLayout.getMeasuredWidth();
+                    ViewGroup.LayoutParams params = holder.coverLayout.getLayoutParams();
+                    aimHeightLarge = width * 420 / 1008;
+                    if (params.height != aimHeightLarge) {
+                        params.height = aimHeightLarge;
+                        holder.coverLayout.setLayoutParams(params);
+                    }
+                });
+            else {
                 ViewGroup.LayoutParams params = holder.coverLayout.getLayoutParams();
-                int height = params.height;
-                int aimHeight = width * 420 / 1008;
-                if (height != aimHeight) {
-                    params.height = aimHeight;
+                if (params.height != aimHeightLarge) {
+                    params.height = aimHeightLarge;
                     holder.coverLayout.setLayoutParams(params);
                 }
-            });
+            }
 
         if (viewType == 4)
-            holder.coverLayout.post(() -> {
-                int width = holder.coverLayout.getMeasuredWidth();
+            if (aimHeightSmall < 0)
+                holder.coverLayout.post(() -> {
+                    int width = holder.coverLayout.getMeasuredWidth();
+                    ViewGroup.LayoutParams params = holder.coverLayout.getLayoutParams();
+                    aimHeightSmall = width * 246 / 1008;
+                    if (params.height != aimHeightSmall) {
+                        params.height = aimHeightSmall;
+                        holder.coverLayout.setLayoutParams(params);
+                    }
+                });
+            else {
                 ViewGroup.LayoutParams params = holder.coverLayout.getLayoutParams();
-                int height = params.height;
-                int aimHeight = width * 246 / 1008;
-                if (height != aimHeight) {
-                    params.height = aimHeight;
+                if (params.height != aimHeightSmall) {
+                    params.height = aimHeightSmall;
                     holder.coverLayout.setLayoutParams(params);
                 }
-            });
+            }
     }
 
     @Override

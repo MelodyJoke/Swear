@@ -29,6 +29,8 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess, unused")
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
+    private static int aimHeight = -1;
+
     private Context mContext;
 
     private List<Order> mList;
@@ -138,16 +140,23 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             holder.bottomLayout.setVisibility(View.GONE);
         }
 
-        holder.coverImage.post(() -> {
-            int width = holder.coverImage.getMeasuredWidth();
+        if (aimHeight < 0)
+            holder.coverImage.post(() -> {
+                int width = holder.coverImage.getMeasuredWidth();
+                ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
+                aimHeight = width * 246 / 357;
+                if (params.height != aimHeight) {
+                    params.height = aimHeight;
+                    holder.coverImage.setLayoutParams(params);
+                }
+            });
+        else {
             ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
-            int height = params.height;
-            int aimHeight = width * 246 / 357;
-            if (height != aimHeight) {
+            if (params.height != aimHeight) {
                 params.height = aimHeight;
                 holder.coverImage.setLayoutParams(params);
             }
-        });
+        }
     }
 
     @Override
