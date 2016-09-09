@@ -167,6 +167,7 @@ public class LoginActivity extends HandlerActivity {
 
         mSkipButton.setOnClickListener(view -> {
             UserHelper.clear(mContext);
+            RetrofitConfig.clearCookies();
 
             startActivity(new Intent(mContext, MainActivity.class));
             finish();

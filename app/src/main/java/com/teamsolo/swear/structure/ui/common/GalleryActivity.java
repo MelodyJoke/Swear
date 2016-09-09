@@ -27,7 +27,6 @@ import java.util.List;
  * date: 2016/9/8
  * version: 0.0.0.1
  */
-
 public class GalleryActivity extends BaseActivity implements BaseFragment.OnFragmentInteractionListener {
 
     private List<String> mList;
@@ -50,13 +49,11 @@ public class GalleryActivity extends BaseActivity implements BaseFragment.OnFrag
     }
 
     @Override
-    @SuppressWarnings("Convert2streamapi")
     protected void initViews() {
         ViewPager mContainer = (ViewPager) findViewById(R.id.container);
 
-        for (String url :
-                mList)
-            mFragments.add(ImageFragment.newInstance(url));
+        for (int i = 0; i < mList.size(); i++)
+            mFragments.add(ImageFragment.newInstance(mList.get(i), i));
 
         mContainer.setAdapter(new StatePagerAdapter(getSupportFragmentManager(), new String[0], mFragments));
     }
@@ -68,7 +65,8 @@ public class GalleryActivity extends BaseActivity implements BaseFragment.OnFrag
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        onBackPressed();
+        int position = Integer.parseInt(uri.getQueryParameter("position"));
+        if (position == 0 || position == mList.size() - 1) onBackPressed();
     }
 
     public static class ImageFragment extends BaseFragment {
@@ -77,10 +75,13 @@ public class GalleryActivity extends BaseActivity implements BaseFragment.OnFrag
 
         private String url;
 
-        public static ImageFragment newInstance(String url) {
+        private int position;
+
+        public static ImageFragment newInstance(String url, int position) {
             ImageFragment imageFragment = new ImageFragment();
             Bundle args = new Bundle();
             args.putString("url", url);
+            args.putInt("position", position);
             imageFragment.setArguments(args);
 
             return imageFragment;
@@ -100,6 +101,7 @@ public class GalleryActivity extends BaseActivity implements BaseFragment.OnFrag
         @Override
         protected void getBundle(@NotNull Bundle bundle) {
             url = bundle.getString("url");
+            position = bundle.getInt("position");
         }
 
         @Override
@@ -114,10 +116,10 @@ public class GalleryActivity extends BaseActivity implements BaseFragment.OnFrag
 
         @Override
         protected void bindListeners() {
-            mImageView.setOnClickListener(v -> onInteraction(null));
+            mImageView.setOnClickListener(v -> onInteraction(Uri.parse("action?position=" + position)));
 
             mImageView.setOnLongClickListener(v -> {
-                // TODO:
+                // TODO: save or share
                 return true;
             });
         }
