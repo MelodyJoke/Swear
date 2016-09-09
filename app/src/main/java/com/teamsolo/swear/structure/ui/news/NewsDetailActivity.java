@@ -184,7 +184,7 @@ public class NewsDetailActivity extends HandlerActivity {
         mKeepButton = (CheckedTextView) findViewById(R.id.keep);
         mPraiseButton = (CheckedTextView) findViewById(R.id.praise);
 
-        mCommentDialog = CommentDialog.newInstance(250);
+        mCommentDialog = CommentDialog.newInstance(500);
     }
 
     @SuppressWarnings("deprecation")
@@ -318,6 +318,7 @@ public class NewsDetailActivity extends HandlerActivity {
                     if (!RetrofitConfig.handleResp(commonResponse, mContext))
                         toast(commonResponse.message);
                     else {
+                        toast(commonResponse.message);
                         PreferenceManager.getDefaultSharedPreferences(mContext).edit()
                                 .putString(SpConst.NEWS_COMMENT_CACHE, "").apply();
                         if (mCommentList.size() < 6) requestDetail();
