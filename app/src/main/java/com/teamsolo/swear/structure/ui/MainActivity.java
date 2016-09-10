@@ -39,6 +39,7 @@ import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
+import com.teamsolo.swear.foundation.ui.SearchAble;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
@@ -47,6 +48,7 @@ import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
 import com.teamsolo.swear.structure.ui.news.NewsFragment;
+import com.teamsolo.swear.structure.ui.training.TrainingFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -211,7 +213,13 @@ public class MainActivity extends HandlerActivity implements
     protected void bindListeners() {
         mFab.setOnClickListener(view -> {
             if (!hasInit) return;
-            startChooseChild();
+
+            boolean isSearch = (boolean) view.getTag();
+            if (!isSearch) startChooseChild();
+            else {
+                if (currentFragment instanceof SearchAble)
+                    ((SearchAble) currentFragment).search(null);
+            }
         });
 
         mNavigationView.setNavigationItemSelectedListener(this);
@@ -232,10 +240,20 @@ public class MainActivity extends HandlerActivity implements
                 if (!hasInit) return;
 
                 ActionBar actionBar = getSupportActionBar();
+                List<Child> children = UserHelper.getChildren(mContext);
 
                 switch (position) {
                     case 0:
                         if (actionBar != null) actionBar.setTitle(R.string.app_name);
+
+                        mFab.setTag(false);
+                        mFab.setImageResource(R.drawable.ic_group_white_24dp);
+                        if (children == null || children.size() <= 1) {
+                            if (mFab.isShown()) mFab.hide();
+                        } else {
+                            if (!mFab.isShown()) mFab.show();
+                        }
+
                         if (fragments.get(FRAG_SCHOOL) == null) {
                             Fragment fragmentSchool = OrdersFragment.newInstance(FRAG_SCHOOL);
                             fragments.append(FRAG_SCHOOL, fragmentSchool);
@@ -257,8 +275,13 @@ public class MainActivity extends HandlerActivity implements
 
                     case 1:
                         if (actionBar != null) actionBar.setTitle(R.string.training_nav);
+
+                        mFab.setTag(true);
+                        mFab.setImageResource(R.drawable.ic_search_white_24dp);
+                        if (!mFab.isShown()) mFab.show();
+
                         if (fragments.get(FRAG_TRAINING) == null) {
-                            Fragment fragmentTraining = OrdersFragment.newInstance(FRAG_TRAINING);
+                            Fragment fragmentTraining = TrainingFragment.newInstance();
                             fragments.append(FRAG_TRAINING, fragmentTraining);
                             fragmentManager.beginTransaction()
                                     .add(R.id.content, fragments.get(FRAG_TRAINING), String.valueOf(FRAG_TRAINING))
@@ -278,6 +301,11 @@ public class MainActivity extends HandlerActivity implements
 
                     case 2:
                         if (actionBar != null) actionBar.setTitle(R.string.news_nav);
+
+                        mFab.setTag(false);
+                        mFab.setImageResource(R.drawable.ic_group_white_24dp);
+                        if (mFab.isShown()) mFab.hide();
+
                         if (fragments.get(FRAG_NEWS) == null) {
                             Fragment fragmentNews = NewsFragment.newInstance();
                             fragments.append(FRAG_NEWS, fragmentNews);
@@ -299,6 +327,11 @@ public class MainActivity extends HandlerActivity implements
 
                     case 3:
                         if (actionBar != null) actionBar.setTitle(R.string.nlg_nav);
+
+                        mFab.setTag(true);
+                        mFab.setImageResource(R.drawable.ic_search_white_24dp);
+                        if (!mFab.isShown()) mFab.show();
+
                         if (fragments.get(FRAG_NLG) == null) {
                             Fragment fragmentNlg = OrdersFragment.newInstance(FRAG_NLG);
                             fragments.append(FRAG_NLG, fragmentNlg);
