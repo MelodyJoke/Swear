@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -17,13 +18,16 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Comment;
 import com.teamsolo.swear.foundation.bean.resp.CommentsResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
+import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
+import com.teamsolo.swear.foundation.ui.widget.CommentDialog;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.news.adapter.CommentAdapter;
@@ -51,6 +55,10 @@ public class CommentsActivity extends HandlerActivity implements
 
     private View mInputLayout;
 
+    private TextView mCountText;
+
+    private CommentDialog mCommentDialog;
+
     private CommentAdapter mAdapter;
 
     private List<Comment> mList = new ArrayList<>();
@@ -62,6 +70,8 @@ public class CommentsActivity extends HandlerActivity implements
     private long count;
 
     private Subscriber<CommentsResp> subscriber;
+
+    private Subscriber<CommonResponse> subscriberComment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +89,7 @@ public class CommentsActivity extends HandlerActivity implements
         newsUUId = intent.getStringExtra("id");
         comments = intent.getParcelableArrayListExtra("list");
         if (comments != null) mList.addAll(comments);
-        if (mList.size() >= 6 && count > 6) mList.add(null);
+        if (mList.size() >= 6) mList.add(null);
     }
 
     @Override
@@ -115,17 +125,62 @@ public class CommentsActivity extends HandlerActivity implements
 
         mInputLayout = findViewById(R.id.input);
 
-        TextView mCountText = (TextView) findViewById(R.id.count);
+        mCountText = (TextView) findViewById(R.id.count);
         long realCount = count;
         if (realCount < mList.size()) realCount = mList.size();
         mCountText.setText(String.format(getString(R.string.news_comments_count),
                 realCount > 99999 ? "99999+" : String.valueOf(realCount)));
+
+        mCommentDialog = CommentDialog.newInstance(500);
     }
 
     @Override
     protected void bindListeners() {
-        mInputLayout.setOnClickListener(v -> {
-            // TODO:
+        mInputLayout.setOnClickListener(v -> mCommentDialog.show(getSupportFragmentManager(), ""));
+
+        mCommentDialog.setOnCancelButtonClickListener((v, editText) -> editText.getText().clear());
+
+        mCommentDialog.setOnConfirmButtonClickListener((v, editText) -> {
+            String reply = editText.getText().toString();
+
+            if (TextUtils.isEmpty(reply)) {
+                toast(R.string.news_comments_hint);
+                return;
+            }
+
+            if (TextUtils.isEmpty(newsUUId)) return;
+
+            Map<String, String> paras = new HashMap<>();
+            paras.put("CMD", CmdConst.CMD_NEWS_COMMENT);
+            paras.put("newsUuid", newsUUId);
+            paras.put("replyContent", reply);
+            paras.put("serviceType", "2");
+            subscriberComment = BaseHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    toast(RetrofitConfig.handleReqError(e));
+                }
+
+                @Override
+                public void onNext(CommonResponse commonResponse) {
+                    if (!RetrofitConfig.handleResp(commonResponse, mContext))
+                        toast(commonResponse.message);
+                    else {
+                        toast(commonResponse.message);
+                        PreferenceManager.getDefaultSharedPreferences(mContext).edit()
+                                .putString(SpConst.NEWS_COMMENT_CACHE, "").apply();
+                        if (mList.size() > 0 && mList.get(mList.size() - 1) != null)
+                            CommentsActivity.this.request();
+                    }
+                }
+            });
+
+            mCommentDialog.dismiss();
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -159,12 +214,24 @@ public class CommentsActivity extends HandlerActivity implements
                 if (!RetrofitConfig.handleResp(commentsResp, mContext))
                     toast(commentsResp.message);
                 else {
-                    List<Comment> comments = commentsResp.newsCommentList;
-                    if (comments != null) {
+                    List<Comment> temp = commentsResp.newsCommentList;
+                    if (temp != null) {
                         if (mList.get(mList.size() - 1) == null) mList.remove(mList.size() - 1);
                         mList.addAll(commentsResp.newsCommentList);
-                        if (comments.size() >= 10) mList.add(null);
+                        if (temp.size() >= 10) mList.add(null);
                         mAdapter.notifyDataSetChanged();
+
+                        long realCount = count;
+                        if (realCount < mList.size()) realCount = mList.size();
+                        mCountText.setText(String.format(getString(R.string.news_comments_count),
+                                realCount > 99999 ? "99999+" : String.valueOf(realCount)));
+
+                        comments.clear();
+                        if (mList.size() < 6) comments.addAll(mList);
+                        else if (mList.size() == 6 && mList.get(5) == null)
+                            comments.addAll(mList.subList(0, 5));
+                        else if (mList.size() > 6 || mList.size() == 6 && mList.get(5) != null)
+                            comments.addAll(mList.subList(0, 6));
                     }
                 }
             }
@@ -175,7 +242,7 @@ public class CommentsActivity extends HandlerActivity implements
     public void onRefresh() {
         mList.clear();
         mList.addAll(comments);
-        if (mList.size() >= 6 && count > 6) mList.add(null);
+        if (mList.size() >= 6) mList.add(null);
 
         mSwipeRefreshLayout.setRefreshing(false);
         mAdapter.notifyDataSetChanged();
@@ -189,7 +256,11 @@ public class CommentsActivity extends HandlerActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
+
+        if (subscriberComment != null && !subscriberComment.isUnsubscribed())
+            subscriberComment.unsubscribe();
     }
 
     @Override

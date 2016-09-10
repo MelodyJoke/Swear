@@ -126,6 +126,7 @@ public class CommentDialog extends BaseDialog {
 
                 if (s.length() > maxLength) {
                     mInputEdit.setText(s.subSequence(0, maxLength));
+                    mInputEdit.setSelection(maxLength);
                     mCountText.setText(String.format(
                             getContext().getString(R.string.news_comments_length), maxLength, maxLength));
                 } else
