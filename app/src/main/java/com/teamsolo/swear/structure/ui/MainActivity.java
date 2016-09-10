@@ -59,6 +59,8 @@ import java.util.Map;
 
 import rx.Subscriber;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.teamsolo.swear.structure.util.UserHelper.getChildren;
 
 /**
@@ -190,7 +192,7 @@ public class MainActivity extends HandlerActivity implements
         }
 
         mTabLayout = (TabLayout) findViewById(R.id.tab);
-        mTabLayout.setVisibility(View.GONE);
+        mTabLayout.setVisibility(GONE);
 
         mBottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bnb);
         mBottomNavigationBar.setFab(mFab);
@@ -240,7 +242,6 @@ public class MainActivity extends HandlerActivity implements
                 if (!hasInit) return;
 
                 ActionBar actionBar = getSupportActionBar();
-                List<Child> children = UserHelper.getChildren(mContext);
 
                 switch (position) {
                     case 0:
@@ -248,11 +249,8 @@ public class MainActivity extends HandlerActivity implements
 
                         mFab.setTag(false);
                         mFab.setImageResource(R.drawable.ic_group_white_24dp);
-                        if (children == null || children.size() <= 1) {
-                            if (mFab.isShown()) mFab.hide();
-                        } else {
-                            if (!mFab.isShown()) mFab.show();
-                        }
+                        List<Child> children = UserHelper.getChildren(mContext);
+                        mFab.setVisibility(children == null || children.size() <= 1 ? GONE : VISIBLE);
 
                         if (fragments.get(FRAG_SCHOOL) == null) {
                             Fragment fragmentSchool = OrdersFragment.newInstance(FRAG_SCHOOL);
@@ -278,7 +276,7 @@ public class MainActivity extends HandlerActivity implements
 
                         mFab.setTag(true);
                         mFab.setImageResource(R.drawable.ic_search_white_24dp);
-                        if (!mFab.isShown()) mFab.show();
+                        mFab.setVisibility(VISIBLE);
 
                         if (fragments.get(FRAG_TRAINING) == null) {
                             Fragment fragmentTraining = TrainingFragment.newInstance();
@@ -304,7 +302,7 @@ public class MainActivity extends HandlerActivity implements
 
                         mFab.setTag(false);
                         mFab.setImageResource(R.drawable.ic_group_white_24dp);
-                        if (mFab.isShown()) mFab.hide();
+                        mFab.setVisibility(GONE);
 
                         if (fragments.get(FRAG_NEWS) == null) {
                             Fragment fragmentNews = NewsFragment.newInstance();
@@ -330,7 +328,7 @@ public class MainActivity extends HandlerActivity implements
 
                         mFab.setTag(true);
                         mFab.setImageResource(R.drawable.ic_search_white_24dp);
-                        if (!mFab.isShown()) mFab.show();
+                        mFab.setVisibility(VISIBLE);
 
                         if (fragments.get(FRAG_NLG) == null) {
                             Fragment fragmentNlg = OrdersFragment.newInstance(FRAG_NLG);
@@ -533,6 +531,7 @@ public class MainActivity extends HandlerActivity implements
     private void initFragment() {
         if (!hasInit) {
             fragments.append(FRAG_SCHOOL, NewsFragment.newInstance());
+            mFab.setTag(false);
 
             fragmentManager.beginTransaction()
                     .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
@@ -570,9 +569,10 @@ public class MainActivity extends HandlerActivity implements
             }
 
             List<Child> children = UserHelper.getChildren(mContext);
-            mFab.setVisibility(children == null || children.size() <= 1 ? View.GONE : View.VISIBLE);
-            mChildPortraitImage.setVisibility(children == null || children.size() < 1 ? View.GONE : View.VISIBLE);
-            mChildText.setVisibility(children == null || children.size() < 1 ? View.GONE : View.VISIBLE);
+            mFab.setVisibility(children == null || children.size() <= 1 ? GONE : VISIBLE);
+
+            mChildPortraitImage.setVisibility(children == null || children.size() < 1 ? GONE : VISIBLE);
+            mChildText.setVisibility(children == null || children.size() < 1 ? GONE : VISIBLE);
 
             handler.sendEmptyMessage(3);
         });

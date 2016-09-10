@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.drawee.view.SimpleDraweeView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:actualImageScaleType="focusCrop"
+    app:fadeDuration="300"
+    app:failureImage="@mipmap/loading_failed_large"
+    app:failureImageScaleType="centerInside"
+    app:placeholderImage="@mipmap/loading_holder_large"
+    app:placeholderImageScaleType="centerInside" />

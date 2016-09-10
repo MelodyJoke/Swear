@@ -12,17 +12,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterViewFlipper;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
 import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
+import com.teamsolo.swear.foundation.ui.widget.SlideShowPlayHandler;
+import com.teamsolo.swear.foundation.ui.widget.SlideShowView;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * description: training fragment
@@ -30,17 +33,21 @@ import org.jetbrains.annotations.NotNull;
  * date: 2016/9/10
  * version: 0.0.0.1
  */
-public class TrainingFragment extends HandlerFragment implements Refreshable, SearchAble, ScrollAble {
+public class TrainingFragment extends HandlerFragment implements
+        Refreshable, SearchAble, ScrollAble,
+        SlideShowView.SlideShowParent {
 
     private NestedScrollView mContentView;
 
-    private AdapterViewFlipper mSlideShow;
+    private SlideShowView mSlideShow;
 
     private RecyclerView mGridView;
 
     private TabLayout mTabLayout;
 
     private ViewPager mContainer;
+
+    private SlideShowPlayHandler mSlideShowHandler;
 
     public static TrainingFragment newInstance() {
         TrainingFragment fragment = new TrainingFragment();
@@ -70,31 +77,18 @@ public class TrainingFragment extends HandlerFragment implements Refreshable, Se
     protected void initViews() {
         mContentView = (NestedScrollView) findViewById(R.id.content);
 
-        mSlideShow = (AdapterViewFlipper) findViewById(R.id.slide);
-        mSlideShow.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return 2;
-            }
+        mSlideShow = (SlideShowView) findViewById(R.id.slide);
 
-            @Override
-            public Object getItem(int position) {
-                return null;
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return 0;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                ImageView imageView = new ImageView(mContext);
-                imageView.setImageResource(position == 0 ? R.mipmap.loading_holder_large : R.mipmap.loading_failed_large);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                return imageView;
-            }
-        });
+        List<SlideShowView.SlideShowDummy> urls = new ArrayList<>();
+        urls.add(new Test("http://www.tara-china.cn/UploadFiles/Introduce_Members/2016/3/201603191209116196.jpg"));
+        urls.add(new Test("http://www.tara-china.cn/UploadFiles/Introduce_Members/2016/3/201603191209137660.jpg"));
+        urls.add(new Test("http://www.tara-china.cn/UploadFiles/Introduce_Members/2016/3/201603191209161126.jpg"));
+        urls.add(new Test("http://www.tara-china.cn/UploadFiles/Introduce_Members/2016/3/201603191209172768.jpg"));
+        urls.add(new Test("http://www.tara-china.cn/UploadFiles/Introduce_Members/2016/3/201603191209206027.jpg"));
+        mSlideShow.setDummies(urls);
+        mSlideShowHandler = new SlideShowPlayHandler(new WeakReference<>(this), 4000);
+        mSlideShow.setSlideShowHandler(mSlideShowHandler);
+        mSlideShow.startFlipping();
 
         mGridView = (RecyclerView) findViewById(R.id.gridView);
         mGridView.setHasFixedSize(true);
@@ -106,9 +100,25 @@ public class TrainingFragment extends HandlerFragment implements Refreshable, Se
         mTabLayout.setupWithViewPager(mContainer);
     }
 
+    class Test implements SlideShowView.SlideShowDummy {
+
+        String url;
+
+        Test(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public String getUrl() {
+            return url;
+        }
+    }
+
     @Override
     protected void bindListeners() {
-
+        mSlideShow.setOnItemClickListener((view, position, dummy) -> {
+            if (dummy instanceof Test) toast(((Test) dummy).url);
+        });
     }
 
     private void request() {
@@ -130,6 +140,16 @@ public class TrainingFragment extends HandlerFragment implements Refreshable, Se
     public void scroll(Uri uri) {
         System.out.println("scroll");
         mContentView.scrollTo(0, 0);
+    }
+
+    @Override
+    public SlideShowPlayHandler getHandler() {
+        return mSlideShowHandler;
+    }
+
+    @Override
+    public SlideShowView getSlideShowView() {
+        return mSlideShow;
     }
 
     @Override
