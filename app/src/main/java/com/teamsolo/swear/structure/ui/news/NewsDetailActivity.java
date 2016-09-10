@@ -278,6 +278,11 @@ public class NewsDetailActivity extends HandlerActivity {
 
                 mReplyLayout.setVisibility(View.VISIBLE);
             }
+
+            long realCount = mItem.commentNumber;
+            if (mCommentList.size() > realCount) realCount = mCommentList.size();
+            mCountText.setText(realCount > 9999 ? "9999+" : String.valueOf(realCount));
+            mCountText.setVisibility(realCount > 0 ? View.VISIBLE : View.GONE);
         }
     }
 

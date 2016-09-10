@@ -127,7 +127,10 @@ public class CommentsActivity extends HandlerActivity implements
 
         mCountText = (TextView) findViewById(R.id.count);
         long realCount = count;
-        if (realCount < mList.size()) realCount = mList.size();
+        if (realCount < mList.size()) {
+            realCount = mList.size();
+            if (mList.get(mList.size() - 1) == null) realCount--;
+        }
         mCountText.setText(String.format(getString(R.string.news_comments_count),
                 realCount > 99999 ? "99999+" : String.valueOf(realCount)));
 
@@ -222,7 +225,10 @@ public class CommentsActivity extends HandlerActivity implements
                         mAdapter.notifyDataSetChanged();
 
                         long realCount = count;
-                        if (realCount < mList.size()) realCount = mList.size();
+                        if (realCount < mList.size()) {
+                            realCount = mList.size();
+                            if (mList.get(mList.size() - 1) == null) realCount--;
+                        }
                         mCountText.setText(String.format(getString(R.string.news_comments_count),
                                 realCount > 99999 ? "99999+" : String.valueOf(realCount)));
 
