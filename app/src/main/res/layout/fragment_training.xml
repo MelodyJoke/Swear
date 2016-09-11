@@ -30,7 +30,7 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:background="@color/colorBackground" />
 
-        <android.support.v4.view.ViewPager
+        <com.teamsolo.swear.foundation.ui.widget.WrappingViewPager
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

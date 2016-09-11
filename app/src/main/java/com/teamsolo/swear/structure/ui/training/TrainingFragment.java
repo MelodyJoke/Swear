@@ -7,7 +7,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,6 +30,7 @@ import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
 import com.teamsolo.swear.foundation.ui.widget.SlideShowPlayHandler;
 import com.teamsolo.swear.foundation.ui.widget.SlideShowView;
+import com.teamsolo.swear.foundation.ui.widget.WrappingViewPager;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
@@ -60,10 +60,6 @@ public class TrainingFragment extends HandlerFragment implements
     private NestedScrollView mContentView;
 
     private SlideShowView mSlideShow;
-
-    private TabLayout mTabLayout;
-
-    private ViewPager mContainer;
 
     private SlideShowPlayHandler mSlideShowHandler;
 
@@ -155,10 +151,10 @@ public class TrainingFragment extends HandlerFragment implements
 
             }
         };
-        mContainer = (ViewPager) findViewById(R.id.container);
+        WrappingViewPager mContainer = (WrappingViewPager) findViewById(R.id.container);
         mContainer.setAdapter(mPagerAdapter);
 
-        mTabLayout = (TabLayout) findViewById(R.id.tab);
+        TabLayout mTabLayout = (TabLayout) findViewById(R.id.tab);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mContainer);
 
