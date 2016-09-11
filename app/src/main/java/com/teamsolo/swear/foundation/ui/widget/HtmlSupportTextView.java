@@ -181,7 +181,7 @@ public class HtmlSupportTextView extends TextView {
                 @Override
                 protected void onNewResultImpl(Bitmap bitmap) {
                     if (bitmap != null && !bitmap.isRecycled()) {
-                        caches.put(url, new BitmapDrawable(getContext().getResources(), bitmap));
+                        caches.put(url, new BitmapDrawable(getContext().getResources(), bitmap.copy(bitmap.getConfig(), false)));
                         LogUtility.i(TAG, "download success: " + url);
                     } else {
                         caches.put(url, getContext().getResources().getDrawable(R.mipmap.loading_failed_web));
@@ -259,5 +259,20 @@ public class HtmlSupportTextView extends TextView {
 
     public interface onClickListener {
         void onClick(View v, String link);
+    }
+
+    public void recycle() {
+        for (Map.Entry<String, Drawable> entry
+                : caches.entrySet()) {
+            Drawable drawable = entry.getValue();
+            if (drawable instanceof BitmapDrawable) {
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+                if (bitmap != null && !bitmap.isRecycled()) bitmap.recycle();
+            }
+        }
+
+        caches.clear();
+        caches = null;
     }
 }

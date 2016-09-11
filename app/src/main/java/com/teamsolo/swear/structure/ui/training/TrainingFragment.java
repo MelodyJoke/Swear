@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,8 +19,10 @@ import android.view.ViewGroup;
 import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Activity;
+import com.teamsolo.swear.foundation.bean.Classify;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
+import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
@@ -29,6 +32,7 @@ import com.teamsolo.swear.foundation.ui.widget.SlideShowView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
+import com.teamsolo.swear.structure.ui.training.adapter.ClassifyAdapter;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -55,11 +59,11 @@ public class TrainingFragment extends HandlerFragment implements
 
     private SlideShowView mSlideShow;
 
-    private RecyclerView mGridView;
-
     private TabLayout mTabLayout;
 
     private ViewPager mContainer;
+
+    private ClassifyAdapter mClassifyAdapter;
 
     private SlideShowPlayHandler mSlideShowHandler;
 
@@ -68,6 +72,8 @@ public class TrainingFragment extends HandlerFragment implements
     private Subscriber<ActivitiesResp> subscriberActivity;
 
     private List<SlideShowView.SlideShowDummy> dummies = new ArrayList<>();
+
+    private List<Classify> classifies = new ArrayList<>();
 
     public static TrainingFragment newInstance() {
         TrainingFragment fragment = new TrainingFragment();
@@ -104,14 +110,31 @@ public class TrainingFragment extends HandlerFragment implements
         mSlideShow.setSlideShowHandler(mSlideShowHandler);
         mSlideShow.startFlipping();
 
-        mGridView = (RecyclerView) findViewById(R.id.gridView);
+        RecyclerView mGridView = (RecyclerView) findViewById(R.id.gridView);
         mGridView.setHasFixedSize(true);
+        GridLayoutManager manager = new GridLayoutManager(mContext, 4);
+        manager.setAutoMeasureEnabled(true);
+        mGridView.setLayoutManager(manager);
         mGridView.setItemAnimator(new DefaultItemAnimator());
+        mClassifyAdapter = new ClassifyAdapter(mContext, classifies);
+        mGridView.setAdapter(mClassifyAdapter);
+        mGridView.setNestedScrollingEnabled(false);
+        mGridView.setFocusable(false);
 
         mTabLayout = (TabLayout) findViewById(R.id.tab);
         mContainer = (ViewPager) findViewById(R.id.container);
 
         mTabLayout.setupWithViewPager(mContainer);
+
+        mSlideShow.post(() -> {
+            int width = mSlideShow.getMeasuredWidth();
+            int aimHeight = width * 369 / 1080;
+            ViewGroup.LayoutParams params = mSlideShow.getLayoutParams();
+            if (params.height != aimHeight) {
+                params.height = aimHeight;
+                mSlideShow.setLayoutParams(params);
+            }
+        });
     }
 
     @Override
@@ -131,6 +154,11 @@ public class TrainingFragment extends HandlerFragment implements
                 intent.putExtra("canShare", true);
                 startActivity(intent);
             }
+        });
+
+        mClassifyAdapter.setOnItemClickListener((view, classify) -> {
+            // TODO:
+            System.out.println(classify.name);
         });
     }
 
@@ -173,6 +201,40 @@ public class TrainingFragment extends HandlerFragment implements
         });
     }
 
+    private void requestClassifies(int position) {
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_GET_CLASSIFIES);
+        paras.put("serviceType", "5");
+        paras.put("type", String.valueOf(position));
+
+        BaseHttpUrlRequests.getInstance().getClassifies(paras, new Subscriber<ClassifiesResp>() {
+            @Override
+            public void onCompleted() {
+                handler.sendEmptyMessage(2);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+                handler.sendEmptyMessage(2);
+            }
+
+            @Override
+            public void onNext(ClassifiesResp classifiesResp) {
+                if (!RetrofitConfig.handleResp(classifiesResp, mContext))
+                    toast(classifiesResp.message);
+                else {
+                    classifies.clear();
+                    List<Classify> temp = classifiesResp.classifyList;
+                    if (temp != null && !temp.isEmpty()) {
+                        classifies.addAll(temp);
+                        mClassifyAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     public void refresh(Uri uri) {
         handler.sendEmptyMessage(0);
@@ -209,6 +271,10 @@ public class TrainingFragment extends HandlerFragment implements
                 break;
 
             case 1:
+                new Thread(() -> requestClassifies(1)).start();
+                break;
+
+            case 2:
                 onInteraction(Uri.parse("refresh?ready=true"));
                 isRequesting = false;
                 break;

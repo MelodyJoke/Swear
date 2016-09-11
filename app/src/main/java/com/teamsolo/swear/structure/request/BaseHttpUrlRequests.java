@@ -3,6 +3,7 @@ package com.teamsolo.swear.structure.request;
 import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.swear.foundation.bean.req.ActivitiesReq;
 import com.teamsolo.swear.foundation.bean.req.ChildChooseReq;
+import com.teamsolo.swear.foundation.bean.req.ClassifiesReq;
 import com.teamsolo.swear.foundation.bean.req.CommentsReq;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
 import com.teamsolo.swear.foundation.bean.req.NewsDetailReq;
@@ -10,6 +11,7 @@ import com.teamsolo.swear.foundation.bean.req.NewsReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
+import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
 import com.teamsolo.swear.foundation.bean.resp.CommentsResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsResp;
@@ -160,6 +162,18 @@ public class BaseHttpUrlRequests {
     public Subscriber<ActivitiesResp> getActivities(Map<String, String> paras, Subscriber<ActivitiesResp> subscriber) {
         retrofit.create(ActivitiesReq.class)
                 .getActivities(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取培训分类
+     */
+    public Subscriber<ClassifiesResp> getClassifies(Map<String, String> paras, Subscriber<ClassifiesResp> subscriber) {
+        retrofit.create(ClassifiesReq.class)
+                .getClassifies(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
