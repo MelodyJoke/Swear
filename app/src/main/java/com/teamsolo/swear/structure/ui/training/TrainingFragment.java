@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -15,6 +16,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
@@ -63,17 +65,23 @@ public class TrainingFragment extends HandlerFragment implements
 
     private ViewPager mContainer;
 
-    private ClassifyAdapter mClassifyAdapter;
-
     private SlideShowPlayHandler mSlideShowHandler;
 
-    private boolean isRequesting;
+    private ClassifyAdapter mClassifyAdapter;
 
-    private Subscriber<ActivitiesResp> subscriberActivity;
+    private PagerAdapter mPagerAdapter;
+
+    private boolean isRequesting;
 
     private List<SlideShowView.SlideShowDummy> dummies = new ArrayList<>();
 
     private List<Classify> classifies = new ArrayList<>();
+
+    private List<Classify> classifiesAno = new ArrayList<>();
+
+    private Subscriber<ActivitiesResp> subscriberActivity;
+
+    private Subscriber<ClassifiesResp> subscriberClassify;
 
     public static TrainingFragment newInstance() {
         TrainingFragment fragment = new TrainingFragment();
@@ -121,14 +129,42 @@ public class TrainingFragment extends HandlerFragment implements
         mGridView.setNestedScrollingEnabled(false);
         mGridView.setFocusable(false);
 
-        mTabLayout = (TabLayout) findViewById(R.id.tab);
-        mContainer = (ViewPager) findViewById(R.id.container);
+        mPagerAdapter = new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return classifiesAno.size();
+            }
 
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return classifiesAno.get(position).name;
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                return new TextView(mContext);
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+
+            }
+        };
+        mContainer = (ViewPager) findViewById(R.id.container);
+        mContainer.setAdapter(mPagerAdapter);
+
+        mTabLayout = (TabLayout) findViewById(R.id.tab);
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mContainer);
 
         mSlideShow.post(() -> {
             int width = mSlideShow.getMeasuredWidth();
-            int aimHeight = width * 369 / 1080;
+            int aimHeight = width * 399 / 1080;
             ViewGroup.LayoutParams params = mSlideShow.getLayoutParams();
             if (params.height != aimHeight) {
                 params.height = aimHeight;
@@ -207,16 +243,16 @@ public class TrainingFragment extends HandlerFragment implements
         paras.put("serviceType", "5");
         paras.put("type", String.valueOf(position));
 
-        BaseHttpUrlRequests.getInstance().getClassifies(paras, new Subscriber<ClassifiesResp>() {
+        subscriberClassify = BaseHttpUrlRequests.getInstance().getClassifies(paras, new Subscriber<ClassifiesResp>() {
             @Override
             public void onCompleted() {
-                handler.sendEmptyMessage(2);
+                handler.sendEmptyMessage(position == 1 ? 2 : 3);
             }
 
             @Override
             public void onError(Throwable e) {
                 toast(RetrofitConfig.handleReqError(e));
-                handler.sendEmptyMessage(2);
+                handler.sendEmptyMessage(position == 1 ? 2 : 3);
             }
 
             @Override
@@ -224,11 +260,27 @@ public class TrainingFragment extends HandlerFragment implements
                 if (!RetrofitConfig.handleResp(classifiesResp, mContext))
                     toast(classifiesResp.message);
                 else {
-                    classifies.clear();
-                    List<Classify> temp = classifiesResp.classifyList;
-                    if (temp != null && !temp.isEmpty()) {
-                        classifies.addAll(temp);
-                        mClassifyAdapter.notifyDataSetChanged();
+                    if (position == 1) {
+                        classifies.clear();
+                        List<Classify> temp = classifiesResp.classifyList;
+                        if (temp != null && !temp.isEmpty()) {
+                            classifies.addAll(temp);
+                            mClassifyAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        classifiesAno.clear();
+
+                        Classify recClassify = new Classify();
+                        recClassify.name = getString(R.string.training_rec);
+                        recClassify.classificationType = 2;
+                        recClassify.classificationId = -1;
+                        classifiesAno.add(recClassify);
+
+                        List<Classify> temp = classifiesResp.classifyList;
+                        if (temp != null && !temp.isEmpty()) {
+                            classifiesAno.addAll(temp);
+                            mPagerAdapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -275,6 +327,10 @@ public class TrainingFragment extends HandlerFragment implements
                 break;
 
             case 2:
+                new Thread(() -> requestClassifies(2)).start();
+                break;
+
+            case 3:
                 onInteraction(Uri.parse("refresh?ready=true"));
                 isRequesting = false;
                 break;
@@ -285,6 +341,9 @@ public class TrainingFragment extends HandlerFragment implements
     public void onDestroy() {
         super.onDestroy();
         if (subscriberActivity != null && !subscriberActivity.isUnsubscribed())
-            subscriberActivity.isUnsubscribed();
+            subscriberActivity.unsubscribe();
+
+        if (subscriberClassify != null && !subscriberClassify.isUnsubscribed())
+            subscriberClassify.unsubscribe();
     }
 }

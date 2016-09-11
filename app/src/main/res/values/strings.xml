@@ -139,6 +139,7 @@
 
     <!--training-->
     <string name="training_nav">培训</string>
+    <string name="training_rec">推荐</string>
 
     <!--news-->
     <string name="news_nav">资讯</string>

@@ -13,7 +13,7 @@
         <com.teamsolo.swear.foundation.ui.widget.SlideShowView
             android:id="@+id/slide"
             android:layout_width="match_parent"
-            android:layout_height="123dp"
+            android:layout_height="133dp"
             android:background="@color/colorBackground" />
 
         <android.support.v7.widget.RecyclerView
