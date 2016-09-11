@@ -24,6 +24,7 @@
             android:id="@+id/cover"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_marginTop="@dimen/tiny_margin"
             app:actualImageScaleType="centerInside"
             app:failureImage="@mipmap/loading_failed_web"
             app:failureImageScaleType="centerInside"
