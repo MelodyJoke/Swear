@@ -66,11 +66,19 @@ public class HtmlSupportTextView extends TextView {
             return drawable;
         } else {
             Drawable drawable = caches.get(source);
+
             if (drawable != null) {
                 fixDrawableSize(drawable);
-                return drawable;
+
+                if (drawable instanceof BitmapDrawable) {
+                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                    if (bitmap != null && !bitmap.isRecycled()) return drawable;
+                } else return drawable;
             }
-            return getContext().getResources().getDrawable(R.mipmap.loading_failed_web);
+
+            Drawable drawableError = getContext().getResources().getDrawable(R.mipmap.loading_failed_web);
+            fixDrawableSize(drawableError);
+            return drawableError;
         }
     };
 
@@ -175,10 +183,6 @@ public class HtmlSupportTextView extends TextView {
                     if (bitmap != null && !bitmap.isRecycled()) {
                         caches.put(url, new BitmapDrawable(getContext().getResources(), bitmap));
                         LogUtility.i(TAG, "download success: " + url);
-                    } else if (bitmap != null && bitmap.isRecycled()) {
-                        Fresco.getImagePipeline()
-                                .fetchDecodedImage(copy, getContext())
-                                .subscribe(this, CallerThreadExecutor.getInstance());
                     } else {
                         caches.put(url, getContext().getResources().getDrawable(R.mipmap.loading_failed_web));
                         LogUtility.i(TAG, "download failed: " + url);

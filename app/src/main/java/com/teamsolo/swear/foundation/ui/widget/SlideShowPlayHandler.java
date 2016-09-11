@@ -62,4 +62,8 @@ public class SlideShowPlayHandler extends Handler {
                 break;
         }
     }
+
+    public void setCurrentItem(int position) {
+        this.currentItem = position;
+    }
 }

@@ -45,9 +45,7 @@ public class SlideShowView extends RelativeLayout {
 
     private List<CheckedTextView> indicators;
 
-    private PagerAdapter adapter;
-
-    private int drawableRes = R.drawable.selector_slide_indicator;
+    private int drawableRes = R.drawable.selector_slide_indicator_accent;
 
     private int current;
 
@@ -84,51 +82,6 @@ public class SlideShowView extends RelativeLayout {
 
     private void initViews() {
         viewPager = (ViewPager) findViewById(R.id.pager);
-        pagers = new ArrayList<>();
-        adapter = new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return dummies.size();
-            }
-
-            @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return view == object;
-            }
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                String item = dummies.get(position).getUrl();
-                SimpleDraweeView imageView = (SimpleDraweeView) LayoutInflater.from(getContext())
-                        .inflate(R.layout.item_slide_show, container, false);
-                try {
-                    if (!TextUtils.isEmpty(item)) imageView.setImageURI(Uri.parse(item));
-                    else imageView.setImageURI(Uri.parse("http://error"));
-                } catch (Exception e) {
-                    imageView.setImageURI(Uri.parse("http://error"));
-                }
-
-                imageView.setOnClickListener(v -> {
-                    if (onItemClickListener != null)
-                        onItemClickListener.onClick(v, current, dummies.get(current));
-                });
-
-                pagers.add(imageView);
-                container.addView(imageView);
-                return imageView;
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                if (object instanceof SimpleDraweeView) {
-                    SimpleDraweeView imageView = (SimpleDraweeView) object;
-                    container.removeView(imageView);
-                    pagers.remove(imageView);
-                }
-            }
-        };
-        viewPager.setAdapter(adapter);
-
         indicatorContainer = (LinearLayout) findViewById(R.id.indicators);
     }
 
@@ -138,16 +91,18 @@ public class SlideShowView extends RelativeLayout {
             indicatorContainer.removeAllViews();
             indicators = new ArrayList<>();
 
-            for (int i = 0; i < dummies.size(); i++) {
-                Drawable drawable = getContext().getResources().getDrawable(drawableRes);
-                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            if (dummies.size() > 1) {
+                for (int i = 0; i < dummies.size(); i++) {
+                    Drawable drawable = getContext().getResources().getDrawable(drawableRes);
+                    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
 
-                CheckedTextView indicator = new CheckedTextView(getContext());
-                indicator.setCompoundDrawables(null, null, null, drawable);
-                indicator.setPadding(padding / 2, padding, padding / 2, padding);
+                    CheckedTextView indicator = new CheckedTextView(getContext());
+                    indicator.setCompoundDrawables(null, null, null, drawable);
+                    indicator.setPadding(padding / 2, padding, padding / 2, padding);
 
-                indicators.add(indicator);
-                indicatorContainer.addView(indicator);
+                    indicators.add(indicator);
+                    indicatorContainer.addView(indicator);
+                }
             }
         }
 
@@ -203,9 +158,54 @@ public class SlideShowView extends RelativeLayout {
     public void setDummies(List<SlideShowDummy> dummies) {
         this.dummies.clear();
         this.dummies.addAll(dummies);
-        adapter.notifyDataSetChanged();
+
+        pagers = new ArrayList<>();
+        PagerAdapter adapter = new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return dummies.size();
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                String item = dummies.get(position).getUrl();
+                SimpleDraweeView imageView = (SimpleDraweeView) LayoutInflater.from(getContext())
+                        .inflate(R.layout.item_slide_show, container, false);
+                try {
+                    if (!TextUtils.isEmpty(item)) imageView.setImageURI(Uri.parse(item));
+                    else imageView.setImageURI(Uri.parse("http://error"));
+                } catch (Exception e) {
+                    imageView.setImageURI(Uri.parse("http://error"));
+                }
+
+                imageView.setOnClickListener(v -> {
+                    if (onItemClickListener != null)
+                        onItemClickListener.onClick(v, current, dummies.get(current));
+                });
+
+                pagers.add(imageView);
+                container.addView(imageView);
+                return imageView;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                if (object instanceof SimpleDraweeView) {
+                    SimpleDraweeView imageView = (SimpleDraweeView) object;
+                    container.removeView(imageView);
+                    pagers.remove(imageView);
+                }
+            }
+        };
+        viewPager.setAdapter(adapter);
 
         current = 0;
+        if (mSlideShowHandler != null) mSlideShowHandler.setCurrentItem(0);
         invalidateIndicators(true);
     }
 
