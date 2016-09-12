@@ -25,6 +25,8 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class AgencyAdapter extends RecyclerView.Adapter<AgencyAdapter.ViewHolder> {
 
+    private static int aimHeight = -1;
+
     private Context mContext;
 
     private List<Agency> mList;
@@ -82,6 +84,24 @@ public class AgencyAdapter extends RecyclerView.Adapter<AgencyAdapter.ViewHolder
             holder.titleText.setText(R.string.unknown);
             holder.addressText.setText(R.string.unknown);
             holder.itemView.setOnClickListener(null);
+        }
+
+        if (aimHeight < 0)
+            holder.coverImage.post(() -> {
+                int width = holder.coverImage.getMeasuredWidth();
+                aimHeight = width * 360 / 492;
+                ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
+                if (params.height != aimHeight) {
+                    params.height = aimHeight;
+                    holder.coverImage.setLayoutParams(params);
+                }
+            });
+        else {
+            ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
+            if (params.height != aimHeight) {
+                params.height = aimHeight;
+                holder.coverImage.setLayoutParams(params);
+            }
         }
     }
 
