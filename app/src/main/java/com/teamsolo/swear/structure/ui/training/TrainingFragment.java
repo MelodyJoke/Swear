@@ -307,7 +307,7 @@ public class TrainingFragment extends HandlerFragment implements
 
     @Override
     public void scroll(Uri uri) {
-        mContentView.scrollTo(0, 0);
+        mContentView.smoothScrollTo(0, 0);
     }
 
     @Override
