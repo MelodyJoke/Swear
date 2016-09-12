@@ -3,6 +3,7 @@ package com.teamsolo.swear.structure.ui.training.adapter;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,61 +11,68 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.teamsolo.swear.R;
-import com.teamsolo.swear.foundation.bean.Classify;
+import com.teamsolo.swear.foundation.bean.Agency;
+import com.teamsolo.swear.foundation.ui.Appendable;
 
 import java.util.List;
 
 /**
- * description: training classify adapter
+ * description: agency adapter
  * author: Melody
- * date: 2016/9/11
+ * date: 2016/9/12
  * version: 0.0.0.1
  */
-@SuppressWarnings("WeakerAccess, unused, FieldCanBeLocal")
-public class ClassifyAdapter extends RecyclerView.Adapter<ClassifyAdapter.ViewHolder> {
+@SuppressWarnings("WeakerAccess")
+public class AgencyAdapter extends RecyclerView.Adapter<AgencyAdapter.ViewHolder> {
 
     private Context mContext;
 
-    private List<Classify> mList;
+    private List<Agency> mList;
 
     private LayoutInflater mInflater;
 
     private OnItemClickListener onItemClickListener;
 
-    public ClassifyAdapter(Context context, List<Classify> classifies) {
+    public AgencyAdapter(Context context, List<Agency> agencies) {
         mContext = context;
-        mList = classifies;
+        mList = agencies;
         mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getItemViewType(int position) {
-        Classify item = getItem(position);
+        Agency item = getItem(position);
         if (item == null) return -1;
-        return item.classificationType;
+        return super.getItemViewType(position);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == -1)
             return new ViewHolder(mInflater.inflate(R.layout.item_loading, parent, false), viewType);
-        return new ViewHolder(mInflater.inflate(R.layout.item_training_classify, parent, false), viewType);
+        return new ViewHolder(mInflater.inflate(R.layout.item_training_agency, parent, false), viewType);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (getItemViewType(position) == -1) return;
+        int type = getItemViewType(position);
 
-        final Classify item = getItem(holder.getAdapterPosition());
+        if (type == -1) {
+            if (mContext instanceof Appendable) ((Appendable) mContext).append(null);
+            return;
+        }
+
+        final Agency item = getItem(holder.getAdapterPosition());
 
         if (item != null) {
             try {
-                holder.coverImage.setImageURI(Uri.parse(item.resourcePath));
+                holder.coverImage.setImageURI(Uri.parse(item.schoolImagePath));
             } catch (Exception e) {
                 holder.coverImage.setImageURI(Uri.parse("http://error"));
             }
 
-            holder.titleText.setText(item.name);
+            holder.titleText.setText(!TextUtils.isEmpty(item.schoolName) ? item.schoolName : mContext.getString(R.string.unknown));
+            holder.addressText.setText(!TextUtils.isEmpty(item.address) ? item.address : mContext.getString(R.string.unknown));
 
             holder.itemView.setOnClickListener(v -> {
                 if (onItemClickListener != null) onItemClickListener.onClick(v, item);
@@ -72,6 +80,7 @@ public class ClassifyAdapter extends RecyclerView.Adapter<ClassifyAdapter.ViewHo
         } else {
             holder.coverImage.setImageURI(Uri.parse("http://error"));
             holder.titleText.setText(R.string.unknown);
+            holder.addressText.setText(R.string.unknown);
             holder.itemView.setOnClickListener(null);
         }
     }
@@ -81,7 +90,7 @@ public class ClassifyAdapter extends RecyclerView.Adapter<ClassifyAdapter.ViewHo
         return mList.size();
     }
 
-    public Classify getItem(int position) {
+    public Agency getItem(int position) {
         if (position < mList.size()) return mList.get(position);
         return null;
     }
@@ -94,7 +103,7 @@ public class ClassifyAdapter extends RecyclerView.Adapter<ClassifyAdapter.ViewHo
 
         SimpleDraweeView coverImage;
 
-        TextView titleText;
+        TextView titleText, addressText;
 
         ViewHolder(View itemView, int viewType) {
             super(itemView);
@@ -102,11 +111,12 @@ public class ClassifyAdapter extends RecyclerView.Adapter<ClassifyAdapter.ViewHo
             if (viewType != -1) {
                 coverImage = (SimpleDraweeView) itemView.findViewById(R.id.cover);
                 titleText = (TextView) itemView.findViewById(R.id.title);
+                addressText = (TextView) itemView.findViewById(R.id.address);
             }
         }
     }
 
     public interface OnItemClickListener {
-        void onClick(View view, Classify classify);
+        void onClick(View view, Agency agency);
     }
 }

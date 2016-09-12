@@ -2,6 +2,7 @@ package com.teamsolo.swear.structure.request;
 
 import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.swear.foundation.bean.req.ActivitiesReq;
+import com.teamsolo.swear.foundation.bean.req.AgenciesReq;
 import com.teamsolo.swear.foundation.bean.req.ChildChooseReq;
 import com.teamsolo.swear.foundation.bean.req.ClassifiesReq;
 import com.teamsolo.swear.foundation.bean.req.CommentsReq;
@@ -10,6 +11,7 @@ import com.teamsolo.swear.foundation.bean.req.NewsDetailReq;
 import com.teamsolo.swear.foundation.bean.req.NewsReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
+import com.teamsolo.swear.foundation.bean.resp.AgenciesResp;
 import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
 import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
 import com.teamsolo.swear.foundation.bean.resp.CommentsResp;
@@ -174,6 +176,18 @@ public class BaseHttpUrlRequests {
     public Subscriber<ClassifiesResp> getClassifies(Map<String, String> paras, Subscriber<ClassifiesResp> subscriber) {
         retrofit.create(ClassifiesReq.class)
                 .getClassifies(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取培训机构列表
+     */
+    public Subscriber<AgenciesResp> getAgencies(Map<String, String> paras, Subscriber<AgenciesResp> subscriber) {
+        retrofit.create(AgenciesReq.class)
+                .getAgencies(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

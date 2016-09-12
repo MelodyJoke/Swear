@@ -32,8 +32,9 @@ public class Application extends BaseApplication {
         /**
          * config retrofit log mode
          * log if not in {@link LogUtility#MODE_SLUGGISH}
+         * log if {@link LogUtility#releaseLog} is true while in {@link LogUtility#MODE_SLUGGISH}
          */
-        if (LogUtility.getMode() == LogUtility.MODE_SLUGGISH)
+        if (LogUtility.getMode() == LogUtility.MODE_SLUGGISH && !LogUtility.releaseLog)
             RetrofitConfig.loggingInterceptor.setLevel(Level.NONE);
         else RetrofitConfig.loggingInterceptor.setLevel(Level.BODY);
 

@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.teamsolo.base.bean.Response;
 import com.teamsolo.base.template.activity.BaseActivity;
+import com.teamsolo.base.util.LogUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.constant.DbConst;
 import com.teamsolo.swear.structure.Application;
@@ -52,7 +53,7 @@ import static com.teamsolo.swear.foundation.constant.SpConst.SP_COOKIE;
 @SuppressWarnings("WeakerAccess, unused")
 public class RetrofitConfig {
 
-    public static boolean releaseHttps = false;
+    public static boolean releaseHttps = LogUtility.getMode() == LogUtility.MODE_SLUGGISH;
 
     /**
      * cookies cache

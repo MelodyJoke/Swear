@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -15,7 +16,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
@@ -28,6 +28,7 @@ import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
+import com.teamsolo.swear.foundation.ui.adapter.CommonPagerAdapter;
 import com.teamsolo.swear.foundation.ui.widget.SlideShowPlayHandler;
 import com.teamsolo.swear.foundation.ui.widget.SlideShowView;
 import com.teamsolo.swear.foundation.ui.widget.WrappingViewPager;
@@ -61,6 +62,8 @@ public class TrainingFragment extends HandlerFragment implements
 
     private SlideShowView mSlideShow;
 
+    private WrappingViewPager mContainer;
+
     private SlideShowPlayHandler mSlideShowHandler;
 
     private ClassifyAdapter mClassifyAdapter;
@@ -74,6 +77,10 @@ public class TrainingFragment extends HandlerFragment implements
     private List<Classify> classifies = new ArrayList<>();
 
     private List<Classify> classifiesAno = new ArrayList<>();
+
+    private List<String> titles = new ArrayList<>();
+
+    private List<Fragment> fragments = new ArrayList<>();
 
     private Subscriber<ActivitiesResp> subscriberActivity;
 
@@ -120,42 +127,26 @@ public class TrainingFragment extends HandlerFragment implements
         manager.setAutoMeasureEnabled(true);
         mGridView.setLayoutManager(manager);
         mGridView.setItemAnimator(new DefaultItemAnimator());
+        classifies.add(null);
         mClassifyAdapter = new ClassifyAdapter(mContext, classifies);
         mGridView.setAdapter(mClassifyAdapter);
         mGridView.setNestedScrollingEnabled(false);
         mGridView.setFocusable(false);
 
-        mPagerAdapter = new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return classifiesAno.size();
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return classifiesAno.get(position).name;
-            }
-
-            @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return view == object;
-            }
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                return new TextView(mContext);
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-
-            }
-        };
-        WrappingViewPager mContainer = (WrappingViewPager) findViewById(R.id.container);
+        Classify recClassify = new Classify();
+        recClassify.name = getString(R.string.training_rec);
+        recClassify.classificationType = 2;
+        recClassify.classificationId = -1;
+        classifiesAno.add(recClassify);
+        transFromClassifies();
+        mPagerAdapter = new CommonPagerAdapter(getChildFragmentManager(), titles, fragments).setRecycle(false);
+        mContainer = (WrappingViewPager) findViewById(R.id.container);
         mContainer.setAdapter(mPagerAdapter);
+        mContainer.setFocusable(false);
 
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.tab);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setFocusable(false);
         mTabLayout.setupWithViewPager(mContainer);
 
         mSlideShow.post(() -> {
@@ -167,6 +158,17 @@ public class TrainingFragment extends HandlerFragment implements
                 mSlideShow.setLayoutParams(params);
             }
         });
+    }
+
+    private void transFromClassifies() {
+        titles.clear();
+        fragments.clear();
+
+        for (Classify classify :
+                classifiesAno) {
+            titles.add(classify.name);
+            fragments.add(AgenciesFragment.newInstance(classify));
+        }
     }
 
     @Override
@@ -275,7 +277,17 @@ public class TrainingFragment extends HandlerFragment implements
                         List<Classify> temp = classifiesResp.classifyList;
                         if (temp != null && !temp.isEmpty()) {
                             classifiesAno.addAll(temp);
+                            transFromClassifies();
                             mPagerAdapter.notifyDataSetChanged();
+
+                            for (int i = 0; i < mContainer.getChildCount(); i++) {
+                                View child = mContainer.getChildAt(i);
+                                if (child != null) {
+                                    Object tag = child.getTag();
+                                    if (tag instanceof Refreshable)
+                                        ((Refreshable) tag).refresh(null);
+                                }
+                            }
                         }
                     }
                 }

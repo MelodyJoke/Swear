@@ -31,12 +31,18 @@ public final class LogUtility {
     public static final int MODE_SLUGGISH = 2, MODE_RELEASE = 2;
 
     /**
+     * if release log in {@link #MODE_SLUGGISH}
+     */
+    public static final boolean releaseLog = true;
+
+    /**
      * current mode
      * check in {@link #MODE_EAGER,#MODE_DEVELOP,#MODE_TEST,#MODE_SLUGGISH,#MODE_RELEASE}
      */
     private static int MODE = MODE_EAGER;
 
     private LogUtility() {
+
     }
 
     /**
@@ -60,6 +66,9 @@ public final class LogUtility {
      */
     public static void d(String tag, String msg) {
         switch (MODE) {
+            case MODE_SLUGGISH:
+                if (!releaseLog) break;
+            case MODE_TEST:
             case MODE_EAGER:
                 if (!TextUtils.isEmpty(msg)) Log.d(tag, msg);
                 break;
@@ -77,6 +86,9 @@ public final class LogUtility {
      */
     public static void i(String tag, String msg) {
         switch (MODE) {
+            case MODE_SLUGGISH:
+                if (!releaseLog) break;
+            case MODE_TEST:
             case MODE_EAGER:
                 if (!TextUtils.isEmpty(msg)) Log.i(tag, msg);
                 break;
@@ -94,6 +106,9 @@ public final class LogUtility {
      */
     public static void w(String tag, String msg) {
         switch (MODE) {
+            case MODE_SLUGGISH:
+                if (!releaseLog) break;
+            case MODE_TEST:
             case MODE_EAGER:
                 if (!TextUtils.isEmpty(msg)) Log.w(tag, msg);
                 break;
@@ -111,6 +126,9 @@ public final class LogUtility {
      */
     public static void e(String tag, String msg) {
         switch (MODE) {
+            case MODE_SLUGGISH:
+                if (!releaseLog) break;
+            case MODE_TEST:
             case MODE_EAGER:
                 if (!TextUtils.isEmpty(msg)) Log.e(tag, msg);
                 break;
