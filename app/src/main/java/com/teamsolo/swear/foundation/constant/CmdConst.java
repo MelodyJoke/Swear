@@ -66,6 +66,9 @@ public interface CmdConst {
     // comment
     String CMD_NEWS_COMMENT = "savecomment";
 
+    // get carousel list
+    String CMD_GET_CAROUSELS = "knowl_carouselList";
+
     // get orders
     String CMD_GET_ORDERS = "getorderlist";
 }

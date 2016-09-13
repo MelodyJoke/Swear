@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackgroundBase">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.teamsolo.swear.foundation.ui.widget.SlideShowView
+            android:id="@+id/slide"
+            android:layout_width="match_parent"
+            android:layout_height="133dp"
+            android:background="@color/colorBackground" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/colorBackground"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:padding="@dimen/tiny_margin">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/category_ability"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:foreground="?android:selectableItemBackground"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/tiny_margin">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@string/app_name"
+                        android:padding="@dimen/tiny_margin"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/knowledge_category_ability" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/tiny_margin"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/nlg_ability"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/category_mental"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/light_margin"
+                android:layout_marginStart="@dimen/light_margin"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:foreground="?android:selectableItemBackground"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/tiny_margin">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@string/app_name"
+                        android:padding="@dimen/tiny_margin"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/knowledge_category_mental" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/tiny_margin"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/nlg_mental"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/category_lesson"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/light_margin"
+                android:layout_marginStart="@dimen/light_margin"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:foreground="?android:selectableItemBackground"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/tiny_margin">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@string/app_name"
+                        android:padding="@dimen/tiny_margin"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/knowledge_category_lessons" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/tiny_margin"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/nlg_lesson"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/category_classify"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/light_margin"
+                android:layout_marginStart="@dimen/light_margin"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:foreground="?android:selectableItemBackground"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/tiny_margin">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@string/app_name"
+                        android:padding="@dimen/tiny_margin"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/knowledge_category_classify" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/tiny_margin"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/nlg_classify"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listView_ability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/colorBackground" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listView_mental"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/colorBackground" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/gridView_courseware"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/colorBackground" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/gridView_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/colorBackground" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

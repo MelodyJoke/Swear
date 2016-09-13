@@ -210,7 +210,7 @@ public class TrainingFragment extends HandlerFragment implements
         subscriberActivity = BaseHttpUrlRequests.getInstance().getActivities(paras, new Subscriber<ActivitiesResp>() {
             @Override
             public void onCompleted() {
-                handler.sendEmptyMessage(1);
+                handler.sendEmptyMessageDelayed(1, 500);
             }
 
             @Override
@@ -227,7 +227,7 @@ public class TrainingFragment extends HandlerFragment implements
                     dummies.clear();
                     List<Activity> temp = activitiesResp.activityEntities;
                     if (temp != null && !temp.isEmpty()) {
-                        dummies.addAll(activitiesResp.activityEntities);
+                        dummies.addAll(temp);
                         mSlideShow.setDummies(dummies);
                     }
                 }
@@ -244,7 +244,7 @@ public class TrainingFragment extends HandlerFragment implements
         subscriberClassify = BaseHttpUrlRequests.getInstance().getClassifies(paras, new Subscriber<ClassifiesResp>() {
             @Override
             public void onCompleted() {
-                handler.sendEmptyMessage(position == 1 ? 2 : 3);
+                handler.sendEmptyMessageDelayed(position == 1 ? 2 : 3, 500);
             }
 
             @Override
@@ -280,14 +280,16 @@ public class TrainingFragment extends HandlerFragment implements
                             transFromClassifies();
                             mPagerAdapter.notifyDataSetChanged();
 
-                            for (int i = 0; i < mContainer.getChildCount(); i++) {
-                                View child = mContainer.getChildAt(i);
-                                if (child != null) {
-                                    Object tag = child.getTag();
-                                    if (tag instanceof Refreshable)
-                                        ((Refreshable) tag).refresh(null);
+                            handler.postDelayed(() -> {
+                                for (int i = 0; i < mContainer.getChildCount(); i++) {
+                                    View child = mContainer.getChildAt(i);
+                                    if (child != null) {
+                                        Object tag = child.getTag();
+                                        if (tag instanceof Refreshable)
+                                            ((Refreshable) tag).refresh(null);
+                                    }
                                 }
-                            }
+                            }, 500);
                         }
                     }
                 }

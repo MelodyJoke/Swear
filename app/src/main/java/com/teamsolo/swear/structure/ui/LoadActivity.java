@@ -278,6 +278,13 @@ public class LoadActivity extends HandlerActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
+
+        Drawable drawable = mImageView.getDrawable();
+        if (drawable instanceof BitmapDrawable) {
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            if (bitmap != null && !bitmap.isRecycled()) bitmap.recycle();
+        }
     }
 }

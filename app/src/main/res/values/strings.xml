@@ -157,6 +157,10 @@
 
     <!--knowledge-->
     <string name="nlg_nav">学堂</string>
+    <string name="nlg_ability">学习力</string>
+    <string name="nlg_mental">心理成长</string>
+    <string name="nlg_lesson">课业</string>
+    <string name="nlg_classify">筛选</string>
 
     <!--orders-->
     <string name="orders_title">我的订单</string>

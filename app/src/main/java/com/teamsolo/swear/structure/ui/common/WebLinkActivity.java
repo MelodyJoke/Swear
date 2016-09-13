@@ -267,19 +267,17 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
 
         try {
             Uri uri = Uri.parse(url);
-            if (!TextUtils.isEmpty(uri.getQueryParameter("lotteryDrawId"))) {
-                Uri.Builder builder = uri.buildUpon();
-                if (TextUtils.isEmpty(uri.getQueryParameter("sessionId")) && !TextUtils.isEmpty(getSessionId()))
-                    builder.appendQueryParameter("sessionId", getSessionId());
+            Uri.Builder builder = uri.buildUpon();
+            if (TextUtils.isEmpty(uri.getQueryParameter("sessionId")) && !TextUtils.isEmpty(getSessionId()))
+                builder.appendQueryParameter("sessionId", getSessionId());
 
-                if (TextUtils.isEmpty(uri.getQueryParameter("app")))
-                    builder.appendQueryParameter("app", "1");
+            if (TextUtils.isEmpty(uri.getQueryParameter("app")))
+                builder.appendQueryParameter("app", "1");
 
-                String result = builder.build().toString();
-                LogUtility.i("url fixed", result);
-                mWebView.loadUrl(result);
-                return;
-            }
+            String result = builder.build().toString();
+            LogUtility.i("url fixed", result);
+            mWebView.loadUrl(result);
+            return;
         } catch (Exception ignore) {
         }
 

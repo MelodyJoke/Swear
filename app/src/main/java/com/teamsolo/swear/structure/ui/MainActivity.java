@@ -44,6 +44,7 @@ import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
+import com.teamsolo.swear.structure.ui.konwledge.KnowledgeFragment;
 import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
@@ -331,7 +332,7 @@ public class MainActivity extends HandlerActivity implements
                         mFab.setVisibility(VISIBLE);
 
                         if (fragments.get(FRAG_NLG) == null) {
-                            Fragment fragmentNlg = OrdersFragment.newInstance(FRAG_NLG);
+                            Fragment fragmentNlg = KnowledgeFragment.newInstance();
                             fragments.append(FRAG_NLG, fragmentNlg);
                             fragmentManager.beginTransaction()
                                     .add(R.id.content, fragments.get(FRAG_NLG), String.valueOf(FRAG_NLG))
