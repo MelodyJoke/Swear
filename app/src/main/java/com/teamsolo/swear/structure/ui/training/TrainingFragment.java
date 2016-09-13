@@ -196,7 +196,7 @@ public class TrainingFragment extends HandlerFragment implements
         });
     }
 
-    private void requestActivities() {
+    private void requestCarousels() {
         int gradeId = UserHelper.getRealAttentionGrade(mContext);
 
         Map<String, String> paras = new HashMap<>();
@@ -329,7 +329,7 @@ public class TrainingFragment extends HandlerFragment implements
                 if (isRequesting) break;
 
                 isRequesting = true;
-                new Thread(this::requestActivities).start();
+                new Thread(this::requestCarousels).start();
                 break;
 
             case 1:
