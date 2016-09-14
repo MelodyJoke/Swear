@@ -119,7 +119,7 @@ public class NewsFragment extends HandlerFragment implements Refreshable, Append
     @SuppressWarnings("Convert2streamapi")
     protected void bindListeners() {
         mAdapter.setOnItemClickListener((v, dummy) -> {
-            Intent intent = new Intent(mContext, NewsDetailActivity.class);
+            Intent intent = new Intent(mContext, NewsActivity.class);
             intent.putExtra("newsId", dummy.newsUUId);
             startActivity(intent);
 

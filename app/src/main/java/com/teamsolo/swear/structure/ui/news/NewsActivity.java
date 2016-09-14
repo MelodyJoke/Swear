@@ -67,7 +67,7 @@ import rx.Subscriber;
  * date: 2016/9/4
  * version: 0.0.0.1
  */
-public class NewsDetailActivity extends HandlerActivity {
+public class NewsActivity extends HandlerActivity {
 
     private NestedScrollView mContainerView;
 
@@ -106,7 +106,7 @@ public class NewsDetailActivity extends HandlerActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_detail);
+        setContentView(R.layout.activity_news);
 
         getBundle(getIntent());
         initViews();

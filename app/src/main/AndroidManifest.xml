@@ -106,7 +106,7 @@
 
         <!--news-->
         <activity
-            android:name=".structure.ui.news.NewsDetailActivity"
+            android:name=".structure.ui.news.NewsActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:label="@string/news_detail_title"
             android:screenOrientation="portrait"
