@@ -286,10 +286,10 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
 
     protected void share(String shareUrl, String shareTitle) {
         try {
-            Uri.parse(fixShareUrl(shareUrl));
+            String realShareUrl = fixShareUrl(shareUrl);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, shareTitle + ": " + shareUrl);
+            intent.putExtra(Intent.EXTRA_TEXT, shareTitle + ": " + realShareUrl);
 
             startActivity(Intent.createChooser(intent, getString(R.string.share_share_to)));
         } catch (Exception e) {
@@ -297,33 +297,25 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         }
     }
 
-    public static String fixShareUrl(String origin) {
-        try {
-            String result;
-            Uri uri = Uri.parse(origin);
+    public static String fixShareUrl(String origin) throws Exception {
+        Uri uri = Uri.parse(origin);
 
-            Map<String, String> queryParamPairs = new LinkedHashMap<>();
-            Set<String> paramNames = uri.getQueryParameterNames();
+        Map<String, String> queryParamPairs = new LinkedHashMap<>();
+        Set<String> paramNames = uri.getQueryParameterNames();
 
-            for (String paramName : paramNames) {
-                if ("sessionId".equals(paramName) || "app".equals(paramName)) continue;
+        for (String paramName : paramNames) {
+            if ("sessionId".equals(paramName) || "app".equals(paramName)) continue;
 
-                String paramValue = uri.getQueryParameter(paramName);
-                queryParamPairs.put(paramName, paramValue);
-            }
-
-            Uri.Builder builder = uri.buildUpon().clearQuery();
-
-            for (Map.Entry<String, String> entry : queryParamPairs.entrySet())
-                builder.appendQueryParameter(entry.getKey(), entry.getValue());
-
-            result = builder.build().toString();
-
-            return result;
-        } catch (Exception ignore) {
+            String paramValue = uri.getQueryParameter(paramName);
+            queryParamPairs.put(paramName, paramValue);
         }
 
-        return origin;
+        Uri.Builder builder = uri.buildUpon().clearQuery();
+
+        for (Map.Entry<String, String> entry : queryParamPairs.entrySet())
+            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+
+        return builder.build().toString();
     }
 
     @Override
