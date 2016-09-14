@@ -1,6 +1,7 @@
 package com.teamsolo.swear.structure.ui.training.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -56,6 +57,7 @@ public class AgencyAdapter extends RecyclerView.Adapter<AgencyAdapter.ViewHolder
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onBindViewHolder(ViewHolder holder, int position) {
         int type = getItemViewType(position);
 
@@ -74,6 +76,9 @@ public class AgencyAdapter extends RecyclerView.Adapter<AgencyAdapter.ViewHolder
             }
 
             holder.titleText.setText(!TextUtils.isEmpty(item.schoolName) ? item.schoolName : mContext.getString(R.string.unknown));
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_verified_user_accent_18dp);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            holder.titleText.setCompoundDrawables(null, null, item.isCooperate == 1 ? drawable : null, null);
             holder.addressText.setText(!TextUtils.isEmpty(item.address) ? item.address : mContext.getString(R.string.unknown));
 
             holder.itemView.setOnClickListener(v -> {
@@ -82,6 +87,7 @@ public class AgencyAdapter extends RecyclerView.Adapter<AgencyAdapter.ViewHolder
         } else {
             holder.coverImage.setImageURI(Uri.parse("http://error"));
             holder.titleText.setText(R.string.unknown);
+            holder.titleText.setCompoundDrawables(null, null, null, null);
             holder.addressText.setText(R.string.unknown);
             holder.itemView.setOnClickListener(null);
         }
