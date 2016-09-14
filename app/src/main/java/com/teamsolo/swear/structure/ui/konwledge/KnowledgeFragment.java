@@ -19,9 +19,10 @@ import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Activity;
 import com.teamsolo.swear.foundation.bean.Carousel;
-import com.teamsolo.swear.foundation.bean.Classify;
+import com.teamsolo.swear.foundation.bean.KnowledgeNews;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.CarouselsResp;
+import com.teamsolo.swear.foundation.bean.resp.KnowledgeNewsResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
@@ -31,7 +32,8 @@ import com.teamsolo.swear.foundation.ui.widget.SlideShowView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.KnowledgeHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
-import com.teamsolo.swear.structure.ui.training.adapter.ClassifyAdapter;
+import com.teamsolo.swear.structure.ui.konwledge.adapter.NewsAdapter;
+import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,15 +61,17 @@ public class KnowledgeFragment extends HandlerFragment implements
 
     private SlideShowPlayHandler mSlideShowHandler;
 
-    private ClassifyAdapter mClassifyAdapter;
+    private NewsAdapter mAbilityAdapter, mMentalAdapter;
 
     private boolean isRequesting;
 
-    private List<Classify> classifies = new ArrayList<>();
+    private List<KnowledgeNews> abilities = new ArrayList<>(), mental = new ArrayList<>();
 
     private List<SlideShowView.SlideShowDummy> dummies = new ArrayList<>();
 
     private Subscriber<CarouselsResp> subscriberCarousel;
+
+    private Subscriber<KnowledgeNewsResp> subscriberNews;
 
     public static KnowledgeFragment newInstance() {
         KnowledgeFragment fragment = new KnowledgeFragment();
@@ -110,9 +114,9 @@ public class KnowledgeFragment extends HandlerFragment implements
         managerAbility.setAutoMeasureEnabled(true);
         mListViewAbility.setLayoutManager(managerAbility);
         mListViewAbility.setItemAnimator(new DefaultItemAnimator());
-        classifies.add(null);
-        mClassifyAdapter = new ClassifyAdapter(mContext, classifies);
-        mListViewAbility.setAdapter(mClassifyAdapter);
+        abilities.add(null);
+        mAbilityAdapter = new NewsAdapter(mContext, abilities);
+        mListViewAbility.setAdapter(mAbilityAdapter);
         mListViewAbility.setNestedScrollingEnabled(false);
         mListViewAbility.setFocusable(false);
 
@@ -122,8 +126,9 @@ public class KnowledgeFragment extends HandlerFragment implements
         managerMental.setAutoMeasureEnabled(true);
         mListViewMental.setLayoutManager(managerMental);
         mListViewMental.setItemAnimator(new DefaultItemAnimator());
-        ClassifyAdapter adapter = new ClassifyAdapter(mContext, classifies);
-        mListViewMental.setAdapter(adapter);
+        mental.add(null);
+        mMentalAdapter = new NewsAdapter(mContext, mental);
+        mListViewMental.setAdapter(mMentalAdapter);
         mListViewMental.setNestedScrollingEnabled(false);
         mListViewMental.setFocusable(false);
 
@@ -133,7 +138,9 @@ public class KnowledgeFragment extends HandlerFragment implements
         managerCourseware.setAutoMeasureEnabled(true);
         mGridViewCourseware.setLayoutManager(managerCourseware);
         mGridViewCourseware.setItemAnimator(new DefaultItemAnimator());
-        ClassifyAdapter adapter2 = new ClassifyAdapter(mContext, classifies);
+        List<KnowledgeNews> list = new ArrayList<>();
+        list.add(null);
+        NewsAdapter adapter2 = new NewsAdapter(mContext, list);
         mGridViewCourseware.setAdapter(adapter2);
         mGridViewCourseware.setNestedScrollingEnabled(false);
         mGridViewCourseware.setFocusable(false);
@@ -144,7 +151,7 @@ public class KnowledgeFragment extends HandlerFragment implements
         managerVideo.setAutoMeasureEnabled(true);
         mGridViewVideo.setLayoutManager(managerVideo);
         mGridViewVideo.setItemAnimator(new DefaultItemAnimator());
-        ClassifyAdapter adapter3 = new ClassifyAdapter(mContext, classifies);
+        NewsAdapter adapter3 = new NewsAdapter(mContext, list);
         mGridViewVideo.setAdapter(adapter3);
         mGridViewVideo.setNestedScrollingEnabled(false);
         mGridViewVideo.setFocusable(false);
@@ -188,7 +195,11 @@ public class KnowledgeFragment extends HandlerFragment implements
                         if (!TextUtils.isEmpty(carousel.link)) {
                             WebLink webLink = new WebLink();
                             webLink.title = TextUtils.isEmpty(carousel.carouselName) ? getString(R.string.app_name) : carousel.carouselName;
-                            webLink.forwardUrl = carousel.link;
+                            try {
+                                webLink.forwardUrl = WebLinkActivity.fixNlgUrl(carousel.link, carousel.isNavigation);
+                            } catch (Exception e) {
+                                webLink.forwardUrl = carousel.link;
+                            }
 
                             Intent intent = new Intent(mContext, WebLinkActivity.class);
                             intent.putExtra("link", webLink);
@@ -214,6 +225,16 @@ public class KnowledgeFragment extends HandlerFragment implements
 
         findViewById(R.id.category_classify).setOnClickListener(v -> {
             // TODO: ability
+        });
+
+        mAbilityAdapter.setOnItemClickListener((view, news) -> {
+            // TODO:
+            System.out.println(news.title);
+        });
+
+        mMentalAdapter.setOnItemClickListener((view, news) -> {
+            // TODO:
+            System.out.println(news.title);
         });
     }
 
@@ -244,6 +265,57 @@ public class KnowledgeFragment extends HandlerFragment implements
                     if (temp != null && !temp.isEmpty()) {
                         dummies.addAll(temp);
                         mSlideShow.setDummies(dummies);
+                    }
+                }
+            }
+        });
+    }
+
+    private void requestNews(int type) {
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_GET_NLG_NEWS);
+        paras.put("serviceType", "4");
+        paras.put("type", String.valueOf(type));
+        int gradeId = UserHelper.getRealAttentionGrade(mContext);
+        if (gradeId > 0) paras.put("gradeId", String.valueOf(gradeId));
+
+        subscriberNews = KnowledgeHttpUrlRequests.getInstance().getNews(paras, new Subscriber<KnowledgeNewsResp>() {
+            @Override
+            public void onCompleted() {
+                handler.sendEmptyMessageDelayed(type == 1 ? 2 : 3, 500);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+                handler.sendEmptyMessage(type == 1 ? 2 : 3);
+            }
+
+            @Override
+            public void onNext(KnowledgeNewsResp knowledgeNewsResp) {
+                if (!RetrofitConfig.handleResp(knowledgeNewsResp, mContext))
+                    toast(knowledgeNewsResp.message);
+                else {
+                    if (type == 1) {
+                        abilities.clear();
+                        List<KnowledgeNews> temp = knowledgeNewsResp.newsMsgEntityList;
+                        if (temp != null && !temp.isEmpty()) {
+                            abilities.addAll(temp);
+                            mAbilityAdapter.notifyDataSetChanged();
+                        }
+
+                        findViewById(R.id.title_ability).setVisibility(abilities.isEmpty() ? View.GONE : View.VISIBLE);
+                        findViewById(R.id.listView_ability).setVisibility(abilities.isEmpty() ? View.GONE : View.VISIBLE);
+                    } else if (type == 2) {
+                        mental.clear();
+                        List<KnowledgeNews> temp = knowledgeNewsResp.newsMsgEntityList;
+                        if (temp != null && !temp.isEmpty()) {
+                            mental.addAll(temp);
+                            mMentalAdapter.notifyDataSetChanged();
+                        }
+
+                        findViewById(R.id.title_mental).setVisibility(mental.isEmpty() ? View.GONE : View.VISIBLE);
+                        findViewById(R.id.listView_mental).setVisibility(mental.isEmpty() ? View.GONE : View.VISIBLE);
                     }
                 }
             }
@@ -286,6 +358,14 @@ public class KnowledgeFragment extends HandlerFragment implements
                 break;
 
             case 1:
+                new Thread(() -> requestNews(1)).start();
+                break;
+
+            case 2:
+                new Thread(() -> requestNews(2)).start();
+                break;
+
+            case 3:
                 onInteraction(Uri.parse("refresh?ready=true"));
                 isRequesting = false;
                 break;
@@ -298,5 +378,8 @@ public class KnowledgeFragment extends HandlerFragment implements
 
         if (subscriberCarousel != null && !subscriberCarousel.isUnsubscribed())
             subscriberCarousel.unsubscribe();
+
+        if (subscriberNews != null && !subscriberNews.isUnsubscribed())
+            subscriberNews.unsubscribe();
     }
 }

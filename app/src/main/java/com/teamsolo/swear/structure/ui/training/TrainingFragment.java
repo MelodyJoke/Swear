@@ -201,8 +201,7 @@ public class TrainingFragment extends HandlerFragment implements
 
         Map<String, String> paras = new HashMap<>();
         paras.put("CMD", CmdConst.CMD_GET_ACTIVITIES);
-        if (gradeId > 0)
-            paras.put("gradeId", String.valueOf(UserHelper.getRealAttentionGrade(mContext)));
+        if (gradeId > 0) paras.put("gradeId", String.valueOf(gradeId));
         paras.put("position", "1");
         paras.put("serviceType", "6");
         paras.put("displayArea", "2");

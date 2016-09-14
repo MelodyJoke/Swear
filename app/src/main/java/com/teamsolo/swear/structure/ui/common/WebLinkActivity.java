@@ -318,6 +318,30 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
         return builder.build().toString();
     }
 
+    public static String fixNlgUrl(String origin, byte isNavigation) throws Exception {
+        Uri uri = Uri.parse(origin);
+        Uri.Builder builder = uri.buildUpon();
+
+        Set<String> paramNames = uri.getQueryParameterNames();
+        if (paramNames.contains("isNavigation")) {
+            Map<String, String> queryParamPairs = new LinkedHashMap<>();
+
+            for (String paramName : paramNames) {
+                if ("isNavigation".equals(paramName)) continue;
+
+                String paramValue = uri.getQueryParameter(paramName);
+                queryParamPairs.put(paramName, paramValue);
+            }
+
+            builder.clearQuery();
+            for (Map.Entry<String, String> entry : queryParamPairs.entrySet())
+                builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+
+        builder.appendQueryParameter("isNavigation", String.valueOf(isNavigation));
+        return builder.toString();
+    }
+
     @Override
     public void onBackPressed() {
         if (mWebView != null && mWebView.canGoBack()) mWebView.goBack();

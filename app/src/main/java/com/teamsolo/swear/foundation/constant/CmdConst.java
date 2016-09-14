@@ -69,6 +69,9 @@ public interface CmdConst {
     // get carousel list
     String CMD_GET_CAROUSELS = "knowl_carouselList";
 
+    // get ability or mental news
+    String CMD_GET_NLG_NEWS = "knowl_getIndexLearningAndGrowthNewList";
+
     // get orders
     String CMD_GET_ORDERS = "getorderlist";
 }

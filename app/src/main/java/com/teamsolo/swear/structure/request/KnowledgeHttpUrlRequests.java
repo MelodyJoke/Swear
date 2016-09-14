@@ -3,7 +3,9 @@ package com.teamsolo.swear.structure.request;
 import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.swear.foundation.bean.req.CarouselsReq;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
+import com.teamsolo.swear.foundation.bean.req.KnowledgeNewsReq;
 import com.teamsolo.swear.foundation.bean.resp.CarouselsResp;
+import com.teamsolo.swear.foundation.bean.resp.KnowledgeNewsResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 
@@ -72,6 +74,18 @@ public class KnowledgeHttpUrlRequests {
     public Subscriber<CarouselsResp> getCarousels(Map<String, String> paras, Subscriber<CarouselsResp> subscriber) {
         retrofit.create(CarouselsReq.class)
                 .getCarousels(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取学习力/心理成长列表
+     */
+    public Subscriber<KnowledgeNewsResp> getNews(Map<String, String> paras, Subscriber<KnowledgeNewsResp> subscriber) {
+        retrofit.create(KnowledgeNewsReq.class)
+                .getNews(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
