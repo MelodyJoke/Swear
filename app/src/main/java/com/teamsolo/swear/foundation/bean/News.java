@@ -58,7 +58,7 @@ public class News extends Bean {
 
     public byte isLike;
 
-    public ArrayList<Comment> newsCommentList = new ArrayList<>();
+    public ArrayList<NewsComment> newsCommentList = new ArrayList<>();
 
     public News() {
 
@@ -82,7 +82,7 @@ public class News extends Bean {
         isFullComment = in.readByte();
         isFavorite = in.readByte();
         isLike = in.readByte();
-        in.readTypedList(newsCommentList, Comment.CREATOR);
+        in.readTypedList(newsCommentList, NewsComment.CREATOR);
     }
 
     public static final Creator<News> CREATOR = new Creator<News>() {

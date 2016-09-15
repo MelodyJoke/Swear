@@ -3,18 +3,20 @@ package com.teamsolo.swear.structure.request;
 import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.swear.foundation.bean.req.ActivitiesReq;
 import com.teamsolo.swear.foundation.bean.req.AgenciesReq;
+import com.teamsolo.swear.foundation.bean.req.AgencyDetailReq;
 import com.teamsolo.swear.foundation.bean.req.ChildChooseReq;
 import com.teamsolo.swear.foundation.bean.req.ClassifiesReq;
-import com.teamsolo.swear.foundation.bean.req.CommentsReq;
+import com.teamsolo.swear.foundation.bean.req.NewsCommentsReq;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
 import com.teamsolo.swear.foundation.bean.req.NewsDetailReq;
 import com.teamsolo.swear.foundation.bean.req.NewsReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.bean.resp.AgenciesResp;
+import com.teamsolo.swear.foundation.bean.resp.AgencyDetailResp;
 import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
 import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
-import com.teamsolo.swear.foundation.bean.resp.CommentsResp;
+import com.teamsolo.swear.foundation.bean.resp.NewsCommentsResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsResp;
 import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
@@ -149,8 +151,8 @@ public class BaseHttpUrlRequests {
     /**
      * 获取评论列表
      */
-    public Subscriber<CommentsResp> getNewsComments(Map<String, String> paras, Subscriber<CommentsResp> subscriber) {
-        retrofit.create(CommentsReq.class)
+    public Subscriber<NewsCommentsResp> getNewsComments(Map<String, String> paras, Subscriber<NewsCommentsResp> subscriber) {
+        retrofit.create(NewsCommentsReq.class)
                 .getComments(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -176,6 +178,18 @@ public class BaseHttpUrlRequests {
     public Subscriber<ClassifiesResp> getClassifies(Map<String, String> paras, Subscriber<ClassifiesResp> subscriber) {
         retrofit.create(ClassifiesReq.class)
                 .getClassifies(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取机构详情
+     */
+    public Subscriber<AgencyDetailResp> getAgencyDetail(Map<String, String> paras, Subscriber<AgencyDetailResp> subscriber) {
+        retrofit.create(AgencyDetailReq.class)
+                .getAgencyDetail(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

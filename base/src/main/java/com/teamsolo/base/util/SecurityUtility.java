@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -111,5 +112,13 @@ public final class SecurityUtility {
         }
 
         return uuid;
+    }
+
+    public static String decodeString(String source) {
+        try {
+            return URLDecoder.decode(source, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return source;
+        }
     }
 }

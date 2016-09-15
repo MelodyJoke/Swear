@@ -22,8 +22,8 @@ import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
-import com.teamsolo.swear.foundation.bean.Comment;
-import com.teamsolo.swear.foundation.bean.resp.CommentsResp;
+import com.teamsolo.swear.foundation.bean.NewsComment;
+import com.teamsolo.swear.foundation.bean.resp.NewsCommentsResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
@@ -61,15 +61,15 @@ public class CommentsActivity extends HandlerActivity implements
 
     private CommentAdapter mAdapter;
 
-    private List<Comment> mList = new ArrayList<>();
+    private List<NewsComment> mList = new ArrayList<>();
 
-    private ArrayList<Comment> comments;
+    private ArrayList<NewsComment> comments;
 
     private String newsUUId;
 
     private long count;
 
-    private Subscriber<CommentsResp> subscriber;
+    private Subscriber<NewsCommentsResp> subscriber;
 
     private Subscriber<CommonResponse> subscriberComment;
 
@@ -201,7 +201,7 @@ public class CommentsActivity extends HandlerActivity implements
         paras.put("serviceType", "2");
         paras.put("newsCommentId", String.valueOf(mList.get(mList.size() - 1).newsCommentId));
 
-        subscriber = BaseHttpUrlRequests.getInstance().getNewsComments(paras, new Subscriber<CommentsResp>() {
+        subscriber = BaseHttpUrlRequests.getInstance().getNewsComments(paras, new Subscriber<NewsCommentsResp>() {
             @Override
             public void onCompleted() {
 
@@ -213,11 +213,11 @@ public class CommentsActivity extends HandlerActivity implements
             }
 
             @Override
-            public void onNext(CommentsResp commentsResp) {
+            public void onNext(NewsCommentsResp commentsResp) {
                 if (!RetrofitConfig.handleResp(commentsResp, mContext))
                     toast(commentsResp.message);
                 else {
-                    List<Comment> temp = commentsResp.newsCommentList;
+                    List<NewsComment> temp = commentsResp.newsCommentList;
                     if (temp != null) {
                         if (mList.get(mList.size() - 1) == null) mList.remove(mList.size() - 1);
                         mList.addAll(commentsResp.newsCommentList);

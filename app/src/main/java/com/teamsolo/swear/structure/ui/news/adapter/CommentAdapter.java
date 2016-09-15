@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.teamsolo.swear.R;
-import com.teamsolo.swear.foundation.bean.Comment;
+import com.teamsolo.swear.foundation.bean.NewsComment;
 import com.teamsolo.swear.foundation.ui.Appendable;
 
 import java.text.SimpleDateFormat;
@@ -30,11 +30,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     private Context mContext;
 
-    private List<Comment> mList;
+    private List<NewsComment> mList;
 
     private LayoutInflater mInflater;
 
-    public CommentAdapter(Context context, List<Comment> comments) {
+    public CommentAdapter(Context context, List<NewsComment> comments) {
         mContext = context;
         mList = comments;
         mInflater = LayoutInflater.from(context);
@@ -64,7 +64,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             return;
         }
 
-        final Comment item = getItem(mPosition);
+        final NewsComment item = getItem(mPosition);
         if (item != null) {
             if (!TextUtils.isEmpty(item.portraitResourcePath)) {
                 try {
@@ -102,7 +102,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         return mList.size();
     }
 
-    public Comment getItem(int position) {
+    public NewsComment getItem(int position) {
         if (position < mList.size()) return mList.get(position);
         return null;
     }

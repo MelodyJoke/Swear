@@ -11,7 +11,7 @@ import com.teamsolo.base.bean.Bean;
  * version: 0.0.0.1
  */
 @SuppressWarnings("WeakerAccess, unused")
-public class Comment extends Bean {
+public class NewsComment extends Bean {
 
     public long createTimeStamp;
 
@@ -29,11 +29,11 @@ public class Comment extends Bean {
 
     public long replyUserId;
 
-    public Comment() {
+    public NewsComment() {
 
     }
 
-    private Comment(Parcel in) {
+    private NewsComment(Parcel in) {
         createTimeStamp = in.readLong();
         createTimeStr = in.readString();
         newsCommentId = in.readLong();
@@ -44,15 +44,15 @@ public class Comment extends Bean {
         replyUserId = in.readLong();
     }
 
-    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
+    public static final Creator<NewsComment> CREATOR = new Creator<NewsComment>() {
         @Override
-        public Comment createFromParcel(Parcel source) {
-            return new Comment(source);
+        public NewsComment createFromParcel(Parcel source) {
+            return new NewsComment(source);
         }
 
         @Override
-        public Comment[] newArray(int size) {
-            return new Comment[size];
+        public NewsComment[] newArray(int size) {
+            return new NewsComment[size];
         }
     };
 

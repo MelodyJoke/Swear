@@ -1,6 +1,6 @@
 package com.teamsolo.swear.foundation.bean.req;
 
-import com.teamsolo.swear.foundation.bean.resp.CommentsResp;
+import com.teamsolo.swear.foundation.bean.resp.NewsCommentsResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
 
 import java.util.Map;
@@ -17,9 +17,9 @@ import rx.Observable;
  * version: 0.0.0.1
  */
 @SuppressWarnings("unused")
-public interface CommentsReq {
+public interface NewsCommentsReq {
 
     @POST(NetConst.PATH_PRE + NetConst.SERVICE_URL)
     @FormUrlEncoded
-    Observable<CommentsResp> getComments(@FieldMap Map<String, String> paras);
+    Observable<NewsCommentsResp> getComments(@FieldMap Map<String, String> paras);
 }

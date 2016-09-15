@@ -31,7 +31,7 @@ import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.base.util.DisplayUtility;
 import com.teamsolo.base.util.SecurityUtility;
 import com.teamsolo.swear.R;
-import com.teamsolo.swear.foundation.bean.Comment;
+import com.teamsolo.swear.foundation.bean.NewsComment;
 import com.teamsolo.swear.foundation.bean.News;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
@@ -89,7 +89,7 @@ public class NewsActivity extends HandlerActivity {
 
     private CommentAdapter mAdapter;
 
-    private List<Comment> mCommentList = new ArrayList<>();
+    private List<NewsComment> mCommentList = new ArrayList<>();
 
     private String mNewsUUId;
 
@@ -349,7 +349,7 @@ public class NewsActivity extends HandlerActivity {
             Intent intent = new Intent(mContext, CommentsActivity.class);
             intent.putExtra("count", mItem.commentNumber);
             intent.putExtra("id", mItem.newsUuid);
-            intent.putParcelableArrayListExtra("list", (ArrayList<Comment>) mCommentList);
+            intent.putParcelableArrayListExtra("list", (ArrayList<NewsComment>) mCommentList);
             startActivity(intent);
         });
 

@@ -1,5 +1,6 @@
 package com.teamsolo.swear.structure.ui.training;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -93,8 +94,9 @@ public class AgenciesFragment extends BaseFragment implements Refreshable {
     @Override
     protected void bindListeners() {
         mAdapter.setOnItemClickListener((view, agency) -> {
-            // TODO:
-            System.out.println(agency.schoolName);
+            Intent intent = new Intent(mContext, AgencyActivity.class);
+            intent.putExtra("agency", agency);
+            startActivity(intent);
         });
     }
 

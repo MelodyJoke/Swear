@@ -3,7 +3,7 @@ package com.teamsolo.swear.foundation.bean.resp;
 import android.os.Parcel;
 
 import com.teamsolo.base.bean.Response;
-import com.teamsolo.swear.foundation.bean.Comment;
+import com.teamsolo.swear.foundation.bean.NewsComment;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class NewsDetailResp extends Response {
 
     public byte isLike;
 
-    public ArrayList<Comment> newsCommentList = new ArrayList<>();
+    public ArrayList<NewsComment> newsCommentList = new ArrayList<>();
 
     public NewsDetailResp() {
 
@@ -32,7 +32,7 @@ public class NewsDetailResp extends Response {
         isFavorite = in.readByte();
         isFullComment = in.readByte();
         isLike = in.readByte();
-        in.readTypedList(newsCommentList, Comment.CREATOR);
+        in.readTypedList(newsCommentList, NewsComment.CREATOR);
     }
 
     public static final Creator<NewsDetailResp> CREATOR = new Creator<NewsDetailResp>() {

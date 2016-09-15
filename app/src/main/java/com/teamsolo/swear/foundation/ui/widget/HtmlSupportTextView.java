@@ -176,7 +176,6 @@ public class HtmlSupportTextView extends TextView {
                 LogUtility.i(TAG, "parse url failed: " + url);
             }
 
-            final ImageRequest copy = request;
             BaseBitmapDataSubscriber subscriber = new BaseBitmapDataSubscriber() {
                 @Override
                 protected void onNewResultImpl(Bitmap bitmap) {

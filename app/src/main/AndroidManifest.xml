@@ -118,6 +118,15 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
+        <!--knowledge-->
+        <activity
+            android:name=".structure.ui.training.AgencyActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:label="@string/nlg_agency_title"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Translucent"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
         <!--orders-->
         <activity
             android:name=".structure.ui.mine.OrdersActivity"
