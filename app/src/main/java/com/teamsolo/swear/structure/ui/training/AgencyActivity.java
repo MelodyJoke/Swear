@@ -252,6 +252,16 @@ public class AgencyActivity extends HandlerActivity {
             }, PERMISSION_REQUEST_CODE);
         });
 
+        mTelephoneLayout.setOnClickListener(v -> {
+            if (mTelephones.size() <= 0) return;
+
+            tempTelephone = mTelephones.get(0);
+
+            ActivityCompat.requestPermissions(AgencyActivity.this, new String[]{
+                    Manifest.permission.CALL_PHONE
+            }, PERMISSION_REQUEST_CODE);
+        });
+
         mAddressLayout.setOnClickListener(v -> {
             // TODO:
         });

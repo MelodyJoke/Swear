@@ -39,6 +39,12 @@ public class NetConst {
     // news share url
     public static final String NEWS_SHARE_URL = "resource/page/info_detail.html?";
 
+    // bonus point url
+    public static final String BONUS_POINT_URL = "resource/sign/index.html";
+
+    // member index url
+    public static final String MEMBER_INDEX_URL = "resource/sign/member.html";
+
     public static String getBaseHttpUrl() {
         switch (LogUtility.getMode()) {
             case LogUtility.MODE_EAGER:

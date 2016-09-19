@@ -90,6 +90,8 @@
     <string name="nav_history">浏览历史</string>
     <string name="nav_download">本地下载</string>
     <string name="nav_account">账号管理</string>
+    <string name="nav_member">我的会员</string>
+    <string name="nav_bonus_point">我的积分</string>
     <string name="nav_order">我的订单</string>
     <string name="nav_action">操作</string>
     <string name="nav_action_about_us">关于我们</string>

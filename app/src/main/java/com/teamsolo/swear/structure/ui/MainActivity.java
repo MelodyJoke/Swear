@@ -441,6 +441,27 @@ public class MainActivity extends HandlerActivity implements
             case R.id.nav_account:
                 break;
 
+            case R.id.nav_member:
+                WebLink webLinkMem = new WebLink();
+                webLinkMem.title = getString(R.string.nav_member);
+                webLinkMem.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.MEMBER_INDEX_URL;
+
+                Intent intentMem = new Intent(mContext, WebLinkActivity.class);
+                intentMem.putExtra("link", webLinkMem);
+                startActivity(intentMem);
+
+                break;
+
+            case R.id.nav_bonus_point:
+                WebLink webLinkBP = new WebLink();
+                webLinkBP.title = getString(R.string.nav_bonus_point);
+                webLinkBP.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.BONUS_POINT_URL;
+
+                Intent intentBP = new Intent(mContext, WebLinkActivity.class);
+                intentBP.putExtra("link", webLinkBP);
+                startActivity(intentBP);
+                break;
+
             case R.id.nav_order:
                 startActivity(new Intent(mContext, OrdersActivity.class));
                 break;

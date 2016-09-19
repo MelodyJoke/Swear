@@ -27,7 +27,7 @@ public class Application extends BaseApplication {
          * save log file only in {@link LogUtility#MODE_TEST}
          * save nothing in {@link LogUtility#MODE_SLUGGISH}
          */
-        LogUtility.init(LogUtility.MODE_SLUGGISH);
+        LogUtility.init(LogUtility.MODE_DEVELOP);
 
         /**
          * config retrofit log mode

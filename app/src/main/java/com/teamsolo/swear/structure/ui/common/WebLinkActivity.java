@@ -254,6 +254,12 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
             return;
         }
 
+        if (url.startsWith("http://wenxue/app/renewalOfMembership")) {
+            // TODO: jump to purchase member
+            toast("mark here, impl later");
+            return;
+        }
+
         if (url.startsWith("http://wenxue/app/share")) {
             try {
                 String shareUrl = Uri.parse(url).getQueryParameter("url");
@@ -273,6 +279,9 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
 
             if (TextUtils.isEmpty(uri.getQueryParameter("app")))
                 builder.appendQueryParameter("app", "1");
+
+            if (TextUtils.isEmpty(uri.getQueryParameter("versionCode")))
+                builder.appendQueryParameter("versionCode", "202");
 
             String result = builder.build().toString();
             LogUtility.i("url fixed", result);
