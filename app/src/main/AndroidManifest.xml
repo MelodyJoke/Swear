@@ -135,6 +135,14 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
+        <!--accounts-->
+        <activity
+            android:name=".structure.ui.mine.AccountsActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:label="@string/accounts_title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
     </application>
 
 </manifest>

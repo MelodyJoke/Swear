@@ -209,4 +209,12 @@
     <string name="orders_refund">申请退款</string>
     <string name="orders_pay">去付款</string>
     <string name="orders_empty">空空如也~</string>
+
+    <!--accounts-->
+    <string name="accounts_title">账号管理</string>
+    <string name="accounts_empty">万里无云~</string>
+    <string name="accounts_hint">订购会员服务</string>
+    <string name="accounts_hint_2">有效期至: %1$s</string>
+    <string name="accounts_purchase">订购</string>
+    <string name="accounts_purchase_2">续约</string>
 </resources>

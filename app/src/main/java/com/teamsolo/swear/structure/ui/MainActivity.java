@@ -45,6 +45,7 @@ import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
 import com.teamsolo.swear.structure.ui.konwledge.KnowledgeFragment;
+import com.teamsolo.swear.structure.ui.mine.AccountsActivity;
 import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
@@ -439,6 +440,7 @@ public class MainActivity extends HandlerActivity implements
                 break;
 
             case R.id.nav_account:
+                startActivity(new Intent(mContext, AccountsActivity.class));
                 break;
 
             case R.id.nav_member:
