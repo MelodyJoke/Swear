@@ -22,6 +22,7 @@ import com.teamsolo.swear.foundation.bean.Relationship;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.mine.view.AppellationPickDialog;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +45,8 @@ public class AccountActivity extends HandlerActivity {
     private TextInputEditText mNameEdit, mAppellationEdit, mPhoneEdit;
 
     private View mCommonsButton;
+
+    private AppellationPickDialog mDialog;
 
     private boolean isEdit;
 
@@ -95,6 +98,8 @@ public class AccountActivity extends HandlerActivity {
             mAppellationEdit.setText(relationship.appellation);
             mPhoneEdit.setText(relationship.parentPhone);
         }
+
+        mDialog = AppellationPickDialog.newInstance();
     }
 
     @Override
@@ -108,7 +113,13 @@ public class AccountActivity extends HandlerActivity {
         });
 
         mCommonsButton.setOnClickListener(v -> {
-            // TODO:
+            mDialog.show(getSupportFragmentManager(), "");
+            mDialog.setAppellation(mAppellationEdit.getText().toString().trim());
+        });
+
+        mDialog.setOnButtonClickListener((view, appellation) -> {
+            mAppellationEdit.setText(appellation);
+            mDialog.dismiss();
         });
     }
 

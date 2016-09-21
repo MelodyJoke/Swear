@@ -235,5 +235,11 @@
     <string name="accounts_error_diff">没有任何改动</string>
     <string name="accounts_saving">创建家长账号&#8230;</string>
     <string name="accounts_saving_2">更新账号信息&#8230;</string>
+    <string name="accounts_appellation_1">爸爸</string>
+    <string name="accounts_appellation_2">妈妈</string>
+    <string name="accounts_appellation_3">爷爷</string>
+    <string name="accounts_appellation_4">奶奶</string>
+    <string name="accounts_appellation_5">外公</string>
+    <string name="accounts_appellation_6">外婆</string>
 
 </resources>

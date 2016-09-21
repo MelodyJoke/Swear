@@ -107,7 +107,7 @@
                     android:imeActionId="0"
                     android:imeActionLabel="@string/accounts_edit"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="text"
+                    android:inputType="phone"
                     android:maxLength="11"
                     android:maxLines="1" />
 
