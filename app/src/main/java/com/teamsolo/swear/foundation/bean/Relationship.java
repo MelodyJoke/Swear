@@ -39,6 +39,8 @@ public class Relationship extends Bean {
 
     public long updateUser;
 
+    public long expireTime;
+
     public Relationship() {
 
     }
@@ -57,6 +59,7 @@ public class Relationship extends Bean {
         studentId = in.readLong();
         updateTime = in.readLong();
         updateUser = in.readLong();
+        expireTime = in.readLong();
     }
 
     public static final Creator<Relationship> CREATOR = new Creator<Relationship>() {
@@ -91,6 +94,7 @@ public class Relationship extends Bean {
         dest.writeLong(studentId);
         dest.writeLong(updateTime);
         dest.writeLong(updateUser);
+        dest.writeLong(expireTime);
     }
 
     // fields about ui

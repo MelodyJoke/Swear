@@ -38,7 +38,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/light_margin"
+            android:drawableLeft="@drawable/ic_person_primary_18dp"
+            android:drawablePadding="@dimen/tiny_margin"
+            android:drawableStart="@drawable/ic_person_primary_18dp"
             android:ellipsize="end"
+            android:gravity="center_vertical"
             android:maxLines="1"
             android:text="@string/app_name" />
 
@@ -47,7 +51,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/tiny_margin"
+            android:drawableLeft="@drawable/ic_call_primary_18dp"
+            android:drawablePadding="@dimen/tiny_margin"
+            android:drawableStart="@drawable/ic_call_primary_18dp"
             android:ellipsize="end"
+            android:gravity="center_vertical"
             android:maxLines="1"
             android:text="@string/app_name" />
 
@@ -80,7 +88,7 @@
                 android:paddingStart="@dimen/light_margin"
                 android:paddingTop="@dimen/light_margin"
                 android:text="@string/accounts_purchase"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorAccent" />
 
         </LinearLayout>
 

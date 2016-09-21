@@ -2,6 +2,7 @@ package com.teamsolo.swear.structure.ui.mine.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +33,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     private LayoutInflater mInflater;
 
-    private OnButtonClickListener listener;
+    private OnClickListener listener, buttonListener;
 
     private boolean isMain;
 
@@ -59,6 +60,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Relationship item = getItem(position);
         int viewType = getItemViewType(position);
@@ -67,10 +69,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         if (viewType == 0) {
             if (item != null) holder.dateText.setText(item.parentName);
-            else holder.dateText.setText(R.string.app_name);
+            else holder.dateText.setText(R.string.unknown);
         } else {
+            long userId = UserHelper.getUserId(mContext);
+
             if (item != null) {
-                if (!TextUtils.isEmpty(item.parentName)) holder.nameText.setText(item.parentName);
+                if (!TextUtils.isEmpty(item.parentName))
+                    holder.nameText.setText(Html.fromHtml(userId != item.parentsId
+                            ? item.parentName
+                            : "<font color='#3F51B5'>" + item.parentName + "</font>" + mContext.getString(R.string.accounts_me)));
                 else holder.nameText.setText(R.string.unknown);
 
                 if (!TextUtils.isEmpty(item.appellation))
@@ -86,16 +93,25 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
                     holder.hintText.setText(String.format(
                             mContext.getString(R.string.accounts_hint_2),
-                            format.format(new Date(item.updateTime))));
+                            format.format(new Date(item.expireTime))));
                 } else {
                     holder.purchaseButton.setText(R.string.accounts_purchase);
                     holder.hintText.setText(R.string.accounts_hint);
                 }
 
-                if (item.isMain == 1)
-                    this.isMain = UserHelper.getUserId(mContext) == item.parentsId;
+                if (item.isMain == 1) {
+                    holder.purchaseButton.setText(R.string.accounts_purchase_3);
+                    holder.hintText.setText(R.string.accounts_hint_3);
+                }
 
-                holder.bottomLayout.setVisibility(item.isMain != 1 && this.isMain ? View.VISIBLE : View.GONE);
+                if (item.isMain == 1)
+                    this.isMain = userId == item.parentsId;
+
+                holder.bottomLayout.setVisibility(this.isMain || item.isMain == 1 ? View.VISIBLE : View.GONE);
+
+                holder.purchaseButton.setOnClickListener(v -> {
+                    if (buttonListener != null) buttonListener.onClick(v, item);
+                });
             } else {
                 holder.nameText.setText(R.string.unknown);
                 holder.appellationText.setText(R.string.unknown);
@@ -103,6 +119,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
                 holder.purchaseButton.setText(R.string.accounts_purchase);
                 holder.hintText.setText(R.string.accounts_hint);
                 holder.bottomLayout.setVisibility(View.GONE);
+                holder.purchaseButton.setOnClickListener(null);
             }
         }
 
@@ -123,8 +140,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         return null;
     }
 
-    public void setOnButtonClickListener(OnButtonClickListener listener) {
+    public void setOnClickListener(OnClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnButtonClickListener(OnClickListener listener) {
+        this.buttonListener = listener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -152,7 +173,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         }
     }
 
-    public interface OnButtonClickListener {
+    public interface OnClickListener {
         void onClick(View view, Relationship relationship);
     }
 }

@@ -1,6 +1,7 @@
 package com.teamsolo.swear.structure.request;
 
 import com.teamsolo.base.bean.CommonResponse;
+import com.teamsolo.swear.foundation.bean.req.AccountsReq;
 import com.teamsolo.swear.foundation.bean.req.ActivitiesReq;
 import com.teamsolo.swear.foundation.bean.req.AgenciesReq;
 import com.teamsolo.swear.foundation.bean.req.AgencyDetailReq;
@@ -11,6 +12,7 @@ import com.teamsolo.swear.foundation.bean.req.CommonRequest;
 import com.teamsolo.swear.foundation.bean.req.NewsDetailReq;
 import com.teamsolo.swear.foundation.bean.req.NewsReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
+import com.teamsolo.swear.foundation.bean.resp.AccountsResp;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.bean.resp.AgenciesResp;
 import com.teamsolo.swear.foundation.bean.resp.AgencyDetailResp;
@@ -202,6 +204,18 @@ public class BaseHttpUrlRequests {
     public Subscriber<AgenciesResp> getAgencies(Map<String, String> paras, Subscriber<AgenciesResp> subscriber) {
         retrofit.create(AgenciesReq.class)
                 .getAgencies(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取账号列表
+     */
+    public Subscriber<AccountsResp> getAccounts(Map<String, String> paras, Subscriber<AccountsResp> subscriber) {
+        retrofit.create(AccountsReq.class)
+                .getAccounts(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
