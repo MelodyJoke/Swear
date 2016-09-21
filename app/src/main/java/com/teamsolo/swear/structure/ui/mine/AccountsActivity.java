@@ -43,6 +43,8 @@ import java.util.Map;
 
 import rx.Subscriber;
 
+import static android.R.id.message;
+
 /**
  * description: accounts manage page
  * author: Melody
@@ -50,6 +52,8 @@ import rx.Subscriber;
  * version: 0.0.0.1
  */
 public class AccountsActivity extends HandlerActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    private static final int ACCOUNT_EDIT_REQUEST_CODE = 233;
 
     private static final int PERMISSION_REQUEST_CODE = 167;
 
@@ -129,7 +133,8 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
     protected void bindListeners() {
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mFab.setOnClickListener(v -> startActivity(new Intent(mContext, AccountActivity.class)));
+        mFab.setOnClickListener(v ->
+                startActivityForResult(new Intent(mContext, AccountActivity.class), ACCOUNT_EDIT_REQUEST_CODE));
 
         mAdapter.setOnClickListener((view, relationship) -> {
             if (relationship.isMain == 1)
@@ -140,7 +145,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                 Intent intent = new Intent(mContext, AccountActivity.class);
                 intent.putExtra("relationShip", relationship);
                 intent.putExtra("isEdit", true);
-                startActivity(intent);
+                startActivityForResult(intent, ACCOUNT_EDIT_REQUEST_CODE);
             }
         });
 
@@ -257,6 +262,18 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                                     .create();
                         serviceDialog.show();
                     } else toast(R.string.permission_deny);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACCOUNT_EDIT_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                mSwipeRefreshLayout.setRefreshing(true);
+                new Thread(this::request).start();
+            }
         }
     }
 
