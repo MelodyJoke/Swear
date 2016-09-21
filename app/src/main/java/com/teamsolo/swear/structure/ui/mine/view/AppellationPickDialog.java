@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * date: 2016/9/21
  * version: 0.0.0.1
  */
-
+@SuppressWarnings("unused")
 public class AppellationPickDialog extends BaseDialog implements View.OnClickListener {
 
     private CheckedTextView[] buttons;
