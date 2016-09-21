@@ -43,8 +43,6 @@ import java.util.Map;
 
 import rx.Subscriber;
 
-import static android.R.id.message;
-
 /**
  * description: accounts manage page
  * author: Melody

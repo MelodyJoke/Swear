@@ -225,4 +225,15 @@
 
     <string name="accounts_add">添加账号</string>
     <string name="accounts_edit">编辑账号</string>
+    <string name="accounts_name">姓名</string>
+    <string name="accounts_appellation">称谓</string>
+    <string name="accounts_phone">电话</string>
+    <string name="accounts_commons">常用</string>
+    <string name="accounts_error_name">请填写家长姓名</string>
+    <string name="accounts_error_appellation">请填写家长称谓</string>
+    <string name="accounts_error_phone">电话号码不合法</string>
+    <string name="accounts_error_diff">没有任何改动</string>
+    <string name="accounts_saving">创建家长账号&#8230;</string>
+    <string name="accounts_saving_2">更新账号信息&#8230;</string>
+
 </resources>

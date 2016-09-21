@@ -125,7 +125,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         if (item != null)
             holder.itemView.setOnClickListener(v -> {
-                if (listener != null) listener.onClick(v, item);
+                if (listener != null && (isMain || item.isMain == 1)) listener.onClick(v, item);
             });
         else holder.itemView.setOnClickListener(null);
     }
