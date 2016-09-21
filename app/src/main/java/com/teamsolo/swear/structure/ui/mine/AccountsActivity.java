@@ -20,6 +20,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
@@ -128,9 +129,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
     protected void bindListeners() {
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mFab.setOnClickListener(v -> {
-            // TODO: add a new account
-        });
+        mFab.setOnClickListener(v -> startActivity(new Intent(mContext, AccountActivity.class)));
 
         mAdapter.setOnClickListener((view, relationship) -> {
             if (relationship.isMain == 1)
@@ -138,7 +137,10 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                         Manifest.permission.CALL_PHONE
                 }, PERMISSION_REQUEST_CODE);
             else {
-                // TODO: edit
+                Intent intent = new Intent(mContext, AccountActivity.class);
+                intent.putExtra("relationShip", relationship);
+                intent.putExtra("isEdit", true);
+                startActivity(intent);
             }
         });
 
@@ -218,6 +220,15 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
 
                     loadingUtil.dismiss();
                     mSwipeRefreshLayout.setRefreshing(false);
+
+                    if (temp != null) {
+                        int count = 0;
+                        for (Relationship relationship :
+                                temp)
+                            if (relationship.isMain == 0) count++;
+
+                        mFab.setVisibility(count < 5 ? View.VISIBLE : View.GONE);
+                    } else mFab.setVisibility(View.GONE);
                 }
             }
         });

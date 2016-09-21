@@ -222,4 +222,7 @@
     <string name="accounts_main">主账号</string>
     <string name="accounts_common">其他账号</string>
     <string name="accounts_me">-(我)</string>
+
+    <string name="accounts_add">添加账号</string>
+    <string name="accounts_edit">编辑账号</string>
 </resources>
