@@ -1,6 +1,9 @@
 package com.teamsolo.swear.structure.ui.news;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
@@ -20,6 +23,7 @@ import com.teamsolo.swear.foundation.bean.News;
 import com.teamsolo.swear.foundation.bean.NewsDaily;
 import com.teamsolo.swear.foundation.bean.dummy.NewsDummy;
 import com.teamsolo.swear.foundation.bean.resp.NewsResp;
+import com.teamsolo.swear.foundation.constant.BroadcastConst;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
 import com.teamsolo.swear.foundation.ui.Refreshable;
@@ -73,6 +77,14 @@ public class NewsFragment extends HandlerFragment implements Refreshable, Append
 
     private CacheDbHelper helper;
 
+    private BroadcastReceiver attentionChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            onInteraction(Uri.parse("refresh?start=true"));
+            refresh(null);
+        }
+    };
+
     public static NewsFragment newInstance() {
         NewsFragment fragment = new NewsFragment();
         fragment.setArguments(new Bundle());
@@ -89,6 +101,7 @@ public class NewsFragment extends HandlerFragment implements Refreshable, Append
         onInteraction(Uri.parse("refresh?start=true"));
         date = format.format(new Date());
         new Thread(this::request).start();
+        mContext.registerReceiver(attentionChangeReceiver, new IntentFilter(BroadcastConst.BC_ATTENTION_GRADE_CHANGE));
 
         return mLayoutView;
     }
@@ -230,7 +243,9 @@ public class NewsFragment extends HandlerFragment implements Refreshable, Append
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
+        mContext.unregisterReceiver(attentionChangeReceiver);
     }
 
     @Override

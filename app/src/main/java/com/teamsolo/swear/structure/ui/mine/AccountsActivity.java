@@ -201,7 +201,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                 }, PERMISSION_REQUEST_CODE);
             else {
                 // TODO: purchase member
-                System.out.println(relationship.parentName + " purchase");
+                toast(relationship.parentName + " purchase");
             }
         });
     }

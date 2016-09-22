@@ -1,6 +1,7 @@
 package com.teamsolo.swear.structure.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -8,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.teamsolo.swear.foundation.bean.Child;
 import com.teamsolo.swear.foundation.bean.User;
+import com.teamsolo.swear.foundation.constant.BroadcastConst;
 import com.teamsolo.swear.foundation.constant.DbConst;
 import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
@@ -72,18 +74,18 @@ public class UserHelper {
         // memory cache
         mChild = child;
         mStudentId = child.studentId;
-        mChildAttentionGrade = child.attentionGrade;
 
         // db cache
         CacheDbHelper helper = new CacheDbHelper(context);
         helper.save(DbConst.DB_CHILD_INFO, gson.toJson(child), "");
         helper.save(DbConst.DB_CHILD_ID, String.valueOf(child.studentId), "");
-        helper.save(DbConst.DB_CHILD_ATTENTION_GRADE, String.valueOf(child.attentionGrade), "");
 
         // save last child
         getDefaultSharedPreferences(context).edit()
                 .putLong(SpConst.LAST_CHILD, child.studentId).apply();
         helper.save(SpConst.LAST_CHILD, String.valueOf(child.studentId), "");
+
+        setAttentionGrade(child.attentionGrade, context);
     }
 
     public static User getUser(@NotNull Context context) {
@@ -210,6 +212,20 @@ public class UserHelper {
         if (attentionGrade > 0) return attentionGrade;
 
         return 0;
+    }
+
+    private static void setAttentionGrade(int attentionGrade, Context context) {
+        int lastOne = getRealAttentionGrade(context);
+        if (attentionGrade == lastOne) return;
+
+        mChildAttentionGrade = attentionGrade;
+
+        CacheDbHelper helper = new CacheDbHelper(context);
+        helper.save(DbConst.DB_CHILD_ATTENTION_GRADE, String.valueOf(attentionGrade), "");
+
+        Intent intent = new Intent(BroadcastConst.BC_ATTENTION_GRADE_CHANGE);
+        intent.putExtra("attention", attentionGrade);
+        context.sendBroadcast(intent);
     }
 
     public static void clear(@NotNull Context context) {

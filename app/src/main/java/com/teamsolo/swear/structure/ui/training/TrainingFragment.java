@@ -1,6 +1,9 @@
 package com.teamsolo.swear.structure.ui.training;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
@@ -24,6 +27,7 @@ import com.teamsolo.swear.foundation.bean.Classify;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
+import com.teamsolo.swear.foundation.constant.BroadcastConst;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
@@ -86,6 +90,14 @@ public class TrainingFragment extends HandlerFragment implements
 
     private Subscriber<ClassifiesResp> subscriberClassify;
 
+    private BroadcastReceiver attentionChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            onInteraction(Uri.parse("refresh?start=true"));
+            new Thread(() -> requestCarousels()).start();
+        }
+    };
+
     public static TrainingFragment newInstance() {
         TrainingFragment fragment = new TrainingFragment();
         fragment.setArguments(new Bundle());
@@ -101,6 +113,7 @@ public class TrainingFragment extends HandlerFragment implements
         bindListeners();
         onInteraction(Uri.parse("refresh?start=true"));
         handler.sendEmptyMessage(0);
+        mContext.registerReceiver(attentionChangeReceiver, new IntentFilter(BroadcastConst.BC_ATTENTION_GRADE_CHANGE));
 
         return mLayoutView;
     }
@@ -354,5 +367,7 @@ public class TrainingFragment extends HandlerFragment implements
 
         if (subscriberClassify != null && !subscriberClassify.isUnsubscribed())
             subscriberClassify.unsubscribe();
+
+        mContext.unregisterReceiver(attentionChangeReceiver);
     }
 }

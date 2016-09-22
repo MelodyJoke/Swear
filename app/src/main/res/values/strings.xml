@@ -178,6 +178,11 @@
     <string name="nlg_agency_rating_quality">教学质量: %1$s</string>
     <string name="nlg_agency_rating_environment">教学环境: %1$s</string>
 
+    <!--mine-->
+    <!--attention-->
+    <string name="attention_title">关注年级</string>
+    <string name="attention_hint">选择您关注的年级，为您定制推荐内容</string>
+
     <!--orders-->
     <string name="orders_title">我的订单</string>
     <string-array name="orders_indicators">

@@ -46,6 +46,7 @@ import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
 import com.teamsolo.swear.structure.ui.konwledge.KnowledgeFragment;
 import com.teamsolo.swear.structure.ui.mine.AccountsActivity;
+import com.teamsolo.swear.structure.ui.mine.AttentionActivity;
 import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
@@ -71,7 +72,6 @@ import static com.teamsolo.swear.structure.util.UserHelper.getChildren;
  * date: 2016/8/28
  * version: 0.0.0.1
  */
-
 public class MainActivity extends HandlerActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         BaseFragment.OnFragmentInteractionListener,
@@ -428,6 +428,7 @@ public class MainActivity extends HandlerActivity implements
         // TODO: nav drawer action
         switch (id) {
             case R.id.nav_attention:
+                startActivity(new Intent(mContext, AttentionActivity.class));
                 break;
 
             case R.id.nav_collection:
