@@ -141,7 +141,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         final int position = viewHolder.getAdapterPosition();
-                        if (position < 0 || position >= mList.size() || !(viewHolder instanceof AccountAdapter.ViewHolder)) {
+                        if (position < 0 || position >= mList.size() || !(viewHolder instanceof AccountAdapter.ViewHolder) || !mAdapter.isMain()) {
                             mAdapter.notifyItemChanged(position);
                             return;
                         }
@@ -284,11 +284,6 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
     }
 
     private void requestRemove(int position) {
-        if (!mAdapter.isMain()) {
-            mAdapter.notifyItemChanged(position);
-            return;
-        }
-
         final Relationship relationship = mList.get(position);
         toast(String.format(getString(R.string.accounts_removing), relationship.parentName));
 
