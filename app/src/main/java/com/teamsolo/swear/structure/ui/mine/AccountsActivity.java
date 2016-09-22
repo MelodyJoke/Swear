@@ -179,7 +179,9 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
         mFab.setOnClickListener(v ->
                 startActivityForResult(new Intent(mContext, AccountActivity.class), ACCOUNT_EDIT_REQUEST_CODE));
 
-        mAdapter.setOnClickListener((view, relationship) -> {
+        mAdapter.setOnItemClickListener((view, relationship) -> {
+            if (relationship.type == -1 || relationship.type == 0) return;
+
             if (relationship.isMain == 1)
                 ActivityCompat.requestPermissions(AccountsActivity.this, new String[]{
                         Manifest.permission.CALL_PHONE

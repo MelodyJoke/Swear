@@ -140,7 +140,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         return null;
     }
 
-    public void setOnClickListener(OnClickListener listener) {
+    public void setOnItemClickListener(OnClickListener listener) {
         this.listener = listener;
     }
 
