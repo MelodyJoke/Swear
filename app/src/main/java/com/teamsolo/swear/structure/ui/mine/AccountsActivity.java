@@ -20,8 +20,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.view.View;
 
+import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
@@ -69,7 +72,9 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
 
     private List<Relationship> mList = new ArrayList<>();
 
-    private Subscriber<AccountsResp> subscriber;
+    private Subscriber<AccountsResp> subscriberList;
+
+    private Subscriber<CommonResponse> subscriberRemove;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +85,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
         initViews();
         bindListeners();
 
-        new Thread(this::request).start();
+        new Thread(this::requestList).start();
     }
 
     @Override
@@ -125,6 +130,46 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
         mListView.setAdapter(mAdapter);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        final int position = viewHolder.getAdapterPosition();
+                        if (position < 0 || position >= mList.size() || !(viewHolder instanceof AccountAdapter.ViewHolder)) {
+                            mAdapter.notifyItemChanged(position);
+                            return;
+                        }
+
+                        AccountAdapter.ViewHolder holder = (AccountAdapter.ViewHolder) viewHolder;
+                        if (holder.viewType == -1 || holder.viewType == 0) {
+                            mAdapter.notifyItemChanged(position);
+                            return;
+                        }
+
+                        final Relationship relationship = mList.get(position);
+                        if (relationship.isMain == 1) {
+                            toast(R.string.accounts_remove_error);
+                            mAdapter.notifyItemChanged(position);
+                            return;
+                        }
+
+                        new AlertDialog.Builder(mContext)
+                                .setTitle(R.string.prompt)
+                                .setMessage(String.format(getString(R.string.accounts_remove), relationship.parentName))
+                                .setNegativeButton(R.string.cancel, (dialog, which) -> mAdapter.notifyItemChanged(position))
+                                .setPositiveButton(R.string.ok, (dialog, which) -> new Thread(() -> requestRemove(position)).start())
+                                .create()
+                                .show();
+                    }
+                });
+
+        itemTouchHelper.attachToRecyclerView(mListView);
     }
 
     @Override
@@ -154,11 +199,12 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                 }, PERMISSION_REQUEST_CODE);
             else {
                 // TODO: purchase member
+                System.out.println(relationship.parentName + " purchase");
             }
         });
     }
 
-    private void request() {
+    private void requestList() {
         long studentId = UserHelper.getStudentId(mContext);
         if (studentId <= 0) {
             mList.clear();
@@ -170,7 +216,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
         Map<String, String> paras = new HashMap<>();
         paras.put("CMD", CmdConst.CMD_GET_ACCOUNTS);
         paras.put("studentId", String.valueOf(studentId));
-        subscriber = BaseHttpUrlRequests.getInstance().getAccounts(paras, new Subscriber<AccountsResp>() {
+        subscriberList = BaseHttpUrlRequests.getInstance().getAccounts(paras, new Subscriber<AccountsResp>() {
             @Override
             public void onCompleted() {
 
@@ -237,6 +283,62 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
         });
     }
 
+    private void requestRemove(int position) {
+        final Relationship relationship = mList.get(position);
+        toast(String.format(getString(R.string.accounts_removing), relationship.parentName));
+
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_DELETE_ACCOUNT);
+        paras.put("parentsStudentId", String.valueOf(relationship.parentsStudentId));
+        paras.put("parentsId", String.valueOf(relationship.parentsId));
+        paras.put("studentId", String.valueOf(relationship.studentId));
+
+        subscriberRemove = BaseHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+                mAdapter.notifyItemChanged(position);
+            }
+
+            @Override
+            public void onNext(CommonResponse commonResponse) {
+                if (!RetrofitConfig.handleResp(commonResponse, mContext)) {
+                    toast(commonResponse.message);
+                    mAdapter.notifyItemChanged(position);
+                } else {
+                    mList.remove(position);
+                    mAdapter.notifyItemRemoved(position);
+
+                    int count = 0;
+                    for (Relationship relationship :
+                            mList)
+                        if (relationship.type == 1 && relationship.isMain == 0) count++;
+
+                    mFab.setVisibility(count < 5 ? View.VISIBLE : View.GONE);
+
+                    int removePosition = -1;
+                    if (count == 0) {
+                        for (int i = 0; i < mList.size(); i++) {
+                            Relationship relationship = mList.get(i);
+                            if (relationship.type == 0 && TextUtils.equals(relationship.parentName, getString(R.string.accounts_common)))
+                                removePosition = i;
+                        }
+
+                        if (removePosition >= 0) {
+                            mList.remove(removePosition);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     @SuppressWarnings("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -270,14 +372,14 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
         if (requestCode == ACCOUNT_EDIT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 mSwipeRefreshLayout.setRefreshing(true);
-                new Thread(this::request).start();
+                new Thread(this::requestList).start();
             }
         }
     }
 
     @Override
     public void onRefresh() {
-        new Thread(this::request).start();
+        new Thread(this::requestList).start();
     }
 
     @Override
@@ -298,6 +400,10 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
+
+        if (subscriberList != null && !subscriberList.isUnsubscribed())
+            subscriberList.unsubscribe();
+        if (subscriberRemove != null && !subscriberRemove.isUnsubscribed())
+            subscriberRemove.unsubscribe();
     }
 }

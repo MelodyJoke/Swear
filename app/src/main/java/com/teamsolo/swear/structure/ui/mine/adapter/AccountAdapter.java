@@ -148,7 +148,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         this.buttonListener = listener;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView dateText;
 
@@ -158,8 +158,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         TextView hintText, purchaseButton;
 
+        public int viewType;
+
         ViewHolder(View itemView, int viewType) {
             super(itemView);
+
+            this.viewType = viewType;
 
             if (viewType == 0) dateText = (TextView) itemView.findViewById(R.id.title);
             else if (viewType != -1) {
