@@ -284,6 +284,11 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
     }
 
     private void requestRemove(int position) {
+        if (!mAdapter.isMain()) {
+            mAdapter.notifyItemChanged(position);
+            return;
+        }
+
         final Relationship relationship = mList.get(position);
         toast(String.format(getString(R.string.accounts_removing), relationship.parentName));
 

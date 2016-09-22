@@ -148,6 +148,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         this.buttonListener = listener;
     }
 
+    public boolean isMain() {
+        return isMain;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView dateText;

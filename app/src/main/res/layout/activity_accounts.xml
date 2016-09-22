@@ -22,7 +22,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.teamsolo.swear.foundation.ui.widget.FixedSwipeRefreshLayout
         android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,7 +44,7 @@
 
         </FrameLayout>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.teamsolo.swear.foundation.ui.widget.FixedSwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
