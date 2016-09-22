@@ -278,7 +278,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                                 temp)
                             if (relationship.isMain == 0) count++;
 
-                        mFab.setVisibility(count < 5 ? View.VISIBLE : View.GONE);
+                        mFab.setVisibility(count < 5 && mAdapter.isMain() ? View.VISIBLE : View.GONE);
                     } else mFab.setVisibility(View.GONE);
                 }
             }
@@ -321,7 +321,7 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                             mList)
                         if (relationship.type == 1 && relationship.isMain == 0) count++;
 
-                    mFab.setVisibility(count < 5 ? View.VISIBLE : View.GONE);
+                    mFab.setVisibility(count < 5 && mAdapter.isMain() ? View.VISIBLE : View.GONE);
 
                     int removePosition = -1;
                     if (count == 0) {
