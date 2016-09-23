@@ -214,7 +214,7 @@ public class UserHelper {
         return 0;
     }
 
-    private static void setAttentionGrade(int attentionGrade, Context context) {
+    public static void setAttentionGrade(int attentionGrade, Context context) {
         int lastOne = getRealAttentionGrade(context);
         if (attentionGrade == lastOne) return;
 

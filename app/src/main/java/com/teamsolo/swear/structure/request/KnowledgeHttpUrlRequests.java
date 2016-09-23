@@ -1,9 +1,11 @@
 package com.teamsolo.swear.structure.request;
 
 import com.teamsolo.base.bean.CommonResponse;
+import com.teamsolo.swear.foundation.bean.req.AttentionGradeReq;
 import com.teamsolo.swear.foundation.bean.req.CarouselsReq;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
 import com.teamsolo.swear.foundation.bean.req.KnowledgeNewsReq;
+import com.teamsolo.swear.foundation.bean.resp.AttentionGradeResp;
 import com.teamsolo.swear.foundation.bean.resp.CarouselsResp;
 import com.teamsolo.swear.foundation.bean.resp.KnowledgeNewsResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
@@ -86,6 +88,18 @@ public class KnowledgeHttpUrlRequests {
     public Subscriber<KnowledgeNewsResp> getNews(Map<String, String> paras, Subscriber<KnowledgeNewsResp> subscriber) {
         retrofit.create(KnowledgeNewsReq.class)
                 .getNews(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取关注年级
+     */
+    public Subscriber<AttentionGradeResp> getAttentionGrade(Map<String, String> paras, Subscriber<AttentionGradeResp> subscriber) {
+        retrofit.create(AttentionGradeReq.class)
+                .getAttentionGrade(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

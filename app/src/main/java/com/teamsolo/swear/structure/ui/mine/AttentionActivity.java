@@ -13,12 +13,30 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.GradeType;
+import com.teamsolo.swear.foundation.bean.resp.AttentionGradeResp;
+import com.teamsolo.swear.foundation.constant.CmdConst;
+import com.teamsolo.swear.foundation.constant.DbConst;
+import com.teamsolo.swear.foundation.util.RetrofitConfig;
+import com.teamsolo.swear.structure.request.KnowledgeHttpUrlRequests;
+import com.teamsolo.swear.structure.util.UserHelper;
+import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import rx.Subscriber;
 
 /**
  * description: attention grade page
@@ -34,6 +52,8 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
 
     private RecyclerView mListView;
 
+    private List<GradeType> mList = new ArrayList<>();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +62,7 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
         getBundle(getIntent());
         initViews();
         bindListeners();
-        new Thread(this::requestList).start();
+        new Thread(() -> requestList(true)).start();
     }
 
     @Override
@@ -91,11 +111,61 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
 
     @Override
     public void onRefresh() {
-        new Thread(this::requestList).start();
+        new Thread(() -> requestList(false)).start();
     }
 
-    private void requestList() {
-        handler.postDelayed(() -> mSwipeRefreshLayout.setRefreshing(false), 1500);
+    private void requestList(boolean fromCache) {
+        if (fromCache) {
+            Map<String, String> cacheMap = new CacheDbHelper(mContext).load(DbConst.DB_GRADE_TYPES);
+            if (cacheMap != null && !cacheMap.isEmpty()) {
+                String cacheJson = cacheMap.get(DbConst.TABLE_CACHE_FIELDS[2][0]);
+                if (!TextUtils.isEmpty(cacheJson)) {
+                    List<GradeType> temp = new Gson().fromJson(cacheJson, new TypeToken<List<GradeType>>() {
+                    }.getType());
+                    transGradeTypes(temp);
+                } else requestList(false);
+            } else requestList(false);
+        } else {
+            Map<String, String> paras = new HashMap<>();
+            paras.put("CMD", CmdConst.CMD_ATTENTION);
+
+            KnowledgeHttpUrlRequests.getInstance().getAttentionGrade(paras, new Subscriber<AttentionGradeResp>() {
+                @Override
+                public void onCompleted() {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    toast(RetrofitConfig.handleReqError(e));
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void onNext(AttentionGradeResp attentionGradeResp) {
+                    if (!RetrofitConfig.handleResp(attentionGradeResp, mContext))
+                        toast(attentionGradeResp.message);
+                    else {
+                        UserHelper.setAttentionGrade(attentionGradeResp.attentionGradeId, mContext);
+
+                        List<GradeType> temp = attentionGradeResp.gradeTypes;
+                        if (temp != null && !temp.isEmpty()) {
+                            new CacheDbHelper(mContext).save(DbConst.DB_GRADE_TYPES, new Gson().toJson(temp), "");
+                            transGradeTypes(temp);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void transGradeTypes(List<GradeType> temp) {
+        mList.addAll(temp);
+
+        for (GradeType gradeType :
+                mList) {
+            System.out.println(gradeType.gradeTpyeName);
+        }
     }
 
     private void requestSave() {

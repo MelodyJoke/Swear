@@ -32,6 +32,8 @@ public interface DbConst {
 
     String DB_CHILD_ATTENTION_GRADE = "db_child_grade_id";
 
+    String DB_GRADE_TYPES = "db_grade_types";
+
     String TABLE_CACHE = "table_cache";
 
     String[][] TABLE_CACHE_FIELDS = {
