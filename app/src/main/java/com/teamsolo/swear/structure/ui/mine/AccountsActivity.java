@@ -133,6 +133,12 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT) {
+
+                    @Override
+                    public boolean isLongPressDragEnabled() {
+                        return false;
+                    }
+
                     @Override
                     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                         return false;
