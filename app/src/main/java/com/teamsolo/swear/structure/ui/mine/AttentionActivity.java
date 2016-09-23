@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,12 +21,14 @@ import com.google.gson.reflect.TypeToken;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
+import com.teamsolo.swear.foundation.bean.Grade;
 import com.teamsolo.swear.foundation.bean.GradeType;
 import com.teamsolo.swear.foundation.bean.resp.AttentionGradeResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.constant.DbConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.KnowledgeHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.mine.adapter.GradeTypeAdapter;
 import com.teamsolo.swear.structure.util.UserHelper;
 import com.teamsolo.swear.structure.util.db.CacheDbHelper;
 
@@ -52,7 +55,11 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
 
     private RecyclerView mListView;
 
+    private GradeTypeAdapter mAdapter;
+
     private List<GradeType> mList = new ArrayList<>();
+
+    private Subscriber<AttentionGradeResp> subscriberAttentionGrade;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +82,9 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
         mListView = (RecyclerView) findViewById(R.id.listView);
         mListView.setHasFixedSize(true);
         mListView.setItemAnimator(new DefaultItemAnimator());
-        mListView.setLayoutManager(new LinearLayoutManager(mContext));
+        LinearLayoutManager manager = new LinearLayoutManager(mContext);
+        manager.setAutoMeasureEnabled(true);
+        mListView.setLayoutManager(manager);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setOnClickListener(v -> mListView.smoothScrollToPosition(0));
@@ -100,6 +109,9 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
                 Color.parseColor("#CDDC39"),
                 Color.parseColor("#4CAF50"));
         mSwipeRefreshLayout.setRefreshing(true);
+
+        mAdapter = new GradeTypeAdapter(mContext, mList);
+        mListView.setAdapter(mAdapter);
     }
 
     @Override
@@ -107,6 +119,16 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
         mFab.setOnClickListener(v -> requestSave());
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
+
+        mAdapter.setOnItemClickListener((view, grade) -> {
+            for (GradeType gradeType :
+                    mList)
+                for (Grade item :
+                        gradeType.grades)
+                    item.isChecked = item.gradeId == grade.gradeId;
+
+            mAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override
@@ -123,7 +145,7 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
                     List<GradeType> temp = new Gson().fromJson(cacheJson, new TypeToken<List<GradeType>>() {
                     }.getType());
                     transGradeTypes(temp);
-                    // TODO: notify data set
+                    mAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                 } else requestList(false);
             } else requestList(false);
@@ -131,7 +153,7 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
             Map<String, String> paras = new HashMap<>();
             paras.put("CMD", CmdConst.CMD_ATTENTION);
 
-            KnowledgeHttpUrlRequests.getInstance().getAttentionGrade(paras, new Subscriber<AttentionGradeResp>() {
+            subscriberAttentionGrade = KnowledgeHttpUrlRequests.getInstance().getAttentionGrade(paras, new Subscriber<AttentionGradeResp>() {
                 @Override
                 public void onCompleted() {
                     mSwipeRefreshLayout.setRefreshing(false);
@@ -154,7 +176,7 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
                         if (temp != null && !temp.isEmpty()) {
                             new CacheDbHelper(mContext).save(DbConst.DB_GRADE_TYPES, new Gson().toJson(temp), "");
                             transGradeTypes(temp);
-                            // TODO: notify data set
+                            mAdapter.notifyDataSetChanged();
                         }
                     }
                 }
@@ -166,7 +188,12 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
         mList.clear();
         mList.addAll(temp);
 
-        // TODO: trans list
+        int gradeId = UserHelper.getRealAttentionGrade(mContext);
+        for (GradeType gradeType :
+                mList)
+            for (Grade item :
+                    gradeType.grades)
+                item.isChecked = item.gradeId == gradeId;
     }
 
     private void requestSave() {
@@ -177,5 +204,23 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
     @Override
     protected void handleMessage(HandlerActivity activity, Message msg) {
 
+    }
+
+    @Override
+    public void toast(int msgRes) {
+        Snackbar.make(mFab, msgRes, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void toast(String message) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (subscriberAttentionGrade != null && !subscriberAttentionGrade.isUnsubscribed())
+            subscriberAttentionGrade.unsubscribe();
     }
 }
