@@ -400,8 +400,6 @@ public class AgencyActivity extends HandlerActivity {
         }
 
         if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
-
-        mIntroText.recycle();
     }
 
     @Override

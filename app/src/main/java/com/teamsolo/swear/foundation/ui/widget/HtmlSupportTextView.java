@@ -24,7 +24,6 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
-import com.teamsolo.base.util.DisplayUtility;
 import com.teamsolo.base.util.LogUtility;
 import com.teamsolo.swear.R;
 
@@ -35,8 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.facebook.imagepipeline.request.ImageRequest.fromUri;
 
 /**
  * description: textView to support html rich text
@@ -172,7 +169,7 @@ public class HtmlSupportTextView extends TextView {
             try {
                 request = ImageRequest.fromUri(Uri.parse(url));
             } catch (Exception e) {
-                request = fromUri(DisplayUtility.getResourceUri(R.mipmap.loading_failed_web, getContext().getPackageName()));
+                request = null;
                 LogUtility.i(TAG, "parse url failed: " + url);
             }
 
@@ -180,10 +177,10 @@ public class HtmlSupportTextView extends TextView {
                 @Override
                 protected void onNewResultImpl(Bitmap bitmap) {
                     if (bitmap != null && !bitmap.isRecycled()) {
-                        caches.put(url, new BitmapDrawable(getContext().getResources(), bitmap.copy(bitmap.getConfig(), false)));
+                        caches.put(url, new BitmapDrawable(getContext().getResources(), bitmap));
                         LogUtility.i(TAG, "download success: " + url);
                     } else {
-                        caches.put(url, getContext().getResources().getDrawable(R.mipmap.loading_failed_web));
+                        caches.put(url, null);
                         LogUtility.i(TAG, "download failed: " + url);
                     }
 
@@ -192,12 +189,17 @@ public class HtmlSupportTextView extends TextView {
 
                 @Override
                 protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                    caches.put(url, getContext().getResources().getDrawable(R.mipmap.loading_failed_web));
+                    caches.put(url, null);
                     LogUtility.i(TAG, "download failed: " + url);
 
                     getHandler().post(() -> setRichText(content));
                 }
             };
+
+            if (request == null) {
+                getHandler().post(() -> setRichText(content));
+                return;
+            }
 
             if (Fresco.getImagePipeline().isInBitmapMemoryCache(request.getSourceUri()))
                 Fresco.getImagePipeline()
@@ -258,20 +260,5 @@ public class HtmlSupportTextView extends TextView {
 
     public interface onClickListener {
         void onClick(View v, String link);
-    }
-
-    public void recycle() {
-        for (Map.Entry<String, Drawable> entry
-                : caches.entrySet()) {
-            Drawable drawable = entry.getValue();
-            if (drawable instanceof BitmapDrawable) {
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-
-                if (bitmap != null && !bitmap.isRecycled()) bitmap.recycle();
-            }
-        }
-
-        caches.clear();
-        caches = null;
     }
 }

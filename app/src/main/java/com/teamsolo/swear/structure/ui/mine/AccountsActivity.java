@@ -272,14 +272,16 @@ public class AccountsActivity extends HandlerActivity implements SwipeRefreshLay
                     loadingUtil.dismiss();
                     mSwipeRefreshLayout.setRefreshing(false);
 
-                    if (temp != null) {
-                        int count = 0;
-                        for (Relationship relationship :
-                                temp)
-                            if (relationship.isMain == 0) count++;
+                    handler.postDelayed(() -> {
+                        if (temp != null) {
+                            int count = 0;
+                            for (Relationship relationship :
+                                    temp)
+                                if (relationship.isMain == 0) count++;
 
-                        mFab.setVisibility(count < 5 && mAdapter.isMain() ? View.VISIBLE : View.GONE);
-                    } else mFab.setVisibility(View.GONE);
+                            mFab.setVisibility(count < 5 && mAdapter.isMain() ? View.VISIBLE : View.GONE);
+                        } else mFab.setVisibility(View.GONE);
+                    }, 500);
                 }
             }
         });

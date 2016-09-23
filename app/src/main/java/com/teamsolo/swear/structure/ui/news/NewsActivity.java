@@ -563,7 +563,5 @@ public class NewsActivity extends HandlerActivity {
 
         if (subscriberComment != null && !subscriberComment.isUnsubscribed())
             subscriberComment.unsubscribe();
-
-        mContentText.recycle();
     }
 }
