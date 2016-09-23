@@ -123,6 +123,8 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
                     List<GradeType> temp = new Gson().fromJson(cacheJson, new TypeToken<List<GradeType>>() {
                     }.getType());
                     transGradeTypes(temp);
+                    // TODO: notify data set
+                    mSwipeRefreshLayout.setRefreshing(false);
                 } else requestList(false);
             } else requestList(false);
         } else {
@@ -152,6 +154,7 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
                         if (temp != null && !temp.isEmpty()) {
                             new CacheDbHelper(mContext).save(DbConst.DB_GRADE_TYPES, new Gson().toJson(temp), "");
                             transGradeTypes(temp);
+                            // TODO: notify data set
                         }
                     }
                 }
@@ -160,12 +163,10 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
     }
 
     private void transGradeTypes(List<GradeType> temp) {
+        mList.clear();
         mList.addAll(temp);
 
-        for (GradeType gradeType :
-                mList) {
-            System.out.println(gradeType.gradeTpyeName);
-        }
+        // TODO: trans list
     }
 
     private void requestSave() {
