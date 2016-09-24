@@ -136,6 +136,14 @@
     <string name="pref_title_data_clear_cache">清除缓存</string>
     <string name="pref_title_data_upgrade">检查更新</string>
 
+    <!--index-->
+    <string-array name="index_indicators">
+        <item>学校</item>
+        <item>消息</item>
+        <item>好友</item>
+        <item>班级</item>
+    </string-array>
+
     <!--school-->
     <string name="school_nav">首页</string>
 

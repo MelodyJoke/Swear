@@ -80,7 +80,7 @@ public class MainActivity extends HandlerActivity implements
 
     private static final int CHILD_CHOOSE_REQUEST_CODE = 847;
 
-    private static final int FRAG_SCHOOL = 0, FRAG_TRAINING = 1, FRAG_NEWS = 2, FRAG_NLG = 3;
+    private static final int FRAG_INDEX = 0, FRAG_TRAINING = 1, FRAG_NEWS = 2, FRAG_NLG = 3;
 
     private FloatingActionButton mFab;
 
@@ -194,7 +194,6 @@ public class MainActivity extends HandlerActivity implements
         }
 
         mTabLayout = (TabLayout) findViewById(R.id.tab);
-        mTabLayout.setVisibility(GONE);
 
         mBottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bnb);
         mBottomNavigationBar.setFab(mFab);
@@ -249,28 +248,26 @@ public class MainActivity extends HandlerActivity implements
                     case 0:
                         if (actionBar != null) actionBar.setTitle(R.string.app_name);
 
-                        mFab.setTag(false);
-                        mFab.setImageResource(R.drawable.ic_group_white_24dp);
-                        List<Child> children = UserHelper.getChildren(mContext);
-                        mFab.setVisibility(children == null || children.size() <= 1 ? GONE : VISIBLE);
-
-                        if (fragments.get(FRAG_SCHOOL) == null) {
-                            Fragment fragmentSchool = OrdersFragment.newInstance(FRAG_SCHOOL);
-                            fragments.append(FRAG_SCHOOL, fragmentSchool);
+                        if (fragments.get(FRAG_INDEX) == null) {
+                            Fragment fragmentSchool = OrdersFragment.newInstance(FRAG_INDEX);
+                            fragments.append(FRAG_INDEX, fragmentSchool);
                             fragmentManager.beginTransaction()
-                                    .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
+                                    .add(R.id.content, fragments.get(FRAG_INDEX), String.valueOf(FRAG_INDEX))
                                     .show(fragmentSchool)
                                     .hide(currentFragment)
                                     .commit();
                             currentFragment = fragmentSchool;
                         } else {
-                            Fragment fragmentSchool = fragments.get(FRAG_SCHOOL);
+                            Fragment fragmentSchool = fragments.get(FRAG_INDEX);
                             fragmentManager.beginTransaction()
                                     .show(fragmentSchool)
                                     .hide(currentFragment)
                                     .commit();
                             currentFragment = fragmentSchool;
                         }
+
+                        if (currentFragment instanceof IndexFragment)
+                            ((IndexFragment) currentFragment).onPageSelected();
                         break;
 
                     case 1:
@@ -351,6 +348,8 @@ public class MainActivity extends HandlerActivity implements
                         }
                         break;
                 }
+
+                mTabLayout.setVisibility(position == 0 ? VISIBLE : GONE);
 
                 if (position < fragments.size()) {
                     fragmentManager.beginTransaction()
@@ -555,14 +554,14 @@ public class MainActivity extends HandlerActivity implements
 
     private void initFragment() {
         if (!hasInit) {
-            fragments.append(FRAG_SCHOOL, NewsFragment.newInstance());
+            fragments.append(FRAG_INDEX, IndexFragment.newInstance().setInterActViews(mTabLayout, mFab));
             mFab.setTag(false);
 
             fragmentManager.beginTransaction()
-                    .add(R.id.content, fragments.get(FRAG_SCHOOL), String.valueOf(FRAG_SCHOOL))
-                    .show(fragments.get(FRAG_SCHOOL))
+                    .add(R.id.content, fragments.get(FRAG_INDEX), String.valueOf(FRAG_INDEX))
+                    .show(fragments.get(FRAG_INDEX))
                     .commit();
-            currentFragment = fragments.get(FRAG_SCHOOL);
+            currentFragment = fragments.get(FRAG_INDEX);
         }
 
         handler.sendEmptyMessage(2);
