@@ -49,7 +49,6 @@ import com.teamsolo.swear.structure.ui.mine.AccountsActivity;
 import com.teamsolo.swear.structure.ui.mine.AttentionActivity;
 import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
-import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
 import com.teamsolo.swear.structure.ui.news.NewsFragment;
 import com.teamsolo.swear.structure.ui.training.TrainingFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
@@ -249,21 +248,21 @@ public class MainActivity extends HandlerActivity implements
                         if (actionBar != null) actionBar.setTitle(R.string.app_name);
 
                         if (fragments.get(FRAG_INDEX) == null) {
-                            Fragment fragmentSchool = OrdersFragment.newInstance(FRAG_INDEX);
-                            fragments.append(FRAG_INDEX, fragmentSchool);
+                            Fragment fragmentIndex = IndexFragment.newInstance();
+                            fragments.append(FRAG_INDEX, fragmentIndex);
                             fragmentManager.beginTransaction()
                                     .add(R.id.content, fragments.get(FRAG_INDEX), String.valueOf(FRAG_INDEX))
-                                    .show(fragmentSchool)
+                                    .show(fragmentIndex)
                                     .hide(currentFragment)
                                     .commit();
-                            currentFragment = fragmentSchool;
+                            currentFragment = fragmentIndex;
                         } else {
-                            Fragment fragmentSchool = fragments.get(FRAG_INDEX);
+                            Fragment fragmentIndex = fragments.get(FRAG_INDEX);
                             fragmentManager.beginTransaction()
-                                    .show(fragmentSchool)
+                                    .show(fragmentIndex)
                                     .hide(currentFragment)
                                     .commit();
-                            currentFragment = fragmentSchool;
+                            currentFragment = fragmentIndex;
                         }
 
                         if (currentFragment instanceof IndexFragment)
