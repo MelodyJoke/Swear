@@ -148,8 +148,10 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
                     List<GradeType> temp = new Gson().fromJson(cacheJson, new TypeToken<List<GradeType>>() {
                     }.getType());
                     transGradeTypes(temp);
-                    mAdapter.notifyDataSetChanged();
-                    mSwipeRefreshLayout.setRefreshing(false);
+                    handler.post(() -> {
+                        mAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    });
                 } else requestList(false);
             } else requestList(false);
         } else {
