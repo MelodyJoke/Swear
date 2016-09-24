@@ -338,7 +338,7 @@ public class KnowledgeFragment extends HandlerFragment implements
 
     @Override
     public void search(Uri uri) {
-
+        // TODO: jump to search page
     }
 
     @Override

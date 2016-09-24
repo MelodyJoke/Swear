@@ -1,4 +1,4 @@
-package com.teamsolo.swear.structure.ui.training;
+package com.teamsolo.swear.structure.ui.school;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,10 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,17 +23,12 @@ import com.teamsolo.swear.foundation.bean.Activity;
 import com.teamsolo.swear.foundation.bean.Classify;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
-import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
 import com.teamsolo.swear.foundation.constant.BroadcastConst;
 import com.teamsolo.swear.foundation.constant.CmdConst;
-import com.teamsolo.swear.foundation.ui.FabInteractAble;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
-import com.teamsolo.swear.foundation.ui.SearchAble;
-import com.teamsolo.swear.foundation.ui.adapter.CommonPagerAdapter;
 import com.teamsolo.swear.foundation.ui.widget.SlideShowPlayHandler;
 import com.teamsolo.swear.foundation.ui.widget.SlideShowView;
-import com.teamsolo.swear.foundation.ui.widget.WrappingViewPager;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
@@ -54,56 +45,40 @@ import java.util.Map;
 
 import rx.Subscriber;
 
-import static android.view.View.VISIBLE;
-
 /**
- * description: training fragment
+ * description: school page
  * author: Melody
- * date: 2016/9/10
+ * date: 2016/9/24
  * version: 0.0.0.1
  */
-public class TrainingFragment extends HandlerFragment implements
-        Refreshable, SearchAble, ScrollAble, FabInteractAble,
-        SlideShowView.SlideShowParent {
+public class SchoolFragment extends HandlerFragment implements Refreshable, ScrollAble, SlideShowView.SlideShowParent {
 
     private NestedScrollView mContentView;
 
     private SlideShowView mSlideShow;
 
-    private WrappingViewPager mContainer;
+    private ClassifyAdapter mClassifyAdapter;
 
     private SlideShowPlayHandler mSlideShowHandler;
 
-    private ClassifyAdapter mClassifyAdapter;
-
-    private PagerAdapter mPagerAdapter;
+    private List<Classify> classifies = new ArrayList<>();
 
     private boolean isRequesting;
 
     private List<SlideShowView.SlideShowDummy> dummies = new ArrayList<>();
 
-    private List<Classify> classifies = new ArrayList<>();
-
-    private List<Classify> classifiesAno = new ArrayList<>();
-
-    private List<String> titles = new ArrayList<>();
-
-    private List<Fragment> fragments = new ArrayList<>();
-
     private Subscriber<ActivitiesResp> subscriberActivity;
-
-    private Subscriber<ClassifiesResp> subscriberClassify;
 
     private BroadcastReceiver attentionChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             onInteraction(Uri.parse("refresh?start=true"));
-            new Thread(() -> requestCarousels()).start();
+            // TODO:
         }
     };
 
-    public static TrainingFragment newInstance() {
-        TrainingFragment fragment = new TrainingFragment();
+    public static SchoolFragment newInstance() {
+        SchoolFragment fragment = new SchoolFragment();
         fragment.setArguments(new Bundle());
 
         return fragment;
@@ -112,7 +87,7 @@ public class TrainingFragment extends HandlerFragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setContentView(inflater, R.layout.fragment_training, container);
+        setContentView(inflater, R.layout.fragment_school, container);
         initViews();
         bindListeners();
         onInteraction(Uri.parse("refresh?start=true"));
@@ -150,22 +125,6 @@ public class TrainingFragment extends HandlerFragment implements
         mGridView.setNestedScrollingEnabled(false);
         mGridView.setFocusable(false);
 
-        Classify recClassify = new Classify();
-        recClassify.name = getString(R.string.training_rec);
-        recClassify.classificationType = 2;
-        recClassify.classificationId = -1;
-        classifiesAno.add(recClassify);
-        transFromClassifies();
-        mPagerAdapter = new CommonPagerAdapter(getChildFragmentManager(), titles, fragments).setRecycle(false);
-        mContainer = (WrappingViewPager) findViewById(R.id.container);
-        mContainer.setAdapter(mPagerAdapter);
-        mContainer.setFocusable(false);
-
-        TabLayout mTabLayout = (TabLayout) findViewById(R.id.tab);
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-        mTabLayout.setFocusable(false);
-        mTabLayout.setupWithViewPager(mContainer);
-
         mSlideShow.post(() -> {
             int width = mSlideShow.getMeasuredWidth();
             int aimHeight = width * 399 / 1080;
@@ -175,17 +134,6 @@ public class TrainingFragment extends HandlerFragment implements
                 mSlideShow.setLayoutParams(params);
             }
         });
-    }
-
-    private void transFromClassifies() {
-        titles.clear();
-        fragments.clear();
-
-        for (Classify classify :
-                classifiesAno) {
-            titles.add(classify.name);
-            fragments.add(AgenciesFragment.newInstance(classify));
-        }
     }
 
     @Override
@@ -206,22 +154,16 @@ public class TrainingFragment extends HandlerFragment implements
                 startActivity(intent);
             }
         });
-
-        mClassifyAdapter.setOnItemClickListener((view, classify) -> {
-            // TODO:
-            System.out.println(classify.name);
-        });
     }
 
-    private void requestCarousels() {
+    private void requestCarousels(int position) {
         int gradeId = UserHelper.getRealAttentionGrade(mContext);
 
         Map<String, String> paras = new HashMap<>();
         paras.put("CMD", CmdConst.CMD_GET_ACTIVITIES);
         if (gradeId > 0) paras.put("gradeId", String.valueOf(gradeId));
-        paras.put("position", "1");
+        paras.put("position", String.valueOf(position));
         paras.put("serviceType", "6");
-        paras.put("displayArea", "2");
 
         subscriberActivity = BaseHttpUrlRequests.getInstance().getActivities(paras, new Subscriber<ActivitiesResp>() {
             @Override
@@ -251,88 +193,14 @@ public class TrainingFragment extends HandlerFragment implements
         });
     }
 
-    private void requestClassifies(int position) {
-        Map<String, String> paras = new HashMap<>();
-        paras.put("CMD", CmdConst.CMD_GET_CLASSIFIES);
-        paras.put("serviceType", "5");
-        paras.put("type", String.valueOf(position));
-
-        subscriberClassify = BaseHttpUrlRequests.getInstance().getClassifies(paras, new Subscriber<ClassifiesResp>() {
-            @Override
-            public void onCompleted() {
-                handler.sendEmptyMessageDelayed(position == 1 ? 2 : 3, 500);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                toast(RetrofitConfig.handleReqError(e));
-                handler.sendEmptyMessage(position == 1 ? 2 : 3);
-            }
-
-            @Override
-            public void onNext(ClassifiesResp classifiesResp) {
-                if (!RetrofitConfig.handleResp(classifiesResp, mContext))
-                    toast(classifiesResp.message);
-                else {
-                    if (position == 1) {
-                        classifies.clear();
-                        List<Classify> temp = classifiesResp.classifyList;
-                        if (temp != null && !temp.isEmpty()) {
-                            classifies.addAll(temp);
-                            mClassifyAdapter.notifyDataSetChanged();
-                        }
-                    } else {
-                        classifiesAno.clear();
-
-                        Classify recClassify = new Classify();
-                        recClassify.name = getString(R.string.training_rec);
-                        recClassify.classificationType = 2;
-                        recClassify.classificationId = -1;
-                        classifiesAno.add(recClassify);
-
-                        List<Classify> temp = classifiesResp.classifyList;
-                        if (temp != null && !temp.isEmpty()) {
-                            classifiesAno.addAll(temp);
-                            transFromClassifies();
-                            mPagerAdapter.notifyDataSetChanged();
-
-                            handler.postDelayed(() -> {
-                                for (int i = 0; i < mContainer.getChildCount(); i++) {
-                                    View child = mContainer.getChildAt(i);
-                                    if (child != null) {
-                                        Object tag = child.getTag();
-                                        if (tag instanceof Refreshable)
-                                            ((Refreshable) tag).refresh(null);
-                                    }
-                                }
-                            }, 500);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
     @Override
     public void refresh(Uri uri) {
         handler.sendEmptyMessage(0);
     }
 
     @Override
-    public void search(Uri uri) {
-        // TODO: jump to search page
-    }
-
-    @Override
     public void scroll(Uri uri) {
         mContentView.smoothScrollTo(0, 0);
-    }
-
-    @Override
-    public void interact(FloatingActionButton fab, Uri uri, View... others) {
-        fab.setTag(true);
-        fab.setImageResource(R.drawable.ic_search_white_24dp);
-        fab.setVisibility(VISIBLE);
     }
 
     @Override
@@ -352,20 +220,14 @@ public class TrainingFragment extends HandlerFragment implements
                 if (isRequesting) break;
 
                 isRequesting = true;
-                new Thread(this::requestCarousels).start();
+                new Thread(() -> requestCarousels(1)).start();
                 break;
 
             case 1:
-                new Thread(() -> requestClassifies(1)).start();
-                break;
-
-            case 2:
-                new Thread(() -> requestClassifies(2)).start();
-                break;
-
-            case 3:
-                onInteraction(Uri.parse("refresh?ready=true"));
-                isRequesting = false;
+                handler.postDelayed(() -> {
+                    onInteraction(Uri.parse("refresh?ready=true"));
+                    isRequesting = false;
+                }, 1500);
                 break;
         }
     }
@@ -373,11 +235,9 @@ public class TrainingFragment extends HandlerFragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         if (subscriberActivity != null && !subscriberActivity.isUnsubscribed())
             subscriberActivity.unsubscribe();
-
-        if (subscriberClassify != null && !subscriberClassify.isUnsubscribed())
-            subscriberClassify.unsubscribe();
 
         mContext.unregisterReceiver(attentionChangeReceiver);
     }

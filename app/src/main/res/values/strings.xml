@@ -137,6 +137,7 @@
     <string name="pref_title_data_upgrade">检查更新</string>
 
     <!--index-->
+    <string name="index_nav">首页</string>
     <string-array name="index_indicators">
         <item>学校</item>
         <item>消息</item>
@@ -145,7 +146,7 @@
     </string-array>
 
     <!--school-->
-    <string name="school_nav">首页</string>
+    <string name="school_rec">特别推荐</string>
 
     <!--training-->
     <string name="training_nav">培训</string>

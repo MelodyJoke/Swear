@@ -198,7 +198,7 @@ public class MainActivity extends HandlerActivity implements
         mBottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bnb);
         mBottomNavigationBar.setFab(mFab);
         mBottomNavigationBar
-                .addItem(new BottomNavigationItem(R.drawable.ic_business_white_24dp, getString(R.string.school_nav)))
+                .addItem(new BottomNavigationItem(R.drawable.ic_business_white_24dp, getString(R.string.index_nav)))
                 .addItem(new BottomNavigationItem(R.drawable.ic_school_white_24dp, getString(R.string.training_nav)))
                 .addItem(new BottomNavigationItem(R.drawable.ic_receipt_white_24dp, getString(R.string.news_nav)))
                 .addItem(new BottomNavigationItem(R.drawable.ic_local_library_white_24dp, getString(R.string.nlg_nav)))

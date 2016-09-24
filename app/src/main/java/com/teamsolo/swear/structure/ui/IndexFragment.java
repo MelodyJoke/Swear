@@ -2,7 +2,6 @@ package com.teamsolo.swear.structure.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -12,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.teamsolo.base.template.fragment.HandlerFragment;
+import com.teamsolo.base.template.fragment.BaseFragment;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Child;
 import com.teamsolo.swear.foundation.ui.FabInteractAble;
@@ -21,6 +20,7 @@ import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
 import com.teamsolo.swear.foundation.ui.adapter.CommonPagerAdapter;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
+import com.teamsolo.swear.structure.ui.school.SchoolFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,8 @@ import static android.view.View.VISIBLE;
  * date: 2016/9/24
  * version: 0.0.0.1
  */
-public class IndexFragment extends HandlerFragment implements Refreshable, SearchAble, FabInteractAble {
+public class IndexFragment extends BaseFragment implements
+        Refreshable, SearchAble, FabInteractAble {
 
     private TabLayout mTabLayout;
 
@@ -85,7 +86,7 @@ public class IndexFragment extends HandlerFragment implements Refreshable, Searc
     }
 
     private void initPagers() {
-        mFragments.add(OrdersFragment.newInstance(0));
+        mFragments.add(SchoolFragment.newInstance());
         mFragments.add(OrdersFragment.newInstance(1));
         mFragments.add(OrdersFragment.newInstance(2));
         mFragments.add(OrdersFragment.newInstance(3));
@@ -139,11 +140,6 @@ public class IndexFragment extends HandlerFragment implements Refreshable, Searc
         this.mFab = fab;
 
         return this;
-    }
-
-    @Override
-    protected void handleMessage(HandlerFragment fragment, Message msg) {
-
     }
 
     @Override
