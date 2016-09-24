@@ -104,6 +104,7 @@ public class GradeTypeAdapter extends RecyclerView.Adapter<GradeTypeAdapter.View
             GridLayoutManager manager = new GridLayoutManager(mContext, 4);
             manager.setAutoMeasureEnabled(true);
             gridView.setLayoutManager(manager);
+            gridView.setFocusable(false);
 
             adapter = new GradeAdapter(mContext, list);
             adapter.setOnItemClickListener((view, grade) -> {

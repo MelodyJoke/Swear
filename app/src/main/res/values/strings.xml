@@ -181,7 +181,8 @@
     <!--mine-->
     <!--attention-->
     <string name="attention_title">关注年级</string>
-    <string name="attention_hint">选择您关注的年级，为您定制推荐内容</string>
+    <string name="attention_empty_error">请选择您关注的年级</string>
+    <string name="attention_diff_error">没有任何变化</string>
 
     <!--orders-->
     <string name="orders_title">我的订单</string>

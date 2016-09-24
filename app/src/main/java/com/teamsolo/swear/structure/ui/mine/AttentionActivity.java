@@ -18,6 +18,7 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
@@ -60,6 +61,8 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
     private List<GradeType> mList = new ArrayList<>();
 
     private Subscriber<AttentionGradeResp> subscriberAttentionGrade;
+
+    private Subscriber<CommonResponse> subscriberSave;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,7 +201,59 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
 
     private void requestSave() {
         mFab.setClickable(false);
-        finish();
+
+        int gradeId = -1;
+        out:
+        for (GradeType gradeType :
+                mList)
+            for (Grade grade :
+                    gradeType.grades)
+                if (grade.isChecked) {
+                    gradeId = grade.gradeId;
+                    break out;
+                }
+
+        final int copy = gradeId;
+
+        if (copy <= 0) {
+            mFab.setClickable(true);
+            toast(R.string.attention_empty_error);
+            return;
+        }
+
+        int lastOne = UserHelper.getRealAttentionGrade(mContext);
+        if (copy == lastOne) {
+            mFab.setClickable(true);
+            toast(R.string.attention_diff_error);
+            return;
+        }
+
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_ATTENTION_GRADE);
+        paras.put("gradeId", String.valueOf(copy));
+
+        subscriberSave = KnowledgeHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+            @Override
+            public void onCompleted() {
+                mFab.setClickable(true);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+                mFab.setClickable(true);
+            }
+
+            @Override
+            public void onNext(CommonResponse commonResponse) {
+                if (!RetrofitConfig.handleResp(commonResponse, mContext))
+                    toast(commonResponse.message);
+                else {
+                    UserHelper.setAttentionGrade(copy, mContext);
+                    finish();
+                }
+            }
+        });
     }
 
     @Override
@@ -222,5 +277,8 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
 
         if (subscriberAttentionGrade != null && !subscriberAttentionGrade.isUnsubscribed())
             subscriberAttentionGrade.unsubscribe();
+
+        if (subscriberSave != null && !subscriberSave.isUnsubscribed())
+            subscriberSave.unsubscribe();
     }
 }
