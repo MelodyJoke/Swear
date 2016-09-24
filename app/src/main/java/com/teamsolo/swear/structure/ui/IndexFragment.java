@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Child;
+import com.teamsolo.swear.foundation.ui.FabInteractAble;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
@@ -36,7 +37,7 @@ import static android.view.View.VISIBLE;
  * date: 2016/9/24
  * version: 0.0.0.1
  */
-public class IndexFragment extends HandlerFragment implements Refreshable, SearchAble {
+public class IndexFragment extends HandlerFragment implements Refreshable, SearchAble, FabInteractAble {
 
     private TabLayout mTabLayout;
 
@@ -104,7 +105,7 @@ public class IndexFragment extends HandlerFragment implements Refreshable, Searc
             @Override
             public void onPageSelected(int position) {
                 current = position;
-                IndexFragment.this.onPageSelected();
+                interact(mFab, null);
             }
 
             @Override
@@ -133,17 +134,10 @@ public class IndexFragment extends HandlerFragment implements Refreshable, Searc
         });
     }
 
-    public void onPageSelected() {
-        System.out.println("position: " + current);
-        mFab.setTag(current != 0);
-        mFab.setImageResource(current != 0 ? R.drawable.ic_search_white_24dp : R.drawable.ic_group_white_24dp);
-        List<Child> children = UserHelper.getChildren(mContext);
-        mFab.setVisibility(current == 0 && children == null || children.size() <= 1 ? GONE : VISIBLE);
-    }
-
-    public IndexFragment setInterActViews(TabLayout tabLayout, FloatingActionButton fab) {
+    public IndexFragment setTabLayout(TabLayout tabLayout, FloatingActionButton fab) {
         this.mTabLayout = tabLayout;
         this.mFab = fab;
+
         return this;
     }
 
@@ -162,5 +156,13 @@ public class IndexFragment extends HandlerFragment implements Refreshable, Searc
     @Override
     public void search(Uri uri) {
         // TODO: jump to search page
+    }
+
+    @Override
+    public void interact(FloatingActionButton fab, Uri uri, View... others) {
+        fab.setTag(current != 0);
+        fab.setImageResource(current != 0 ? R.drawable.ic_search_white_24dp : R.drawable.ic_group_white_24dp);
+        List<Child> children = UserHelper.getChildren(mContext);
+        fab.setVisibility(current == 0 && children == null || children.size() <= 1 ? GONE : VISIBLE);
     }
 }

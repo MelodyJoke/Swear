@@ -37,6 +37,7 @@ import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
+import com.teamsolo.swear.foundation.ui.FabInteractAble;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
@@ -264,17 +265,10 @@ public class MainActivity extends HandlerActivity implements
                                     .commit();
                             currentFragment = fragmentIndex;
                         }
-
-                        if (currentFragment instanceof IndexFragment)
-                            ((IndexFragment) currentFragment).onPageSelected();
                         break;
 
                     case 1:
                         if (actionBar != null) actionBar.setTitle(R.string.training_nav);
-
-                        mFab.setTag(true);
-                        mFab.setImageResource(R.drawable.ic_search_white_24dp);
-                        mFab.setVisibility(VISIBLE);
 
                         if (fragments.get(FRAG_TRAINING) == null) {
                             Fragment fragmentTraining = TrainingFragment.newInstance();
@@ -298,10 +292,6 @@ public class MainActivity extends HandlerActivity implements
                     case 2:
                         if (actionBar != null) actionBar.setTitle(R.string.news_nav);
 
-                        mFab.setTag(false);
-                        mFab.setImageResource(R.drawable.ic_group_white_24dp);
-                        mFab.setVisibility(GONE);
-
                         if (fragments.get(FRAG_NEWS) == null) {
                             Fragment fragmentNews = NewsFragment.newInstance();
                             fragments.append(FRAG_NEWS, fragmentNews);
@@ -323,10 +313,6 @@ public class MainActivity extends HandlerActivity implements
 
                     case 3:
                         if (actionBar != null) actionBar.setTitle(R.string.nlg_nav);
-
-                        mFab.setTag(true);
-                        mFab.setImageResource(R.drawable.ic_search_white_24dp);
-                        mFab.setVisibility(VISIBLE);
 
                         if (fragments.get(FRAG_NLG) == null) {
                             Fragment fragmentNlg = KnowledgeFragment.newInstance();
@@ -360,6 +346,9 @@ public class MainActivity extends HandlerActivity implements
                 }
 
                 if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
+
+                if (currentFragment instanceof FabInteractAble)
+                    ((FabInteractAble) currentFragment).interact(mFab, null);
             }
 
             @Override
@@ -553,7 +542,7 @@ public class MainActivity extends HandlerActivity implements
 
     private void initFragment() {
         if (!hasInit) {
-            fragments.append(FRAG_INDEX, IndexFragment.newInstance().setInterActViews(mTabLayout, mFab));
+            fragments.append(FRAG_INDEX, IndexFragment.newInstance().setTabLayout(mTabLayout, mFab));
             mFab.setTag(false);
 
             fragmentManager.beginTransaction()

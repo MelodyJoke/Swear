@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import com.teamsolo.swear.foundation.bean.resp.NewsResp;
 import com.teamsolo.swear.foundation.constant.BroadcastConst;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.ui.Appendable;
+import com.teamsolo.swear.foundation.ui.FabInteractAble;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
@@ -53,7 +55,7 @@ import rx.Subscriber;
  * date: 2016/9/3
  * version: 0.0.0.1
  */
-public class NewsFragment extends HandlerFragment implements Refreshable, Appendable, ScrollAble {
+public class NewsFragment extends HandlerFragment implements Refreshable, Appendable, ScrollAble, FabInteractAble {
 
     private RecyclerView mListView;
 
@@ -238,6 +240,11 @@ public class NewsFragment extends HandlerFragment implements Refreshable, Append
     public void scroll(Uri uri) {
         if (uri.getBooleanQueryParameter("top", false))
             if (mList.size() > 0) mListView.scrollToPosition(0);
+    }
+
+    @Override
+    public void interact(FloatingActionButton fab, Uri uri, View... others) {
+        fab.setVisibility(View.GONE);
     }
 
     @Override

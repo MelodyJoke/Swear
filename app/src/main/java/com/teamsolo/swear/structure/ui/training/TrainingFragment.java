@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -29,6 +30,7 @@ import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
 import com.teamsolo.swear.foundation.constant.BroadcastConst;
 import com.teamsolo.swear.foundation.constant.CmdConst;
+import com.teamsolo.swear.foundation.ui.FabInteractAble;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
@@ -52,6 +54,8 @@ import java.util.Map;
 
 import rx.Subscriber;
 
+import static android.view.View.VISIBLE;
+
 /**
  * description: training fragment
  * author: Melody
@@ -59,7 +63,7 @@ import rx.Subscriber;
  * version: 0.0.0.1
  */
 public class TrainingFragment extends HandlerFragment implements
-        Refreshable, SearchAble, ScrollAble,
+        Refreshable, SearchAble, ScrollAble, FabInteractAble,
         SlideShowView.SlideShowParent {
 
     private NestedScrollView mContentView;
@@ -322,6 +326,13 @@ public class TrainingFragment extends HandlerFragment implements
     @Override
     public void scroll(Uri uri) {
         mContentView.smoothScrollTo(0, 0);
+    }
+
+    @Override
+    public void interact(FloatingActionButton fab, Uri uri, View... others) {
+        fab.setTag(true);
+        fab.setImageResource(R.drawable.ic_search_white_24dp);
+        fab.setVisibility(VISIBLE);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,6 +25,7 @@ import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.CarouselsResp;
 import com.teamsolo.swear.foundation.bean.resp.KnowledgeNewsResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
+import com.teamsolo.swear.foundation.ui.FabInteractAble;
 import com.teamsolo.swear.foundation.ui.Refreshable;
 import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
@@ -45,6 +47,8 @@ import java.util.Map;
 
 import rx.Subscriber;
 
+import static android.view.View.VISIBLE;
+
 /**
  * description: knowledge fragment
  * author: Melody
@@ -52,7 +56,7 @@ import rx.Subscriber;
  * version: 0.0.0.1
  */
 public class KnowledgeFragment extends HandlerFragment implements
-        Refreshable, SearchAble, ScrollAble,
+        Refreshable, SearchAble, ScrollAble, FabInteractAble,
         SlideShowView.SlideShowParent {
 
     private NestedScrollView mContentView;
@@ -335,6 +339,13 @@ public class KnowledgeFragment extends HandlerFragment implements
     @Override
     public void search(Uri uri) {
 
+    }
+
+    @Override
+    public void interact(FloatingActionButton fab, Uri uri, View... others) {
+        fab.setTag(true);
+        fab.setImageResource(R.drawable.ic_search_white_24dp);
+        fab.setVisibility(VISIBLE);
     }
 
     @Override
