@@ -19,7 +19,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,8 +30,6 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.template.fragment.BaseFragment;
-import com.teamsolo.base.util.DisplayUtility;
-import com.teamsolo.base.util.FileManager;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Child;
 import com.teamsolo.swear.foundation.bean.User;
@@ -53,14 +50,13 @@ import com.teamsolo.swear.structure.ui.mine.AccountsActivity;
 import com.teamsolo.swear.structure.ui.mine.AttentionActivity;
 import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
+import com.teamsolo.swear.structure.ui.mine.UserActivity;
 import com.teamsolo.swear.structure.ui.news.NewsFragment;
 import com.teamsolo.swear.structure.ui.training.TrainingFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
-import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,23 +231,15 @@ public class MainActivity extends HandlerActivity implements
 
         mPortraitImage.setOnClickListener(view -> {
             if (!hasInit) return;
-            // TODO:
-            DisplayMetrics metrics = DisplayUtility.getDisplayMetrics();
-            if (metrics == null) return;
 
-            UCrop.Options options = new UCrop.Options();
-            options.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-            options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-            options.setActiveWidgetColor(getResources().getColor(R.color.colorAccent));
-            UCrop.of(Uri.fromFile(new File(FileManager.CACHE_PATH, "cache.jpg")), Uri.fromFile(new File(FileManager.CACHE_PATH, "temp.jpg")))
-                    .withOptions(options)
-                    .withAspectRatio(1, 1)
-                    .withMaxResultSize(metrics.widthPixels, metrics.heightPixels)
-                    .start(this);
+            if (UserHelper.getUserId(mContext) <= 0) return;
+
+            startActivity(new Intent(mContext, UserActivity.class));
         });
 
         mChildPortraitImage.setOnClickListener(view -> {
             if (!hasInit) return;
+
             startChooseChild();
         });
 
@@ -446,32 +434,39 @@ public class MainActivity extends HandlerActivity implements
                 break;
 
             case R.id.nav_account:
-                startActivity(new Intent(mContext, AccountsActivity.class));
+                if (UserHelper.getUserId(mContext) > 0)
+                    startActivity(new Intent(mContext, AccountsActivity.class));
+                else logout();
                 break;
 
             case R.id.nav_member:
-                WebLink webLinkMem = new WebLink();
-                webLinkMem.title = getString(R.string.nav_member);
-                webLinkMem.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.MEMBER_INDEX_URL;
+                if (UserHelper.getUserId(mContext) > 0) {
+                    WebLink webLinkMem = new WebLink();
+                    webLinkMem.title = getString(R.string.nav_member);
+                    webLinkMem.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.MEMBER_INDEX_URL;
 
-                Intent intentMem = new Intent(mContext, WebLinkActivity.class);
-                intentMem.putExtra("link", webLinkMem);
-                startActivity(intentMem);
-
+                    Intent intentMem = new Intent(mContext, WebLinkActivity.class);
+                    intentMem.putExtra("link", webLinkMem);
+                    startActivity(intentMem);
+                } else logout();
                 break;
 
             case R.id.nav_bonus_point:
-                WebLink webLinkBP = new WebLink();
-                webLinkBP.title = getString(R.string.nav_bonus_point);
-                webLinkBP.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.BONUS_POINT_URL;
+                if (UserHelper.getUserId(mContext) > 0) {
+                    WebLink webLinkBP = new WebLink();
+                    webLinkBP.title = getString(R.string.nav_bonus_point);
+                    webLinkBP.forwardUrl = NetConst.HTTP + NetConst.getBaseHttpUrl() + NetConst.PATH_PRE + NetConst.BONUS_POINT_URL;
 
-                Intent intentBP = new Intent(mContext, WebLinkActivity.class);
-                intentBP.putExtra("link", webLinkBP);
-                startActivity(intentBP);
+                    Intent intentBP = new Intent(mContext, WebLinkActivity.class);
+                    intentBP.putExtra("link", webLinkBP);
+                    startActivity(intentBP);
+                } else logout();
                 break;
 
             case R.id.nav_order:
-                startActivity(new Intent(mContext, OrdersActivity.class));
+                if (UserHelper.getUserId(mContext) > 0)
+                    startActivity(new Intent(mContext, OrdersActivity.class));
+                else logout();
                 break;
 
             case R.id.nav_action_setting:
@@ -484,13 +479,7 @@ public class MainActivity extends HandlerActivity implements
 
             case R.id.nav_action_logout:
                 closeDrawer = true;
-                RetrofitConfig.clearCookies();
-                handler.postDelayed(() -> {
-                    Intent intentLogout = new Intent(mContext, LoginActivity.class);
-                    intentLogout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intentLogout);
-                    finish();
-                }, 300);
+                handler.postDelayed(this::logout, 300);
                 break;
         }
 
@@ -679,5 +668,13 @@ public class MainActivity extends HandlerActivity implements
         super.onDestroy();
         if (childChooseRespSubscriber != null && !childChooseRespSubscriber.isUnsubscribed())
             childChooseRespSubscriber.unsubscribe();
+    }
+
+    private void logout() {
+        RetrofitConfig.clearCookies();
+        Intent intentLogout = new Intent(mContext, LoginActivity.class);
+        intentLogout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intentLogout);
+        finish();
     }
 }

@@ -20,6 +20,7 @@ import com.teamsolo.swear.foundation.ui.ScrollAble;
 import com.teamsolo.swear.foundation.ui.SearchAble;
 import com.teamsolo.swear.foundation.ui.adapter.CommonPagerAdapter;
 import com.teamsolo.swear.structure.ui.mine.OrdersFragment;
+import com.teamsolo.swear.structure.ui.news.NewsFragment;
 import com.teamsolo.swear.structure.ui.school.SchoolFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
 
@@ -87,7 +88,7 @@ public class IndexFragment extends BaseFragment implements
 
     private void initPagers() {
         mFragments.add(SchoolFragment.newInstance());
-        mFragments.add(OrdersFragment.newInstance(1));
+        mFragments.add(NewsFragment.newInstance());
         mFragments.add(OrdersFragment.newInstance(2));
         mFragments.add(OrdersFragment.newInstance(3));
 
@@ -159,6 +160,6 @@ public class IndexFragment extends BaseFragment implements
         fab.setTag(current != 0);
         fab.setImageResource(current != 0 ? R.drawable.ic_search_white_24dp : R.drawable.ic_group_white_24dp);
         List<Child> children = UserHelper.getChildren(mContext);
-        fab.setVisibility(current == 0 && children == null || children.size() <= 1 ? GONE : VISIBLE);
+        fab.setVisibility(current == 0 && (children == null || children.size() <= 1) ? GONE : VISIBLE);
     }
 }

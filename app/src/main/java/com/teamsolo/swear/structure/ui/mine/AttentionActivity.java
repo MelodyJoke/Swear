@@ -230,32 +230,37 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
             return;
         }
 
-        Map<String, String> paras = new HashMap<>();
-        paras.put("CMD", CmdConst.CMD_ATTENTION_GRADE);
-        paras.put("gradeId", String.valueOf(copy));
+        if (UserHelper.getUserId(mContext) > 0) {
+            Map<String, String> paras = new HashMap<>();
+            paras.put("CMD", CmdConst.CMD_ATTENTION_GRADE);
+            paras.put("gradeId", String.valueOf(copy));
 
-        subscriberSave = KnowledgeHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
-            @Override
-            public void onCompleted() {
-                mFab.setClickable(true);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                toast(RetrofitConfig.handleReqError(e));
-                mFab.setClickable(true);
-            }
-
-            @Override
-            public void onNext(CommonResponse commonResponse) {
-                if (!RetrofitConfig.handleResp(commonResponse, mContext))
-                    toast(commonResponse.message);
-                else {
-                    UserHelper.setAttentionGrade(copy, mContext);
-                    finish();
+            subscriberSave = KnowledgeHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+                @Override
+                public void onCompleted() {
+                    mFab.setClickable(true);
                 }
-            }
-        });
+
+                @Override
+                public void onError(Throwable e) {
+                    toast(RetrofitConfig.handleReqError(e));
+                    mFab.setClickable(true);
+                }
+
+                @Override
+                public void onNext(CommonResponse commonResponse) {
+                    if (!RetrofitConfig.handleResp(commonResponse, mContext))
+                        toast(commonResponse.message);
+                    else {
+                        UserHelper.setAttentionGrade(copy, mContext);
+                        finish();
+                    }
+                }
+            });
+        } else {
+            UserHelper.setAttentionGrade(copy, mContext);
+            finish();
+        }
     }
 
     @Override

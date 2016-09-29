@@ -260,4 +260,7 @@
     <string name="accounts_appellation_5">外公</string>
     <string name="accounts_appellation_6">外婆</string>
 
+    <!--user info-->
+    <string name="user_title">个人资料</string>
+
 </resources>
