@@ -82,6 +82,9 @@
             android:label="@string/settings_title"
             android:screenOrientation="portrait"
             android:theme="@style/ObAppTheme" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait" />
 
         <!--about-->
         <activity

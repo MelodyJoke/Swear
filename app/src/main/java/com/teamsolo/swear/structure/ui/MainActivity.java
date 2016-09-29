@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,8 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.template.fragment.BaseFragment;
+import com.teamsolo.base.util.DisplayUtility;
+import com.teamsolo.base.util.FileManager;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Child;
 import com.teamsolo.swear.foundation.bean.User;
@@ -53,9 +56,11 @@ import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.news.NewsFragment;
 import com.teamsolo.swear.structure.ui.training.TrainingFragment;
 import com.teamsolo.swear.structure.util.UserHelper;
+import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +77,7 @@ import static com.teamsolo.swear.structure.util.UserHelper.getChildren;
  * date: 2016/8/28
  * version: 0.0.0.1
  */
+@SuppressWarnings("deprecation")
 public class MainActivity extends HandlerActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         BaseFragment.OnFragmentInteractionListener,
@@ -230,6 +236,18 @@ public class MainActivity extends HandlerActivity implements
         mPortraitImage.setOnClickListener(view -> {
             if (!hasInit) return;
             // TODO:
+            DisplayMetrics metrics = DisplayUtility.getDisplayMetrics();
+            if (metrics == null) return;
+
+            UCrop.Options options = new UCrop.Options();
+            options.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+            options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+            options.setActiveWidgetColor(getResources().getColor(R.color.colorAccent));
+            UCrop.of(Uri.fromFile(new File(FileManager.CACHE_PATH, "cache.jpg")), Uri.fromFile(new File(FileManager.CACHE_PATH, "temp.jpg")))
+                    .withOptions(options)
+                    .withAspectRatio(1, 1)
+                    .withMaxResultSize(metrics.widthPixels, metrics.heightPixels)
+                    .start(this);
         });
 
         mChildPortraitImage.setOnClickListener(view -> {

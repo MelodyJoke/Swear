@@ -167,7 +167,7 @@ public class LoadActivity extends HandlerActivity {
                 });
             } else applyTheme(mImageView);
         } else {
-            PreferenceManager.getDefaultSharedPreferences(mContext).edit().putString(SpConst.LOAD_COVER, "cache.jpeg").apply();
+            PreferenceManager.getDefaultSharedPreferences(mContext).edit().putString(SpConst.LOAD_COVER, "cache.jpg").apply();
             applyTheme(mImageView);
         }
     }
