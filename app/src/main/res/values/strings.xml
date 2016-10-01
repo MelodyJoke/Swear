@@ -262,5 +262,16 @@
 
     <!--user info-->
     <string name="user_title">个人资料</string>
+    <string name="user_parent_title">家长信息</string>
+    <string name="user_child_title">学生信息</string>
+    <string name="user_portrait">头像</string>
+    <string name="user_name">姓名</string>
+    <string name="user_phone">电话</string>
+    <string name="user_appellation">称谓</string>
+    <string name="user_member">会员</string>
+    <string name="user_points">积分</string>
+    <string name="user_id">问学ID</string>
+    <string name="user_school">学校</string>
+    <string name="user_class">班级</string>
 
 </resources>
