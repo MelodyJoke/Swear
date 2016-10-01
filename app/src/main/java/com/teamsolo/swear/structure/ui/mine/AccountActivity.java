@@ -128,9 +128,8 @@ public class AccountActivity extends HandlerActivity {
         String appellation = mAppellationEdit.getText().toString().trim();
         String phone = mPhoneEdit.getText().toString().trim();
 
-        if (checkName(name) && checkAppellation(appellation) && checkPhone(phone) && checkDiff(name, appellation, phone)) {
+        if (checkName(name) && checkAppellation(appellation) && checkPhone(phone) && checkDiff(name, appellation, phone))
             requestSave(name, appellation, phone);
-        }
     }
 
     private void requestSave(String name, String appellation, String phone) {

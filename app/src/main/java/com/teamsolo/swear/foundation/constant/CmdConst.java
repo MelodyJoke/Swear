@@ -77,4 +77,13 @@ public interface CmdConst {
 
     // get orders
     String CMD_GET_ORDERS = "getorderlist";
+
+    // member info
+    String CMD_MEMBER_INFO = "getMyMemberInfo";
+
+    // points info
+    String CMD_POINT_INFO = "getMyPointsDetail";
+
+    // update user info
+    String CMD_USER_NAME = "updatePersonalMessage", CMD_USER_APPELLATION = "updateAppellation";
 }

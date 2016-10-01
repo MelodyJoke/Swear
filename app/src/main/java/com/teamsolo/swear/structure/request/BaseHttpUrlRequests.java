@@ -7,21 +7,25 @@ import com.teamsolo.swear.foundation.bean.req.AgenciesReq;
 import com.teamsolo.swear.foundation.bean.req.AgencyDetailReq;
 import com.teamsolo.swear.foundation.bean.req.ChildChooseReq;
 import com.teamsolo.swear.foundation.bean.req.ClassifiesReq;
+import com.teamsolo.swear.foundation.bean.req.MemberReq;
 import com.teamsolo.swear.foundation.bean.req.NewsCommentsReq;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
 import com.teamsolo.swear.foundation.bean.req.NewsDetailReq;
 import com.teamsolo.swear.foundation.bean.req.NewsReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
+import com.teamsolo.swear.foundation.bean.req.PointsReq;
 import com.teamsolo.swear.foundation.bean.resp.AccountsResp;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.bean.resp.AgenciesResp;
 import com.teamsolo.swear.foundation.bean.resp.AgencyDetailResp;
 import com.teamsolo.swear.foundation.bean.resp.ChildChooseResp;
 import com.teamsolo.swear.foundation.bean.resp.ClassifiesResp;
+import com.teamsolo.swear.foundation.bean.resp.MemberResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsCommentsResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsResp;
 import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
+import com.teamsolo.swear.foundation.bean.resp.PointsResp;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.foundation.bean.req.LoadPicReq;
 import com.teamsolo.swear.foundation.bean.req.LoginReq;
@@ -228,6 +232,30 @@ public class BaseHttpUrlRequests {
     public Subscriber<OrdersResp> getOrders(Map<String, String> paras, Subscriber<OrdersResp> subscriber) {
         retrofit.create(OrdersReq.class)
                 .getOrders(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取会员信息
+     */
+    public Subscriber<MemberResp> getMemberInfo(Map<String, String> paras, Subscriber<MemberResp> subscriber) {
+        retrofit.create(MemberReq.class)
+                .getMemberInfo(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取积分信息
+     */
+    public Subscriber<PointsResp> getPointsInfo(Map<String, String> paras, Subscriber<PointsResp> subscriber) {
+        retrofit.create(PointsReq.class)
+                .getPointsInfo(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

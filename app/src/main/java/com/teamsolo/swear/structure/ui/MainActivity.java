@@ -84,6 +84,8 @@ public class MainActivity extends HandlerActivity implements
 
     private static final int FRAG_INDEX = 0, FRAG_TRAINING = 1, FRAG_NEWS = 2, FRAG_NLG = 3;
 
+    private static final int USER_INFO_REQUEST_CODE = 752;
+
     private FloatingActionButton mFab;
 
     private DrawerLayout mDrawer;
@@ -234,7 +236,7 @@ public class MainActivity extends HandlerActivity implements
 
             if (UserHelper.getUserId(mContext) <= 0) return;
 
-            startActivity(new Intent(mContext, UserActivity.class));
+            startActivityForResult(new Intent(mContext, UserActivity.class), USER_INFO_REQUEST_CODE);
         });
 
         mChildPortraitImage.setOnClickListener(view -> {
@@ -562,8 +564,8 @@ public class MainActivity extends HandlerActivity implements
         handler.sendEmptyMessage(2);
     }
 
-    private void invalidateUIAboutUser() {
-        if (hasInit) {
+    private void invalidateUIAboutUser(boolean... extra) {
+        if (hasInit && (extra.length == 0 || !extra[0])) {
             handler.sendEmptyMessage(3);
             return;
         }
@@ -593,11 +595,11 @@ public class MainActivity extends HandlerActivity implements
             mChildPortraitImage.setVisibility(children == null || children.size() < 1 ? GONE : VISIBLE);
             mChildText.setVisibility(children == null || children.size() < 1 ? GONE : VISIBLE);
 
-            handler.sendEmptyMessage(3);
+            if (extra.length == 0 || !extra[0]) handler.sendEmptyMessage(3);
         });
     }
 
-    private void invalidateUIAboutChild() {
+    private void invalidateUIAboutChild(boolean... extra) {
         final Child child = UserHelper.getChild(mContext);
 
         handler.post(() -> {
@@ -625,7 +627,8 @@ public class MainActivity extends HandlerActivity implements
                 mSchoolText.setText(R.string.load_company);
             }
         });
-        handler.sendEmptyMessage(4);
+
+        if (extra.length == 0 || !extra[0]) handler.sendEmptyMessage(4);
     }
 
     private void requestLoadPic() {
@@ -660,6 +663,11 @@ public class MainActivity extends HandlerActivity implements
 
         if (requestCode == CHILD_CHOOSE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) chooseChild(data.getParcelableExtra("child"));
+        } else if (requestCode == USER_INFO_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                invalidateUIAboutUser(true);
+                invalidateUIAboutChild(true);
+            }
         }
     }
 

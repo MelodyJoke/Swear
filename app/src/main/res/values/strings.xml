@@ -273,5 +273,7 @@
     <string name="user_id">问学ID</string>
     <string name="user_school">学校</string>
     <string name="user_class">班级</string>
+    <string name="user_establish">开通</string>
+    <string name="user_arrival">%1$s 到期</string>
 
 </resources>
