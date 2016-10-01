@@ -234,7 +234,10 @@ public class MainActivity extends HandlerActivity implements
         mPortraitImage.setOnClickListener(view -> {
             if (!hasInit) return;
 
-            if (UserHelper.getUserId(mContext) <= 0) return;
+            if (UserHelper.getUserId(mContext) <= 0) {
+                logout();
+                return;
+            }
 
             startActivityForResult(new Intent(mContext, UserActivity.class), USER_INFO_REQUEST_CODE);
         });
