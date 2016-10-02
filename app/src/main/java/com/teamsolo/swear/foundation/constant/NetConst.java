@@ -13,7 +13,20 @@ public class NetConst {
 
     public static final String HTTP = "http://", HTTPS = "https://";
 
+    // path prefix
     public static final String PATH_PRE = "/pc_secureproxy/";
+
+    // upload parent portrait
+    public static final String PARENT_PORTRAIT_UPLOAD = "/resource_server/uploadfile/uploadParentPortrait";
+
+    // upload child portrait
+    public static final String CHILD_PORTRAIT_UPLOAD = "/resource_server/uploadfile/uploadStudentPortrait";
+
+    // upload file
+    public static final String FILE_UPLOAD = "/resource_server/uploadfile/uploadfiles";
+
+    // upload file about IM
+    public static final String FILE_IM_UPLOAD = "/resource_server/uploadfile/uploadParentsChatMsg";
 
     // Login
     public static final String LOGIN_URL = "parent/login";
