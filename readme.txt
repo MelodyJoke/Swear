@@ -5,14 +5,7 @@ bug不一定及时修复, 版本不一定及时跟进, 取决于本人心情
 
             by melody @2016.8.24 qq:1126799783 g-mail:melochanladyjj@gmail.com
 
-code13, version2.0.1
-    第一个版本, 版本信息和原版最新版一致
-
-code14, version2.0.2
-    下一个版本
+code15, version2.0.3
 
 TODO:
-    选孩子
-    资讯首页
-    关注年级
-    用户信息
+    我的收藏-资讯

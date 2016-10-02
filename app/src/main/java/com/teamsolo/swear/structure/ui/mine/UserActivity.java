@@ -58,6 +58,7 @@ import rx.Subscriber;
  * author: Melody
  * date: 2016/9/29
  * version: 0.0.0.1
+ * TODO: take photo, upload image
  */
 @SuppressWarnings("Convert2streamapi")
 public class UserActivity extends HandlerActivity {

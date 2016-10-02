@@ -8,8 +8,8 @@ android {
         applicationId "com.teamsolo.swear"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 13
-        versionName "2.0.1"
+        versionCode 15
+        versionName "2.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary true
 
