@@ -225,6 +225,9 @@
     <string name="orders_pay">去付款</string>
     <string name="orders_empty">空空如也~</string>
 
+    <!--keep-->
+    <string name="keep_title">我的收藏</string>
+
     <!--accounts-->
     <string name="accounts_title">账号管理</string>
     <string name="accounts_empty">万里无云~</string>

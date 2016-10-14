@@ -149,6 +149,14 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
+        <!--keep-->
+        <activity
+            android:name=".structure.ui.mine.CollectionsActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:label="@string/keep_title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
         <!--accounts-->
         <activity
             android:name=".structure.ui.mine.AccountsActivity"

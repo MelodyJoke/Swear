@@ -49,6 +49,7 @@ import com.teamsolo.swear.structure.ui.konwledge.KnowledgeFragment;
 import com.teamsolo.swear.structure.ui.mine.AccountsActivity;
 import com.teamsolo.swear.structure.ui.mine.AttentionActivity;
 import com.teamsolo.swear.structure.ui.mine.ChildChooseActivity;
+import com.teamsolo.swear.structure.ui.mine.CollectionsActivity;
 import com.teamsolo.swear.structure.ui.mine.OrdersActivity;
 import com.teamsolo.swear.structure.ui.mine.UserActivity;
 import com.teamsolo.swear.structure.ui.news.NewsFragment;
@@ -430,6 +431,9 @@ public class MainActivity extends HandlerActivity implements
                 break;
 
             case R.id.nav_collection:
+                if (UserHelper.getUserId(mContext) > 0)
+                    startActivity(new Intent(mContext, CollectionsActivity.class));
+                else logout();
                 break;
 
             case R.id.nav_history:

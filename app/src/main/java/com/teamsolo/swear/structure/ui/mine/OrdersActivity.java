@@ -56,7 +56,7 @@ public class OrdersActivity extends BaseActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_orders);
+        setContentView(R.layout.activity_tab_pagers);
 
         getBundle(getIntent());
         initViews();
