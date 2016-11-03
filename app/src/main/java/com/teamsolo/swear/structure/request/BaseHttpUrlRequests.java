@@ -14,6 +14,7 @@ import com.teamsolo.swear.foundation.bean.req.NewsDetailReq;
 import com.teamsolo.swear.foundation.bean.req.NewsReq;
 import com.teamsolo.swear.foundation.bean.req.OrdersReq;
 import com.teamsolo.swear.foundation.bean.req.PointsReq;
+import com.teamsolo.swear.foundation.bean.req.ScheduleReq;
 import com.teamsolo.swear.foundation.bean.resp.AccountsResp;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.bean.resp.AgenciesResp;
@@ -26,6 +27,7 @@ import com.teamsolo.swear.foundation.bean.resp.NewsDetailResp;
 import com.teamsolo.swear.foundation.bean.resp.NewsResp;
 import com.teamsolo.swear.foundation.bean.resp.OrdersResp;
 import com.teamsolo.swear.foundation.bean.resp.PointsResp;
+import com.teamsolo.swear.foundation.bean.resp.UrlResp;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.foundation.bean.req.LoadPicReq;
 import com.teamsolo.swear.foundation.bean.req.LoginReq;
@@ -256,6 +258,18 @@ public class BaseHttpUrlRequests {
     public Subscriber<PointsResp> getPointsInfo(Map<String, String> paras, Subscriber<PointsResp> subscriber) {
         retrofit.create(PointsReq.class)
                 .getPointsInfo(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取url
+     */
+    public Subscriber<UrlResp> getUrl(Map<String, String> paras, Subscriber<UrlResp> subscriber) {
+        retrofit.create(ScheduleReq.class)
+                .getUrl(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

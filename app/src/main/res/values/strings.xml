@@ -146,7 +146,16 @@
     </string-array>
 
     <!--school-->
+    <string name="school_helper">问学助手</string>
+    <string name="school_notice">通知中心</string>
+    <string name="school_work">作业</string>
+    <string name="school_schedule">课程表</string>
+    <string name="school_score">成绩查看</string>
+    <string name="school_register">报名登记</string>
     <string name="school_rec">特别推荐</string>
+
+    <string name="school_schedule_without_school">所在学校尚未加入问学</string>
+    <string name="school_schedule_without_child">孩子信息缺失，请联系客服400&#8211;601&#8211;7717</string>
 
     <!--training-->
     <string name="training_nav">培训</string>

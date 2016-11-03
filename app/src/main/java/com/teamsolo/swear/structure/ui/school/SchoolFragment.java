@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 import com.teamsolo.base.template.fragment.HandlerFragment;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Activity;
-import com.teamsolo.swear.foundation.bean.Classify;
+import com.teamsolo.swear.foundation.bean.Category;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.foundation.bean.resp.ActivitiesResp;
 import com.teamsolo.swear.foundation.constant.BroadcastConst;
@@ -31,8 +31,9 @@ import com.teamsolo.swear.foundation.ui.widget.SlideShowPlayHandler;
 import com.teamsolo.swear.foundation.ui.widget.SlideShowView;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
-import com.teamsolo.swear.structure.ui.training.adapter.ClassifyAdapter;
+import com.teamsolo.swear.structure.ui.school.adapter.CategoryAdapter;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
@@ -57,11 +58,11 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
 
     private SlideShowView mSlideShow;
 
-    private ClassifyAdapter mClassifyAdapter;
+    private CategoryAdapter mCategoryAdapter;
 
     private SlideShowPlayHandler mSlideShowHandler;
 
-    private List<Classify> classifies = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
 
     private boolean isRequesting;
 
@@ -115,13 +116,13 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
 
         RecyclerView mGridView = (RecyclerView) findViewById(R.id.gridView);
         mGridView.setHasFixedSize(true);
-        GridLayoutManager manager = new GridLayoutManager(mContext, 4);
+        GridLayoutManager manager = new GridLayoutManager(mContext, 3);
         manager.setAutoMeasureEnabled(true);
         mGridView.setLayoutManager(manager);
         mGridView.setItemAnimator(new DefaultItemAnimator());
-        classifies.add(null);
-        mClassifyAdapter = new ClassifyAdapter(mContext, classifies);
-        mGridView.setAdapter(mClassifyAdapter);
+        generateCategories();
+        mCategoryAdapter = new CategoryAdapter(mContext, categories);
+        mGridView.setAdapter(mCategoryAdapter);
         mGridView.setNestedScrollingEnabled(false);
         mGridView.setFocusable(false);
 
@@ -134,6 +135,28 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
                 mSlideShow.setLayoutParams(params);
             }
         });
+    }
+
+    private void generateCategories() {
+        if (!categories.isEmpty()) categories.clear();
+
+        categories.add(Category.generateCategory(0, getString(R.string.school_helper),
+                R.mipmap.school_category_helper, new Intent(mContext, AboutActivity.class)));
+
+        categories.add(Category.generateCategory(1, getString(R.string.school_notice),
+                R.mipmap.school_category_notice, new Intent(mContext, AboutActivity.class)));
+
+        categories.add(Category.generateCategory(2, getString(R.string.school_work),
+                R.mipmap.school_category__work, new Intent(mContext, AboutActivity.class)));
+
+        categories.add(Category.generateCategory(3, getString(R.string.school_schedule),
+                R.mipmap.school_category_schedule, new Intent(mContext, ScheduleActivity.class)));
+
+        categories.add(Category.generateCategory(4, getString(R.string.school_score),
+                R.mipmap.school_category_score, new Intent(mContext, AboutActivity.class)));
+
+        categories.add(Category.generateCategory(5, getString(R.string.school_register),
+                R.mipmap.school_category_register, new Intent(mContext, AboutActivity.class)));
     }
 
     @Override
@@ -153,6 +176,10 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
                 intent.putExtra("canShare", true);
                 startActivity(intent);
             }
+        });
+
+        mCategoryAdapter.setOnItemClickListener((view, category) -> {
+            if (category != null && category.intent != null) startActivity(category.intent);
         });
     }
 
