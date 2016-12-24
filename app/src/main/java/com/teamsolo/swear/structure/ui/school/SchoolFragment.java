@@ -33,6 +33,7 @@ import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.about.AboutActivity;
 import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
+import com.teamsolo.swear.structure.ui.mine.AccountsActivity;
 import com.teamsolo.swear.structure.ui.school.adapter.CategoryAdapter;
 import com.teamsolo.swear.structure.util.UserHelper;
 
@@ -116,7 +117,7 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
 
         RecyclerView mGridView = (RecyclerView) findViewById(R.id.gridView);
         mGridView.setHasFixedSize(true);
-        GridLayoutManager manager = new GridLayoutManager(mContext, 3);
+        GridLayoutManager manager = new GridLayoutManager(mContext, 4);
         manager.setAutoMeasureEnabled(true);
         mGridView.setLayoutManager(manager);
         mGridView.setItemAnimator(new DefaultItemAnimator());
@@ -149,14 +150,20 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
         categories.add(Category.generateCategory(2, getString(R.string.school_work),
                 R.mipmap.school_category__work, new Intent(mContext, AboutActivity.class)));
 
-        categories.add(Category.generateCategory(3, getString(R.string.school_schedule),
+        categories.add(Category.generateCategory(3, getString(R.string.school_follow),
+                R.mipmap.school_category_follow, new Intent(mContext, AboutActivity.class)));
+
+        categories.add(Category.generateCategory(4, getString(R.string.school_schedule),
                 R.mipmap.school_category_schedule, new Intent(mContext, ScheduleActivity.class)));
 
-        categories.add(Category.generateCategory(4, getString(R.string.school_score),
+        categories.add(Category.generateCategory(5, getString(R.string.school_score),
                 R.mipmap.school_category_score, new Intent(mContext, AboutActivity.class)));
 
-        categories.add(Category.generateCategory(5, getString(R.string.school_register),
+        categories.add(Category.generateCategory(6, getString(R.string.school_register),
                 R.mipmap.school_category_register, new Intent(mContext, AboutActivity.class)));
+
+        categories.add(Category.generateCategory(7, getString(R.string.accounts_title),
+                R.mipmap.school_category_accounts, new Intent(mContext, AccountsActivity.class)));
     }
 
     @Override
