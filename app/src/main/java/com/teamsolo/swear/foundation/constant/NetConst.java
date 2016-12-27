@@ -110,6 +110,19 @@ public class NetConst {
         }
     }
 
+    public static String getBaseHttpUrlForFollow() {
+        switch (LogUtility.getMode()) {
+            case LogUtility.MODE_EAGER:
+                return NetEnvironment.Dev.BASE_HTTP_URL_FOR_FOLLOW;
+            case LogUtility.MODE_TEST:
+                return NetEnvironment.Test.BASE_HTTP_URL_FOR_FOLLOW;
+            case LogUtility.MODE_SLUGGISH:
+                return NetEnvironment.Release.BASE_HTTP_URL_FOR_FOLLOW;
+            default:
+                return NetEnvironment.Dev.BASE_HTTP_URL_FOR_FOLLOW;
+        }
+    }
+
     public static String getBaseHttpsUrl() {
         switch (LogUtility.getMode()) {
             case LogUtility.MODE_EAGER:

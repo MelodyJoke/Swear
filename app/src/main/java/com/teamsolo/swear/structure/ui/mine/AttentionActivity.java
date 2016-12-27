@@ -67,7 +67,7 @@ public class AttentionActivity extends HandlerActivity implements SwipeRefreshLa
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attention);
+        setContentView(R.layout.activity_recycler_view_simple);
 
         getBundle(getIntent());
         initViews();

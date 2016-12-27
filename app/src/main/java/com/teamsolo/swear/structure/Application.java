@@ -21,15 +21,15 @@ public class Application extends BaseApplication {
     public void onCreate() {
         super.onCreate();
 
-        /**
+        /*
          * config log util log mode
          * log in tomcat and save log file in {@link LogUtility#MODE_EAGER}
          * save log file only in {@link LogUtility#MODE_TEST}
          * save nothing in {@link LogUtility#MODE_SLUGGISH}
          */
-        LogUtility.init(LogUtility.MODE_SLUGGISH);
+        LogUtility.init(LogUtility.MODE_TEST);
 
-        /**
+        /*
          * config retrofit log mode
          * log if not in {@link LogUtility#MODE_SLUGGISH}
          * log if {@link LogUtility#releaseLog} is true while in {@link LogUtility#MODE_SLUGGISH}

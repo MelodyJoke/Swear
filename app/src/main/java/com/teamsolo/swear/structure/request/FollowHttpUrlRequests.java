@@ -1,13 +1,9 @@
 package com.teamsolo.swear.structure.request;
 
 import com.teamsolo.base.bean.CommonResponse;
-import com.teamsolo.swear.foundation.bean.req.AttentionGradeReq;
-import com.teamsolo.swear.foundation.bean.req.CarouselsReq;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
-import com.teamsolo.swear.foundation.bean.req.KnowledgeNewsReq;
-import com.teamsolo.swear.foundation.bean.resp.AttentionGradeResp;
-import com.teamsolo.swear.foundation.bean.resp.CarouselsResp;
-import com.teamsolo.swear.foundation.bean.resp.KnowledgeNewsResp;
+import com.teamsolo.swear.foundation.bean.req.TeachmatsReq;
+import com.teamsolo.swear.foundation.bean.resp.TeachmatsResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 
@@ -24,21 +20,21 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * description: retrofit http requests with knowledge base http url
+ * description: retrofit http requests with english follow base http url
  * author: Melody
- * date: 2016/9/13
+ * date: 2016/12/27
  * version: 0.0.0.1
  */
 @SuppressWarnings("WeakerAccess, unused")
-public class KnowledgeHttpUrlRequests {
+public class FollowHttpUrlRequests {
 
     private static final int TIMEOUT = 5;
 
     private Retrofit retrofit;
 
-    private KnowledgeHttpUrlRequests() {
+    private FollowHttpUrlRequests() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(NetConst.HTTP + NetConst.getBaseHttpUrlForKnowledge())
+                .baseUrl(NetConst.HTTP + NetConst.getBaseHttpUrlForFollow())
                 .addConverterFactory(GsonConverterFactory.create(RetrofitConfig.gson))
                 .addCallAdapterFactory(RetrofitConfig.rxJavaCallAdapterFactory)
                 .client(new OkHttpClient.Builder()
@@ -50,11 +46,11 @@ public class KnowledgeHttpUrlRequests {
     }
 
     private static class Holder {
-        private static final KnowledgeHttpUrlRequests INSTANCE = new KnowledgeHttpUrlRequests();
+        private static final FollowHttpUrlRequests INSTANCE = new FollowHttpUrlRequests();
     }
 
     @Contract(pure = true)
-    public static KnowledgeHttpUrlRequests getInstance() {
+    public static FollowHttpUrlRequests getInstance() {
         return Holder.INSTANCE;
     }
 
@@ -73,33 +69,9 @@ public class KnowledgeHttpUrlRequests {
     /**
      * 获取活动列表
      */
-    public Subscriber<CarouselsResp> getCarousels(Map<String, String> paras, Subscriber<CarouselsResp> subscriber) {
-        retrofit.create(CarouselsReq.class)
-                .getCarousels(paras)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
-        return subscriber;
-    }
-
-    /**
-     * 获取学习力/心理成长列表
-     */
-    public Subscriber<KnowledgeNewsResp> getNews(Map<String, String> paras, Subscriber<KnowledgeNewsResp> subscriber) {
-        retrofit.create(KnowledgeNewsReq.class)
-                .getNews(paras)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
-        return subscriber;
-    }
-
-    /**
-     * 获取关注年级
-     */
-    public Subscriber<AttentionGradeResp> getAttentionGrade(Map<String, String> paras, Subscriber<AttentionGradeResp> subscriber) {
-        retrofit.create(AttentionGradeReq.class)
-                .getAttentionGrade(paras)
+    public Subscriber<TeachmatsResp> getTeachmats(Map<String, String> paras, Subscriber<TeachmatsResp> subscriber) {
+        retrofit.create(TeachmatsReq.class)
+                .getTeachmats(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

@@ -30,6 +30,7 @@ import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.WebLink;
 import com.teamsolo.swear.structure.ui.LoginActivity;
 import com.teamsolo.swear.structure.ui.about.AgreementActivity;
+import com.teamsolo.swear.structure.ui.school.TeachmatsOrUnitsActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -239,6 +240,11 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
             return;
         }
 
+        if (url.startsWith("http://wenxue/app/toListen") || url.startsWith("http://wenxue/app/toSay")) {
+            startActivity(new Intent(mContext, TeachmatsOrUnitsActivity.class));
+            return;
+        }
+
         if (url.startsWith("http://wenxue/app/getInfoDetail")) {
             mWebView.loadUrl("javascript:getNeedInfo('" + getSessionId() + "', '" + SecurityUtility.getDeviceId(mContext) + "')");
             return;
@@ -281,7 +287,7 @@ public class WebLinkActivity extends BaseActivity implements SwipeRefreshLayout.
                 builder.appendQueryParameter("app", "1");
 
             if (TextUtils.isEmpty(uri.getQueryParameter("versionCode")))
-                builder.appendQueryParameter("versionCode", "202");
+                builder.appendQueryParameter("versionCode", "206");
 
             String result = builder.build().toString();
             LogUtility.i("url fixed", result);

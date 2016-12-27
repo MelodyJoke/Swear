@@ -29,6 +29,8 @@ public final class NetEnvironment {
 
         public static final String BASE_HTTP_URL_FOR_KNOWLEDGE_RES = "v.wenx.dev.xweisoft.com";
 
+        public static final String BASE_HTTP_URL_FOR_FOLLOW = "els.wenx.dev.xweisoft.com";
+
         public static final String BASE_HTTPS_URL = "wenxdev.webprj.xweisoft.com:2222";
 
         public static final String BASE_UPLOAD_URL = "wenx.dev.xweisoft.com";
@@ -51,6 +53,8 @@ public final class NetEnvironment {
 
         public static final String BASE_HTTP_URL_FOR_KNOWLEDGE_RES = "v.wenxue.test.xweisoft.com";
 
+        public static final String BASE_HTTP_URL_FOR_FOLLOW = "els.wenxue.test.xweisoft.com";
+
         public static final String BASE_HTTPS_URL = "wenxtest.webprj.xweisoft.com:2223";
 
         public static final String BASE_UPLOAD_URL = "wenxue.test.xweisoft.com";
@@ -72,6 +76,8 @@ public final class NetEnvironment {
         public static final String BASE_HTTP_URL_FOR_KNOWLEDGE = "video.xuewendao.com";
 
         public static final String BASE_HTTP_URL_FOR_KNOWLEDGE_RES = "v.xuewendao.com";
+
+        public static final String BASE_HTTP_URL_FOR_FOLLOW = "els.xuewendao.com";
 
         public static final String BASE_HTTPS_URL = "papi.xuewendao.com";
 

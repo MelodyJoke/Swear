@@ -158,6 +158,9 @@
     <string name="school_schedule_without_school">所在学校尚未加入问学</string>
     <string name="school_schedule_without_child">孩子信息缺失，请联系客服400&#8211;601&#8211;7717</string>
 
+    <string name="school_follow_title">选择教材</string>
+    <string name="school_follow_empty">比钱包还干净呢~</string>
+
     <!--training-->
     <string name="training_nav">培训</string>
     <string name="training_rec">推荐</string>

@@ -39,6 +39,9 @@ public interface CmdConst {
     // get schedule
     String CMD_SCHEDULE = "getClassinfoLesson";
 
+    // get teaching materials
+    String CMD_TEACH_MATS = "getTeachingMaterialList";
+
     // get school activities
     String CMD_GET_ACTIVITIES = "getActivityList";
 
