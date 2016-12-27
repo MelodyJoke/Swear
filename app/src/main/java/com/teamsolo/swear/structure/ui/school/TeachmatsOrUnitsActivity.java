@@ -23,6 +23,7 @@ import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Teachmats;
 import com.teamsolo.swear.foundation.bean.Unit;
 import com.teamsolo.swear.foundation.bean.resp.TeachmatsResp;
+import com.teamsolo.swear.foundation.bean.resp.UnitsResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.FollowHttpUrlRequests;
@@ -65,6 +66,8 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
     private LoadingUtil loadingUtil;
 
     private Subscriber<TeachmatsResp> subscriberTeachmats;
+
+    private Subscriber<UnitsResp> subscriberUnits;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,7 +145,7 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
     }
 
     private void requestFollow() {
-        handler.postDelayed(this::requestTeachmats, 2000);
+        handler.postDelayed(this::requestUnits, 2000);
     }
 
     private void requestTeachmats() {
@@ -187,7 +190,45 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
     }
 
     private void requestUnits() {
+        Map<String, String> paras = new HashMap<>();
+        paras.put("CMD", CmdConst.CMD_UNITS);
+        paras.put("serviceType", "9");
+        paras.put("teachingMaterialId", teachmatId);
+        subscriberUnits = FollowHttpUrlRequests.getInstance().getUnits(paras, new Subscriber<UnitsResp>() {
+            @Override
+            public void onCompleted() {
+                mSwipeRefreshLayout.setRefreshing(false);
 
+                if (mTeachmats.isEmpty()) loadingUtil.showEmpty();
+                else loadingUtil.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                toast(RetrofitConfig.handleReqError(e));
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+                if (mTeachmats.isEmpty()) loadingUtil.showEmpty();
+                else loadingUtil.dismiss();
+            }
+
+            @Override
+            public void onNext(UnitsResp unitsResp) {
+                if (!RetrofitConfig.handleResp(unitsResp, mContext))
+                    toast(unitsResp.message);
+                else {
+                    mToolbar.setTitle(String.format("%s(%s)", unitsResp.teachingMaterialsName, unitsResp.teachingMaterialsTypeName));
+
+                    if (!mUnits.isEmpty()) mUnits.clear();
+                    if (unitsResp.courseUnitList != null)
+                        mUnits.addAll(unitsResp.courseUnitList);
+
+                    // TODO: notify adapter here
+                    toast(mUnits.get(0).unitName);
+                }
+            }
+        });
     }
 
     @Override
@@ -196,6 +237,9 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
 
         if (subscriberTeachmats != null && !subscriberTeachmats.isUnsubscribed())
             subscriberTeachmats.unsubscribe();
+
+        if (subscriberUnits != null && !subscriberUnits.isUnsubscribed())
+            subscriberUnits.unsubscribe();
     }
 
     @Override

@@ -42,6 +42,9 @@ public interface CmdConst {
     // get teaching materials
     String CMD_TEACH_MATS = "getTeachingMaterialList";
 
+    // get teaching materials units
+    String CMD_UNITS = "getEnglishResourceList";
+
     // get school activities
     String CMD_GET_ACTIVITIES = "getActivityList";
 

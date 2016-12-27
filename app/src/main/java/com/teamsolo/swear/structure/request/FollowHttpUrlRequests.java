@@ -3,7 +3,9 @@ package com.teamsolo.swear.structure.request;
 import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
 import com.teamsolo.swear.foundation.bean.req.TeachmatsReq;
+import com.teamsolo.swear.foundation.bean.req.UnitsReq;
 import com.teamsolo.swear.foundation.bean.resp.TeachmatsResp;
+import com.teamsolo.swear.foundation.bean.resp.UnitsResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 
@@ -67,11 +69,23 @@ public class FollowHttpUrlRequests {
     }
 
     /**
-     * 获取活动列表
+     * 获取年级教材列表
      */
     public Subscriber<TeachmatsResp> getTeachmats(Map<String, String> paras, Subscriber<TeachmatsResp> subscriber) {
         retrofit.create(TeachmatsReq.class)
                 .getTeachmats(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取单元教材列表
+     */
+    public Subscriber<UnitsResp> getUnits(Map<String, String> paras, Subscriber<UnitsResp> subscriber) {
+        retrofit.create(UnitsReq.class)
+                .getUnits(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
