@@ -168,7 +168,7 @@ public class TrainingFragment extends HandlerFragment implements
 
         mSlideShow.post(() -> {
             int width = mSlideShow.getMeasuredWidth();
-            int aimHeight = width * 399 / 1080;
+            int aimHeight = (int) (width * 399.0 / 1080);
             ViewGroup.LayoutParams params = mSlideShow.getLayoutParams();
             if (params.height != aimHeight) {
                 params.height = aimHeight;

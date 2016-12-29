@@ -30,4 +30,6 @@ public interface SpConst {
     String LAST_CHILD = "last_child";
 
     String NEWS_COMMENT_CACHE = "news_comment_cache";
+
+    String LAST_FOLLOW_VISITOR = "last_follow_visitor";
 }

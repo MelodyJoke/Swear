@@ -95,7 +95,7 @@ public class AgencyAdapter extends RecyclerView.Adapter<AgencyAdapter.ViewHolder
         if (aimHeight < 0)
             holder.coverImage.post(() -> {
                 int width = holder.coverImage.getMeasuredWidth();
-                aimHeight = width * 360 / 492;
+                aimHeight = (int) (width * 360.0 / 492);
                 ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
                 if (params.height != aimHeight) {
                     params.height = aimHeight;

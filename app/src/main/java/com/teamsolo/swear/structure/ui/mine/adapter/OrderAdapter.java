@@ -82,13 +82,15 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
             holder.titleText.setText(item.serviceName);
 
-            if (item.orderType == 1)
-                holder.countText.setText(
-                        String.format(mContext.getString(R.string.orders_count), item.unitCount));
-            else if (item.orderType == 5)
-                holder.countText.setText(
-                        String.format(mContext.getString(R.string.orders_count_2), item.unitCount));
-            else holder.countText.setVisibility(View.GONE);
+            if (item.unitCount > 0) {
+                if (item.orderType == 5) {
+                    holder.countText.setText(String.format(mContext.getString(R.string.orders_count_2), item.unitCount));
+                    holder.countText.setVisibility(View.VISIBLE);
+                } else {
+                    holder.countText.setText(String.format(mContext.getString(R.string.orders_count), item.unitCount));
+                    holder.countText.setVisibility(View.VISIBLE);
+                }
+            } else holder.countText.setVisibility(View.GONE);
 
             if (item.orderType == 5) {
                 if (item.payType == 1)
@@ -144,7 +146,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             holder.coverImage.post(() -> {
                 int width = holder.coverImage.getMeasuredWidth();
                 ViewGroup.LayoutParams params = holder.coverImage.getLayoutParams();
-                aimHeight = width * 246 / 357;
+                aimHeight = (int) (width * 246.0 / 357);
                 if (params.height != aimHeight) {
                     params.height = aimHeight;
                     holder.coverImage.setLayoutParams(params);

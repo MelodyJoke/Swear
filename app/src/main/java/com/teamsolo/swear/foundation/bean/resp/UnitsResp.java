@@ -22,7 +22,7 @@ public class UnitsResp extends Response {
 
     public String teachingMaterialsTypeName;
 
-    byte isTransferTeachingMaterialsList;
+    public byte isTransferTeachingMaterialsList;
 
     public UnitsResp() {
 

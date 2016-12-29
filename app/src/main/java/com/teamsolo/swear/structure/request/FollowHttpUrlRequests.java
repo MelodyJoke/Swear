@@ -2,8 +2,10 @@ package com.teamsolo.swear.structure.request;
 
 import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.swear.foundation.bean.req.CommonRequest;
+import com.teamsolo.swear.foundation.bean.req.LastFollowReq;
 import com.teamsolo.swear.foundation.bean.req.TeachmatsReq;
 import com.teamsolo.swear.foundation.bean.req.UnitsReq;
+import com.teamsolo.swear.foundation.bean.resp.LastFollowResp;
 import com.teamsolo.swear.foundation.bean.resp.TeachmatsResp;
 import com.teamsolo.swear.foundation.bean.resp.UnitsResp;
 import com.teamsolo.swear.foundation.constant.NetConst;
@@ -62,6 +64,18 @@ public class FollowHttpUrlRequests {
     public Subscriber<CommonResponse> commonReq(Map<String, String> paras, Subscriber<CommonResponse> subscriber) {
         retrofit.create(CommonRequest.class)
                 .request(paras)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        return subscriber;
+    }
+
+    /**
+     * 获取上次选择的单元
+     */
+    public Subscriber<LastFollowResp> getLastFollow(Map<String, String> paras, Subscriber<LastFollowResp> subscriber) {
+        retrofit.create(LastFollowReq.class)
+                .getLastFollow(paras)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);

@@ -129,7 +129,7 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
 
         mSlideShow.post(() -> {
             int width = mSlideShow.getMeasuredWidth();
-            int aimHeight = width * 399 / 1080;
+            int aimHeight = (int) (width * 399.0 / 1080);
             ViewGroup.LayoutParams params = mSlideShow.getLayoutParams();
             if (params.height != aimHeight) {
                 params.height = aimHeight;
@@ -162,8 +162,9 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
         categories.add(Category.generateCategory(6, getString(R.string.school_register),
                 R.mipmap.school_category_register, new Intent(mContext, AboutActivity.class)));
 
-        categories.add(Category.generateCategory(7, getString(R.string.accounts_title),
-                R.mipmap.school_category_accounts, new Intent(mContext, AccountsActivity.class)));
+        if (UserHelper.getUserId(mContext) > 0)
+            categories.add(Category.generateCategory(7, getString(R.string.accounts_title),
+                    R.mipmap.school_category_accounts, new Intent(mContext, AccountsActivity.class)));
     }
 
     @Override

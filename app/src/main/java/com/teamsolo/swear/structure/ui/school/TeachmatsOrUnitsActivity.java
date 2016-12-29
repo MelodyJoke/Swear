@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,12 +23,16 @@ import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Teachmats;
 import com.teamsolo.swear.foundation.bean.Unit;
+import com.teamsolo.swear.foundation.bean.resp.LastFollowResp;
 import com.teamsolo.swear.foundation.bean.resp.TeachmatsResp;
 import com.teamsolo.swear.foundation.bean.resp.UnitsResp;
 import com.teamsolo.swear.foundation.constant.CmdConst;
+import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.FollowHttpUrlRequests;
+import com.teamsolo.swear.structure.ui.school.adapter.TeachmatsAdapter;
 import com.teamsolo.swear.structure.util.LoadingUtil;
+import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,15 +60,21 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
 
     private ActionBar mToolbar;
 
+    private TeachmatsAdapter mTeachmatsAdapter;
+
+    //private UnitAdapter mUnitAdapter;
+
     private List<Teachmats> mTeachmats = new ArrayList<>();
 
     private List<Unit> mUnits = new ArrayList<>();
 
     private String teachmatId;
 
-    private boolean toTeachmats;
+    private boolean toTeachmats, fromTeachmats;
 
     private LoadingUtil loadingUtil;
+
+    private Subscriber<LastFollowResp> subscriberFollow;
 
     private Subscriber<TeachmatsResp> subscriberTeachmats;
 
@@ -86,6 +97,7 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
     protected void getBundle(@NotNull Intent intent) {
         teachmatId = intent.getStringExtra("id");
         toTeachmats = intent.getBooleanExtra("to", false);
+        fromTeachmats = intent.getBooleanExtra("from", false);
     }
 
     @Override
@@ -122,12 +134,30 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
         loadingUtil.showLoading();
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setImageResource(R.drawable.ic_undo_white_24dp);
         mFab.setVisibility(View.GONE);
+
+        mTeachmatsAdapter = new TeachmatsAdapter(mContext, mTeachmats, (view, teachmat) -> {
+            Intent intent = new Intent(mContext, TeachmatsOrUnitsActivity.class);
+            intent.putExtra("id", teachmat.id);
+            intent.putExtra("from", true);
+            startActivity(intent);
+        });
     }
 
     @Override
     protected void bindListeners() {
         mSwipeRefreshLayout.setOnRefreshListener(() -> handler.post(this::request));
+
+        mFab.setOnClickListener(v -> {
+            if (fromTeachmats) finish();
+            else {
+                Intent intent = new Intent(mContext, TeachmatsOrUnitsActivity.class);
+                intent.putExtra("to", true);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void request() {
@@ -145,7 +175,42 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
     }
 
     private void requestFollow() {
-        handler.postDelayed(this::requestUnits, 2000);
+        if (UserHelper.getUserId(mContext) > 0) {
+            Map<String, String> paras = new HashMap<>();
+            paras.put("CMD", CmdConst.CMD_LAST_FOLLOW);
+            paras.put("serviceType", "9");
+            subscriberFollow = FollowHttpUrlRequests.getInstance().getLastFollow(paras, new Subscriber<LastFollowResp>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    toast(RetrofitConfig.handleReqError(e));
+
+                    mSwipeRefreshLayout.setRefreshing(false);
+
+                    if (mTeachmats.isEmpty()) loadingUtil.showEmpty();
+                    else loadingUtil.dismiss();
+                }
+
+                @Override
+                public void onNext(LastFollowResp lastFollowResp) {
+                    if (!RetrofitConfig.handleResp(lastFollowResp, mContext))
+                        toast(lastFollowResp.message);
+                    else {
+                        teachmatId = lastFollowResp.teachingMaterialsId;
+                        toTeachmats = TextUtils.isEmpty(teachmatId);
+                        TeachmatsOrUnitsActivity.this.request();
+                    }
+                }
+            });
+        } else {
+            teachmatId = PreferenceManager.getDefaultSharedPreferences(mContext).getString(SpConst.LAST_FOLLOW_VISITOR, "");
+            toTeachmats = TextUtils.isEmpty(teachmatId);
+            TeachmatsOrUnitsActivity.this.request();
+        }
     }
 
     private void requestTeachmats() {
@@ -182,9 +247,12 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
                     if (teachmatsResp.gradeList != null)
                         mTeachmats.addAll(teachmatsResp.gradeList);
 
-                    // TODO: notify adapter here
-                    toast(mTeachmats.get(0).gradeName);
+                    if (!(mListView.getAdapter() instanceof TeachmatsAdapter))
+                        mListView.setAdapter(mTeachmatsAdapter);
+                    mTeachmatsAdapter.notifyDataSetChanged();
                 }
+
+                mFab.setVisibility(View.GONE);
             }
         });
     }
@@ -199,8 +267,13 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
             public void onCompleted() {
                 mSwipeRefreshLayout.setRefreshing(false);
 
-                if (mTeachmats.isEmpty()) loadingUtil.showEmpty();
-                else loadingUtil.dismiss();
+                if (mUnits.isEmpty()) loadingUtil.showEmpty();
+                else {
+                    loadingUtil.dismiss();
+                    if (fromTeachmats)
+                        Snackbar.make(mFab, R.string.school_follow_remember, Snackbar.LENGTH_INDEFINITE)
+                                .setAction(R.string.ok, v -> requestRemember()).show();
+                }
             }
 
             @Override
@@ -209,7 +282,7 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
 
                 mSwipeRefreshLayout.setRefreshing(false);
 
-                if (mTeachmats.isEmpty()) loadingUtil.showEmpty();
+                if (mUnits.isEmpty()) loadingUtil.showEmpty();
                 else loadingUtil.dismiss();
             }
 
@@ -218,22 +291,41 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
                 if (!RetrofitConfig.handleResp(unitsResp, mContext))
                     toast(unitsResp.message);
                 else {
-                    mToolbar.setTitle(String.format("%s(%s)", unitsResp.teachingMaterialsName, unitsResp.teachingMaterialsTypeName));
+                    mToolbar.setTitle(String.format("%s (%s)", unitsResp.teachingMaterialsName, unitsResp.teachingMaterialsTypeName));
+
+                    if (unitsResp.isTransferTeachingMaterialsList == 1) {
+                        if (fromTeachmats) finish();
+                        else {
+                            Intent intent = new Intent(mContext, TeachmatsOrUnitsActivity.class);
+                            intent.putExtra("to", true);
+                            startActivity(intent);
+                            finish();
+                            return;
+                        }
+                    }
 
                     if (!mUnits.isEmpty()) mUnits.clear();
                     if (unitsResp.courseUnitList != null)
                         mUnits.addAll(unitsResp.courseUnitList);
 
                     // TODO: notify adapter here
-                    toast(mUnits.get(0).unitName);
                 }
+
+                mFab.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private void requestRemember() {
+        System.out.println("remember: " + teachmatId);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (subscriberFollow != null && !subscriberFollow.isUnsubscribed())
+            subscriberFollow.unsubscribe();
 
         if (subscriberTeachmats != null && !subscriberTeachmats.isUnsubscribed())
             subscriberTeachmats.unsubscribe();
