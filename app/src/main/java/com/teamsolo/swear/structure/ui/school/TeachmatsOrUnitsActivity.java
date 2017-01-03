@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.teamsolo.base.bean.CommonResponse;
 import com.teamsolo.base.template.activity.HandlerActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
@@ -31,6 +32,7 @@ import com.teamsolo.swear.foundation.constant.SpConst;
 import com.teamsolo.swear.foundation.util.RetrofitConfig;
 import com.teamsolo.swear.structure.request.FollowHttpUrlRequests;
 import com.teamsolo.swear.structure.ui.school.adapter.TeachmatsAdapter;
+import com.teamsolo.swear.structure.ui.school.adapter.UnitAdapter;
 import com.teamsolo.swear.structure.util.LoadingUtil;
 import com.teamsolo.swear.structure.util.UserHelper;
 
@@ -49,7 +51,7 @@ import rx.Subscriber;
  * date 2016/12/26
  * version 0.0.0.1
  */
-
+@SuppressWarnings("WeakerAccess, unused")
 public class TeachmatsOrUnitsActivity extends HandlerActivity {
 
     private RecyclerView mListView;
@@ -62,7 +64,7 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
 
     private TeachmatsAdapter mTeachmatsAdapter;
 
-    //private UnitAdapter mUnitAdapter;
+    private UnitAdapter mUnitAdapter;
 
     private List<Teachmats> mTeachmats = new ArrayList<>();
 
@@ -79,6 +81,10 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
     private Subscriber<TeachmatsResp> subscriberTeachmats;
 
     private Subscriber<UnitsResp> subscriberUnits;
+
+    private Subscriber<CommonResponse> subscriberRemember;
+
+    private boolean hasShownRemember;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -143,6 +149,7 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
             intent.putExtra("from", true);
             startActivity(intent);
         });
+        mUnitAdapter = new UnitAdapter(mContext, mUnits);
     }
 
     @Override
@@ -270,9 +277,11 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
                 if (mUnits.isEmpty()) loadingUtil.showEmpty();
                 else {
                     loadingUtil.dismiss();
-                    if (fromTeachmats)
+                    if (fromTeachmats && !hasShownRemember) {
                         Snackbar.make(mFab, R.string.school_follow_remember, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.ok, v -> requestRemember()).show();
+                                .setAction(R.string.school_follow_remember_action, v -> requestRemember()).show();
+                        hasShownRemember = true;
+                    }
                 }
             }
 
@@ -308,7 +317,9 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
                     if (unitsResp.courseUnitList != null)
                         mUnits.addAll(unitsResp.courseUnitList);
 
-                    // TODO: notify adapter here
+                    if (!(mListView.getAdapter() instanceof UnitAdapter))
+                        mListView.setAdapter(mUnitAdapter);
+                    mUnitAdapter.notifyDataSetChanged();
                 }
 
                 mFab.setVisibility(View.VISIBLE);
@@ -317,7 +328,34 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
     }
 
     private void requestRemember() {
-        System.out.println("remember: " + teachmatId);
+        if (TextUtils.isEmpty(teachmatId)) return;
+
+        if (UserHelper.getUserId(mContext) > 0) {
+            Map<String, String> paras = new HashMap<>();
+            paras.put("CMD", CmdConst.CMD_REMEMBER_LAST);
+            paras.put("serviceType", "9");
+            paras.put("teachingMaterialId", teachmatId);
+            subscriberRemember = FollowHttpUrlRequests.getInstance().commonReq(paras, new Subscriber<CommonResponse>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    toast(RetrofitConfig.handleReqError(e));
+                }
+
+                @Override
+                public void onNext(CommonResponse commonResponse) {
+                    if (!RetrofitConfig.handleResp(commonResponse, mContext))
+                        toast(commonResponse.message);
+                }
+            });
+        } else {
+            PreferenceManager.getDefaultSharedPreferences(mContext).edit()
+                    .putString(SpConst.LAST_FOLLOW_VISITOR, teachmatId).apply();
+        }
     }
 
     @Override
@@ -332,6 +370,9 @@ public class TeachmatsOrUnitsActivity extends HandlerActivity {
 
         if (subscriberUnits != null && !subscriberUnits.isUnsubscribed())
             subscriberUnits.unsubscribe();
+
+        if (subscriberRemember != null && !subscriberRemember.isUnsubscribed())
+            subscriberRemember.unsubscribe();
     }
 
     @Override

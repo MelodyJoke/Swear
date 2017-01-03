@@ -161,6 +161,7 @@
     <string name="school_follow_title">选择教材</string>
     <string name="school_follow_empty">比钱包还干净呢~</string>
     <string name="school_follow_remember">宝宝到此一游，下次还来~</string>
+    <string name="school_follow_remember_action">订阅</string>
 
     <!--training-->
     <string name="training_nav">培训</string>

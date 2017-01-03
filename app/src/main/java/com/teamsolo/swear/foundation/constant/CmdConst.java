@@ -45,8 +45,11 @@ public interface CmdConst {
     // get teaching materials units
     String CMD_UNITS = "getCourseUnitList";
 
-    // get last follow unit
+    // get last follow material
     String CMD_LAST_FOLLOW = "lastVisitMaterial";
+
+    // remember last follow material
+    String CMD_REMEMBER_LAST = "updateLastVisit";
 
     // get school activities
     String CMD_GET_ACTIVITIES = "getActivityList";
