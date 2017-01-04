@@ -2,49 +2,58 @@ package com.teamsolo.swear.structure.ui.school;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 import com.teamsolo.base.template.activity.BaseActivity;
 import com.teamsolo.base.util.BuildUtility;
 import com.teamsolo.swear.R;
 import com.teamsolo.swear.foundation.bean.Child;
-import com.teamsolo.swear.foundation.bean.WebLink;
-import com.teamsolo.swear.foundation.bean.resp.UrlResp;
-import com.teamsolo.swear.foundation.constant.CmdConst;
-import com.teamsolo.swear.foundation.util.RetrofitConfig;
-import com.teamsolo.swear.structure.request.BaseHttpUrlRequests;
-import com.teamsolo.swear.structure.ui.common.WebLinkActivity;
 import com.teamsolo.swear.structure.util.LoadingUtil;
 import com.teamsolo.swear.structure.util.UserHelper;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import rx.Subscriber;
 
 /**
- * description Schedule page
+ * description Scores history page
  * author Melo Chan
- * date 2016/11/3
+ * date 2017/1/3
  * version 0.0.0.1
  */
-public class ScheduleActivity extends BaseActivity {
 
-    private static final int PERMISSION_REQUEST_CODE = 196;
+public class ScoresActivity extends BaseActivity {
+
+    private static final int PERMISSION_REQUEST_CODE = 244;
+
+    private FloatingActionButton mFab;
+
+    private CheckedTextView mPrevButton, mNextButton;
+
+    private TextView mTitleText;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private RecyclerView mListView;
 
     private View mLoadingView;
 
@@ -54,12 +63,10 @@ public class ScheduleActivity extends BaseActivity {
 
     private int status;
 
-    private Subscriber<UrlResp> subscriber;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule);
+        setContentView(R.layout.activity_scores);
 
         getBundle(getIntent());
         initViews();
@@ -81,21 +88,45 @@ public class ScheduleActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        mListView = (RecyclerView) findViewById(R.id.listView);
+        mListView.setHasFixedSize(true);
+        mListView.setItemAnimator(new DefaultItemAnimator());
+        mListView.setLayoutManager(new LinearLayoutManager(mContext));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(v -> mListView.smoothScrollToPosition(0));
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
-        if (toolbar != null)
-            toolbar.setNavigationOnClickListener(v -> {
-                if (BuildUtility.isRequired(Build.VERSION_CODES.LOLLIPOP)) finishAfterTransition();
-                else finish();
-            });
+        toolbar.setNavigationOnClickListener(v -> {
+            if (BuildUtility.isRequired(Build.VERSION_CODES.LOLLIPOP)) finishAfterTransition();
+            else finish();
+        });
+
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        List<Child> children = UserHelper.getChildren(mContext);
+        mFab.setVisibility(children == null || children.isEmpty() ? View.GONE : View.VISIBLE);
+
+        mPrevButton = (CheckedTextView) findViewById(R.id.prev);
+        mNextButton = (CheckedTextView) findViewById(R.id.next);
+        mPrevButton.setEnabled(false);
+        mNextButton.setEnabled(false);
+
+        mTitleText = (TextView) findViewById(R.id.title);
+        mTitleText.setText(R.string.loading);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
+        mSwipeRefreshLayout.setColorSchemeColors(
+                Color.parseColor("#F44336"),
+                Color.parseColor("#FF5722"),
+                Color.parseColor("#CDDC39"),
+                Color.parseColor("#4CAF50"));
 
         mLoadingView = findViewById(R.id.loading);
-        mLoadingUtil = new LoadingUtil(mLoadingView);
+        mLoadingUtil = new LoadingUtil(mLoadingView, mListView, findViewById(R.id.title_layout));
         mLoadingUtil.init(R.mipmap.schools_empty, R.string.loading, R.string.school_schedule_without_school).showLoading();
     }
 
@@ -110,53 +141,45 @@ public class ScheduleActivity extends BaseActivity {
                         Manifest.permission.CALL_PHONE
                 }, PERMISSION_REQUEST_CODE);
         });
+
+        mFab.setOnClickListener(v -> {
+            // TODO: go to analyze page
+            mPrevButton.setEnabled(true);
+            mNextButton.setEnabled(true);
+        });
+
+        mPrevButton.setOnClickListener(v -> {
+            // TODO:
+        });
+
+        mNextButton.setOnClickListener(v -> {
+            // TODO:
+        });
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            // TODO:
+        });
     }
 
     private void judge() {
-        if (status == 1)
+        if (status == 1) {
             mLoadingUtil.init(R.mipmap.schools_empty, R.string.loading, R.string.school_schedule_without_school).showEmpty();
-        else if (status == 2)
+            mSwipeRefreshLayout.setEnabled(false);
+        } else if (status == 2) {
             mLoadingUtil.init(R.mipmap.classes_empty, R.string.loading, R.string.school_schedule_without_child).showEmpty();
-        else requestUrl();
+            mSwipeRefreshLayout.setEnabled(false);
+        } else {
+            mSwipeRefreshLayout.setRefreshing(true);
+            new Thread(this::request).start();
+        }
     }
 
-    private void requestUrl() {
-        Map<String, String> paras = new HashMap<>();
-        paras.put("CMD", CmdConst.CMD_SCHEDULE);
-        subscriber = BaseHttpUrlRequests.getInstance().getUrl(paras, new Subscriber<UrlResp>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                toast((RetrofitConfig.handleReqError(e)));
-            }
-
-            @Override
-            public void onNext(UrlResp urlResp) {
-                if (!RetrofitConfig.handleResp(urlResp, mContext))
-                    toast(urlResp.message);
-                else {
-                    if (!TextUtils.isEmpty(urlResp.url)) {
-                        WebLink webLink = new WebLink();
-                        webLink.title = getString(R.string.school_schedule);
-                        webLink.forwardUrl = urlResp.url;
-
-                        String sessionId = RetrofitConfig.getSessionId();
-                        if (!TextUtils.isEmpty(sessionId))
-                            webLink.forwardUrl += "&JSESSIONID=" + sessionId;
-
-                        Intent intent = new Intent(mContext, WebLinkActivity.class);
-                        intent.putExtra("link", webLink);
-                        startActivity(intent);
-
-                        finish();
-                    }
-                }
-            }
-        });
+    private void request() {
+        new Handler(getMainLooper()).postDelayed(() -> {
+            mSwipeRefreshLayout.setRefreshing(false);
+            mLoadingUtil.dismiss();
+            mPrevButton.setChecked(true);
+        }, 3000);
     }
 
     @SuppressWarnings("MissingPermission")
@@ -183,12 +206,5 @@ public class ScheduleActivity extends BaseActivity {
                         serviceDialog.show();
                     } else toast(R.string.permission_deny);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (subscriber != null && !subscriber.isUnsubscribed()) subscriber.unsubscribe();
     }
 }

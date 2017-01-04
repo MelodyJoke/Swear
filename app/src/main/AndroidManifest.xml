@@ -102,15 +102,21 @@
 
         <!--school-->
         <activity
+            android:name=".structure.ui.school.TeachmatsOrUnitsActivity"
+            android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
+            android:label="@string/school_follow"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity
             android:name=".structure.ui.school.ScheduleActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
             android:label="@string/school_schedule"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".structure.ui.school.TeachmatsOrUnitsActivity"
+            android:name=".structure.ui.school.ScoresActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|keyboardHidden"
-            android:label="@string/school_follow"
+            android:label="@string/school_score"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 

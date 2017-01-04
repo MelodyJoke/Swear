@@ -157,7 +157,7 @@ public class SchoolFragment extends HandlerFragment implements Refreshable, Scro
                 R.mipmap.school_category_schedule, new Intent(mContext, ScheduleActivity.class)));
 
         categories.add(Category.generateCategory(5, getString(R.string.school_score),
-                R.mipmap.school_category_score, new Intent(mContext, AboutActivity.class)));
+                R.mipmap.school_category_score, new Intent(mContext, ScoresActivity.class)));
 
         categories.add(Category.generateCategory(6, getString(R.string.school_register),
                 R.mipmap.school_category_register, new Intent(mContext, AboutActivity.class)));

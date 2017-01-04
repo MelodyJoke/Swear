@@ -6,7 +6,6 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        //noinspection OldTargetApi
         targetSdkVersion 25
         versionCode 4
         versionName "2.0"
